@@ -7,7 +7,6 @@ export const envValidationObjectSchema = Joi.object({
     //APP
     APP_PORT: Joi.number().required(),
     APP_HOSTNAME: Joi.string().required(),
-    APP_SECURE: Joi.boolean().required(),
 
     // DATABASE
     DB_HOST: Joi.string().required(),
