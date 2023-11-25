@@ -7,7 +7,7 @@ import { envValidationObjectSchema } from "./config";
 @Module({
   imports: [ConfigModule.forRoot({
       validationSchema: envValidationObjectSchema,
-  }),DatabaseModule],
+  }), DatabaseModule],
   controllers: [],
   providers: [],
 })
