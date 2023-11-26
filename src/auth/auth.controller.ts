@@ -16,6 +16,7 @@ import { RtGuard, LocalAuthGuard } from './guards';
 import { User, Public } from './decorators';
 import { Request } from 'express';
 import { UserEntity } from '../user/entities/user.entity';
+import { RegisterDto } from './dto/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +25,10 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  async register(@Body() dto: LoginDto, @Res() res: Response): Promise<Tokens> {
+  async register(
+    @Body() dto: RegisterDto,
+    @Res() res: Response,
+  ): Promise<Tokens> {
     return this.authService.register(dto, res);
   }
 

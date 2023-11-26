@@ -57,8 +57,6 @@ export class AuthService {
   }
 
   async login(user: UserEntity, res: Response) {
-    // TODO: user powinien być zwracany z req
-
     const tokens = await this.getAndUpdateTokens(user);
 
     return res
@@ -110,7 +108,6 @@ export class AuthService {
   }
 
   private async getAndUpdateTokens(user: UserEntity) {
-    console.log(user.id);
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
