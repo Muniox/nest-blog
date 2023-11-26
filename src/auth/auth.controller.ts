@@ -15,7 +15,7 @@ import { Response } from 'express';
 import { RtGuard, LocalAuthGuard } from './guards';
 import { User, Public } from './decorators';
 import { Request } from 'express';
-import { UserATRequest } from '../types/user-at.type';
+import { UserEntity } from '../user/entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -32,16 +32,13 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('/login')
-  async login(@User() user: any, @Res() res: Response) {
+  async login(@User() user: UserEntity, @Res() res: Response) {
     return this.authService.login(user, res);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
-  async logout(
-    @User('sub') userId: UserATRequest['sub'],
-    @Res() res: Response,
-  ) {
+  async logout(@User('sub') userId: string, @Res() res: Response) {
     return this.authService.logout(userId, res);
   }
   @Public()

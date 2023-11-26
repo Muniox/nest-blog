@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { LoginDto } from './dto';
-import { User } from '../user/entities/user.entity';
+import { UserEntity } from '../user/entities/user.entity';
 import { hashData } from '../utils';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -37,13 +37,13 @@ export class AuthService {
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(dto: LoginDto, res: Response): Promise<any> {
-    const user = await User.findOne({ where: { email: dto.email } });
+    const user = await UserEntity.findOne({ where: { email: dto.email } });
 
     if (user) {
       throw new ForbiddenException('User already exists');
     }
 
-    const newUser = new User();
+    const newUser = new UserEntity();
     newUser.email = dto.email;
     newUser.hash = await hashData(dto.password);
     await newUser.save();
@@ -56,7 +56,7 @@ export class AuthService {
       .json({ ok: true });
   }
 
-  async login(user, res: Response) {
+  async login(user: UserEntity, res: Response) {
     // TODO: user powinien być zwracany z req
 
     const tokens = await this.getAndUpdateTokens(user);
@@ -68,7 +68,7 @@ export class AuthService {
   }
 
   async logout(userId: string, res: Response) {
-    await User.update(
+    await UserEntity.update(
       { id: userId, hashedRT: Not(IsNull()) },
       { hashedRT: null },
     );
@@ -80,7 +80,7 @@ export class AuthService {
   }
 
   async refreshTokens(userId: string, rt: string | null, res: Response) {
-    const user = await User.findOne({ where: { id: userId } });
+    const user = await UserEntity.findOne({ where: { id: userId } });
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
 
@@ -96,7 +96,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string) {
-    const user = await User.findOne({ where: { email } });
+    const user = await UserEntity.findOne({ where: { email } });
 
     if (!user) {
       throw new UnauthorizedException();
@@ -109,7 +109,7 @@ export class AuthService {
     return user;
   }
 
-  private async getAndUpdateTokens(user: User) {
+  private async getAndUpdateTokens(user: UserEntity) {
     console.log(user.id);
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
@@ -137,6 +137,6 @@ export class AuthService {
 
   private async updateRtHash(userId: string, rt: string) {
     const hashRT = await hashData(rt);
-    await User.update({ id: userId }, { hashedRT: hashRT });
+    await UserEntity.update({ id: userId }, { hashedRT: hashRT });
   }
 }
