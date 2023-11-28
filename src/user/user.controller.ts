@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
 import { UserResponse } from '../types/user-response.type';
 import { MessageResponse } from '../types/message-response.type';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -33,16 +33,16 @@ export class UserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserEntity> {
-    return await this.userService.findOne(id);
+  async findOne(@Param('id') id: string): Promise<UserResponse> {
+    return await this.userService.findOneUser(id);
   }
 
-  // update tylko dla admina
+  // update tylko dla admina, dodatkowe sprawdzenie poprawności hasła
   @Patch(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateUserDto: UserEntity,
-  ): Promise<UserEntity> {
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponse> {
     return await this.userService.updateUserData(id, updateUserDto);
   }
 

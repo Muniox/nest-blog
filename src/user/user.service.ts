@@ -36,30 +36,40 @@ export class UserService {
     return users.map((user) => this.filter(user));
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<UserEntity> {
     return UserEntity.findOne({ where: { id } });
+  }
+
+  async findOneUser(id: string): Promise<UserResponse> {
+    return this.filter(await this.findOne(id));
   }
 
   // Do sprawdzenia!
   async updateUserData(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserEntity> {
-    const { email } = await this.findUserByEmail(updateUserDto.email);
+  ): Promise<UserResponse> {
+    const user = await this.findUserByEmail(updateUserDto.email);
 
-    if (email === updateUserDto.email) {
+    if (user?.email === updateUserDto.email) {
       throw new ForbiddenException(`User with this email already exist`);
     }
 
-    await UserEntity.update({ id }, { ...updateUserDto });
+    await UserEntity.update(
+      { id },
+      {
+        email: updateUserDto.email,
+        hash: await hashData(updateUserDto.password),
+      },
+    );
 
-    const user = await this.findOne(id);
+    const updatedUser = await this.findOne(id);
 
-    if (!user) {
+    if (!updatedUser) {
       throw new ForbiddenException(`User with this id don't exist`);
     }
 
-    return user;
+    return this.filter(updatedUser);
   }
 
   async remove(id: string): Promise<MessageResponse> {
