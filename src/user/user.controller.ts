@@ -27,6 +27,11 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Get('logout/:id')
+  async logoutUser(@Param('id') id: string) {
+    await this.userService.logoutUser(id);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string): Promise<UserEntity> {
     return await this.userService.findOne(id);

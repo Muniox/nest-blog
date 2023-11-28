@@ -6,7 +6,6 @@ import { hashData } from '../utils';
 import { IsNull, Not } from 'typeorm';
 import { MessageResponse } from '../types/message-response.type';
 import { UserResponse } from '../types/user-response.type';
-import { filter } from 'rxjs';
 
 @Injectable()
 export class UserService {
