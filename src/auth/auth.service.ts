@@ -9,6 +9,7 @@ import { Response } from 'express';
 import { AtCookieConfig, RtCookieConfig } from '../config';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../user/user.service';
+import { UserResponse } from '../types/user-response.type';
 
 @Injectable()
 export class AuthService {
@@ -105,7 +106,7 @@ export class AuthService {
     return user;
   }
 
-  private async getAndUpdateTokens(user: UserEntity) {
+  private async getAndUpdateTokens(user: UserResponse) {
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;

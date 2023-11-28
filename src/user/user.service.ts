@@ -4,11 +4,21 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { hashData } from '../utils';
 import { IsNull, Not } from 'typeorm';
-import { hash } from 'argon2';
+import { MessageResponse } from '../types/message-response.type';
+import { UserResponse } from '../types/user-response.type';
+import { filter } from 'rxjs';
 
 @Injectable()
 export class UserService {
-  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+  filter(user: UserEntity) {
+    const { id, email } = user;
+    return {
+      id,
+      email,
+    };
+  }
+
+  async create(createUserDto: CreateUserDto): Promise<UserResponse> {
     const user = this.findUserByEmail(createUserDto.email);
 
     if (user) {
@@ -19,11 +29,12 @@ export class UserService {
     newUser.email = createUserDto.email;
     newUser.hash = await hashData(createUserDto.password);
     await newUser.save();
-    return newUser;
+    return this.filter(newUser);
   }
 
-  async findAll() {
-    return `This action returns all user`;
+  async findAll(): Promise<UserResponse[]> {
+    const users = await UserEntity.find();
+    return users.map((user) => this.filter(user));
   }
 
   async findOne(id: string) {
@@ -31,33 +42,40 @@ export class UserService {
   }
 
   // Do sprawdzenia!
-  async updateUserData(id: string, updateUserDto: UpdateUserDto) {
+  async updateUserData(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserEntity> {
     const { email } = await this.findUserByEmail(updateUserDto.email);
 
     if (email === updateUserDto.email) {
       throw new ForbiddenException(`User with this email already exist`);
     }
 
-    const isUser = await this.findOne(id);
+    await UserEntity.update({ id }, { ...updateUserDto });
 
-    if (!isUser) {
+    const user = await this.findOne(id);
+
+    if (!user) {
       throw new ForbiddenException(`User with this id don't exist`);
     }
 
-    await UserEntity.update({ id }, { ...updateUserDto });
+    return user;
+  }
+
+  async remove(id: string): Promise<MessageResponse> {
+    await UserEntity.delete({
+      id,
+    });
 
     return {
-      message: `User was updated`,
+      message: 'User was deleted',
       statusCode: HttpStatus.OK,
     };
   }
 
-  async updateUserHashRT(id: string, hashRT: string) {
+  async updateUserHashRT(id: string, hashRT: string): Promise<void> {
     await UserEntity.update({ id }, { hashedRT: hashRT });
-  }
-
-  async remove(id: string) {
-    return `This action removes a #${id} user`;
   }
 
   async findUserByEmail(email: string): Promise<UserEntity> {
