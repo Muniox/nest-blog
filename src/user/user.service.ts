@@ -10,15 +10,18 @@ import { UserResponse } from '../types/user-response.type';
 @Injectable()
 export class UserService {
   filter(user: UserEntity) {
-    const { id, email } = user;
+    if (!user) throw new ForbiddenException("User don't exist");
+
+    const { id, email, role } = user;
     return {
       id,
       email,
+      role,
     };
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
-    const user = this.findUserByEmail(createUserDto.email);
+    const user = await this.findUserByEmail(createUserDto.email);
 
     if (user) {
       throw new ForbiddenException('User already exists');
@@ -27,6 +30,7 @@ export class UserService {
     const newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.hash = await hashData(createUserDto.password);
+    newUser.role = 'user';
     await newUser.save();
     return this.filter(newUser);
   }

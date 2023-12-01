@@ -26,6 +26,9 @@ export class UserEntity extends BaseEntity {
   email: string;
 
   @Column()
+  role: string;
+
+  @Column()
   hash: string;
 
   @Column({
