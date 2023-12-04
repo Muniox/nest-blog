@@ -115,10 +115,10 @@ export class UserService {
   }
 
   async onApplicationBootstrap() {
-    await this.createUserRoles([Role.user, Role.admin]);
+    await this.createUserRoles(Object.values(Role));
   }
 
-  async createUserRoles(roles: Role[]) {
+  async createUserRoles(roles: string[]) {
     //pozbywam się z tablicy wszystkich duplikatów
     const uniqueRoleArray = [...new Set(roles)];
 
