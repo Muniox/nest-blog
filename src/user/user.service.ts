@@ -6,6 +6,8 @@ import { hashData } from '../utils';
 import { IsNull, Not } from 'typeorm';
 import { MessageResponse } from '../types/message-response.type';
 import { UserResponse } from '../types/user-response.type';
+import { UserRoleEntity } from './entities/user-role.entity';
+import { Role } from '../types';
 
 @Injectable()
 export class UserService {
@@ -30,18 +32,25 @@ export class UserService {
     const newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.hash = await hashData(createUserDto.password);
-    newUser.role = 'user';
+    newUser.role = await UserRoleEntity.findOne({
+      where: { roleType: 'user' },
+    });
     await newUser.save();
     return this.filter(newUser);
   }
 
   async findAll(): Promise<UserResponse[]> {
-    const users = await UserEntity.find();
+    const users = await UserEntity.find({
+      relations: { role: true },
+    });
     return users.map((user) => this.filter(user));
   }
 
   async findOne(id: string): Promise<UserEntity> {
-    return UserEntity.findOne({ where: { id } });
+    return UserEntity.findOne({
+      where: { id },
+      relations: { role: true },
+    });
   }
 
   async findOneUser(id: string): Promise<UserResponse> {
@@ -94,6 +103,7 @@ export class UserService {
   async findUserByEmail(email: string): Promise<UserEntity> {
     return await UserEntity.findOne({
       where: { email },
+      relations: { role: true },
     });
   }
 
@@ -102,5 +112,23 @@ export class UserService {
       { id, hashedRT: Not(IsNull()) },
       { hashedRT: null },
     );
+  }
+
+  async onApplicationBootstrap() {
+    await this.createUserRoles([Role.user, Role.admin]);
+  }
+
+  async createUserRoles(roles: Role[]) {
+    //pozbywam się z tablicy wszystkich duplikatów
+    const uniqueRoleArray = [...new Set(roles)];
+
+    uniqueRoleArray.map(async (item) => {
+      const searchRoleType = await UserRoleEntity.findBy({ roleType: item });
+      if (searchRoleType.length === 0) {
+        const role = new UserRoleEntity();
+        role.roleType = item;
+        await role.save();
+      }
+    });
   }
 }
