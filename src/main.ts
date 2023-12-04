@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import { Cors } from './config';
 
@@ -15,6 +16,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.use(helmet());
   app.use(cookieParser());
 
   const cors = app.get(Cors);
