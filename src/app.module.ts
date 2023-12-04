@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
-import { envValidationObjectSchema } from './config';
+import { Cors, envValidationObjectSchema } from './config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard } from './auth/guards';
@@ -28,6 +28,7 @@ import { RolesGuard } from './auth/guards/role.guard';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    Cors,
   ],
 })
 export class AppModule {}
