@@ -1,17 +1,19 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponse } from '../types/user-response.type';
 import { MessageResponse } from '../types/message-response.type';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UseRole } from '../auth/decorators';
+import { Role } from '../types';
 
 @Controller('user')
 export class UserController {
@@ -23,6 +25,7 @@ export class UserController {
   }
 
   @Get()
+  @UseRole(Role.admin)
   async findAll(): Promise<UserResponse[]> {
     return await this.userService.findAll();
   }

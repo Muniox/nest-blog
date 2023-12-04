@@ -9,11 +9,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto';
-import { Tokens } from '../types';
+import { Role, Tokens } from '../types';
 import { Response } from 'express';
 import { RtGuard, LocalAuthGuard } from './guards';
-import { User, Public } from './decorators';
+import { User, Public, UseRole } from './decorators';
 import { Request } from 'express';
 import { UserEntity } from '../user/entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
