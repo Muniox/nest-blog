@@ -6,7 +6,6 @@ import { getTypeOrmConfig } from '../config';
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({
-      // imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: getTypeOrmConfig,
     }),

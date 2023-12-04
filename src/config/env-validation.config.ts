@@ -1,14 +1,14 @@
 import * as Joi from 'joi';
 
 export const envValidationObjectSchema = Joi.object({
-  // NODE MODE
+  //NODE MODE
   NODE_ENV: Joi.string().valid('development', 'production').required(),
 
   //APP
   APP_PORT: Joi.number().required(),
   APP_HOSTNAME: Joi.string().required(),
 
-  // CORS
+  //CORS
   CORS_METHODS: Joi.string().required(),
   CORS_CREDENTIALS: Joi.boolean().required(),
   CORS_CLIENT_URL: Joi.string().required(),
@@ -17,7 +17,11 @@ export const envValidationObjectSchema = Joi.object({
   APP_DOMAIN: Joi.string().required(),
   APP_REFRESH_PATH: Joi.string().required(),
 
-  // DATABASE
+  //THROTTLER
+  THROTTLE_TTL: Joi.number().required(),
+  THROTTLE_LIMIT: Joi.number().required(),
+
+  //DATABASE
   DB_HOST: Joi.string().required(),
   DB_PORT: Joi.number().required(),
   DB_USERNAME: Joi.string().required(),
@@ -29,6 +33,7 @@ export const envValidationObjectSchema = Joi.object({
   //ACCESS TOKEN
   JWT_SECRET_ACCESS_TOKEN: Joi.string().required(),
   JWT_EXPIRATION_TIME_ACCESS_TOKEN: Joi.string().required(),
+
   //REFRESH TOKEN
   JWT_SECRET_REFRESH_TOKEN: Joi.string().required(),
   JWT_EXPIRATION_TIME_REFRESH_TOKEN: Joi.string().required(),
