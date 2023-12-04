@@ -8,6 +8,11 @@ export const envValidationObjectSchema = Joi.object({
   APP_PORT: Joi.number().required(),
   APP_HOSTNAME: Joi.string().required(),
 
+  // CORS
+  CORS_METHODS: Joi.string().required(),
+  CORS_CREDENTIALS: Joi.boolean().required(),
+  CORS_CLIENT_URL: Joi.string().required(),
+
   //COOKIE
   APP_DOMAIN: Joi.string().required(),
   APP_REFRESH_PATH: Joi.string().required(),
