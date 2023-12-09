@@ -9,13 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Role, Tokens } from '../types';
+import { Tokens } from '../types';
 import { Response } from 'express';
 import { RtGuard, LocalAuthGuard } from './guards';
-import { User, Public, UseRole } from './decorators';
+import { User, Public } from './decorators';
 import { Request } from 'express';
 import { UserEntity } from '../user/entities/user.entity';
-import { RegisterDto } from './dto/register.dto';
+import { AuthDto } from './dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,10 +24,7 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  async register(
-    @Body() dto: RegisterDto,
-    @Res() res: Response,
-  ): Promise<Tokens> {
+  async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
     return this.authService.register(dto, res);
   }
 

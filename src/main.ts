@@ -11,6 +11,8 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
+      validateCustomDecorators: true,
+      transform: true,
       disableErrorMessages: false,
       whitelist: true,
       forbidNonWhitelisted: true,

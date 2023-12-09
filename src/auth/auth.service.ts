@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { LoginDto } from './dto';
+import { AuthDto } from './dto';
 import { UserEntity } from '../user/entities/user.entity';
 import { hashData } from '../utils';
 import * as argon2 from 'argon2';
@@ -34,7 +34,7 @@ export class AuthService {
   private readonly jwtExpirationTimeRefreshToken =
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
-  async register(loginDto: LoginDto, res: Response): Promise<any> {
+  async register(loginDto: AuthDto, res: Response): Promise<any> {
     const user = await this.userService.create(loginDto);
 
     const tokens = await this.getAndUpdateTokens(user);
