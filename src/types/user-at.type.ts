@@ -1,6 +1,6 @@
 export type UserATRequest = {
-  sub: string;
-  email: string;
+  sub: string; //userId
+  email: string; //userEmail
   iat: number;
   exp: number;
   refreshToken: string;
