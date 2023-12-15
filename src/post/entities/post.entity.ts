@@ -10,7 +10,9 @@ import {
 } from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 
-@Entity()
+@Entity({
+  name: 'posts',
+})
 export class PostEntity extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

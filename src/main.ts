@@ -11,11 +11,14 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(
     new ValidationPipe({
-      validateCustomDecorators: true,
+      // validateCustomDecorators: true, //make error for globally only dunno why??
       transform: true,
       disableErrorMessages: false,
       whitelist: true,
       forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
     }),
   );
   app.use(helmet());
