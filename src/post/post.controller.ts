@@ -40,8 +40,13 @@ export class PostController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return await this.postService.update(id, updatePostDto);
+  async update(
+    @User('sub') userId: string,
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return await this.postService.update(id, updatePostDto, userId, file);
   }
 
   @Delete(':id')

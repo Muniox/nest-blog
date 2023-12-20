@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/post.entity';
@@ -37,22 +37,64 @@ export class PostService {
     post.img = filename;
     await post.save();
 
-    return 'This action adds a new post';
+    return {
+      message: `post ${post.title} added`,
+      statusCode: 201,
+    };
   }
 
-  async findAll() {
-    return `This action returns all post`;
+  async findAll(): Promise<PostEntity[]> {
+    return await PostEntity.find();
   }
 
-  async findOne(id: string) {
-    return `This action returns a #${id} post`;
+  async findOne(id: string): Promise<PostEntity> {
+    return await PostEntity.findOne({ where: { id } });
   }
 
-  async update(id: string, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    userId: string,
+    file: Express.Multer.File,
+  ) {
+    const post = await this.findOne(id);
+
+    if (!post) {
+      throw new ForbiddenException('There is no post with that id');
+    }
+
+    if (post.user.id !== userId) {
+      throw new ForbiddenException('You can only edit your posts');
+    }
+
+    const filename = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
+
+    try {
+      await fs.writeFile(
+        path.join(__dirname, '../../storage', filename),
+        file.buffer,
+      );
+    } catch (error) {
+      Logger.log(error);
+    }
+
+    await PostEntity.update(
+      { id },
+      {
+        title: updatePostDto.title,
+        description: updatePostDto.description,
+        img: filename ? filename : post.img,
+        category: updatePostDto.category,
+      },
+    );
+
+    return {
+      message: `post ${post.title} updated`,
+      statusCode: 201,
+    };
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} post`;
+    return await PostEntity.delete({ id });
   }
 }
