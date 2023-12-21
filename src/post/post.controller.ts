@@ -40,6 +40,7 @@ export class PostController {
   }
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
   async update(
     @User('sub') userId: string,
     @Param('id') id: string,

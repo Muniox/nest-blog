@@ -48,7 +48,10 @@ export class PostService {
   }
 
   async findOne(id: string): Promise<PostEntity> {
-    return await PostEntity.findOne({ where: { id } });
+    return await PostEntity.findOne({
+      where: { id },
+      relations: { user: true },
+    });
   }
 
   async update(
@@ -78,12 +81,14 @@ export class PostService {
       Logger.log(error);
     }
 
+    console.log(updatePostDto);
+
     await PostEntity.update(
-      { id },
+      { id: id },
       {
         title: updatePostDto.title,
         description: updatePostDto.description,
-        img: filename ? filename : post.img,
+        img: file ? filename : post.img,
         category: updatePostDto.category,
       },
     );
