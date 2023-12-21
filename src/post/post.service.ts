@@ -81,6 +81,7 @@ export class PostService {
       Logger.log(error);
     }
 
+    // TODO: dodanie możliwości usuwania już niepotrzebnego pliku png
     console.log(updatePostDto);
 
     await PostEntity.update(
