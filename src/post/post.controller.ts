@@ -8,11 +8,13 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  StreamableFile,
+  Header,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { User } from '../auth/decorators';
+import { Public, User } from '../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('post')
@@ -32,6 +34,13 @@ export class PostController {
   @Get()
   async findAll() {
     return await this.postService.findAll();
+  }
+
+  @Get('image/:filename')
+  @Public()
+  @Header('Content-Type', 'image/jpeg')
+  async getFile(@Param('filename') filename: string): Promise<StreamableFile> {
+    return await this.postService.getFile(filename);
   }
 
   @Get(':id')

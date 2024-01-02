@@ -61,7 +61,6 @@ export class AuthService {
   }
 
   async logout(userId: string, res: Response) {
-    // TODO: sprawić żeby nie można było wysyłać req na logout przez niezalogowanych użytkowników
     await this.userService.logoutUser(userId);
 
     return res
