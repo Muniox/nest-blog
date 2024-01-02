@@ -1,8 +1,14 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  Logger,
+  StreamableFile,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostEntity } from './entities/post.entity';
 import { UserService } from '../user/user.service';
+import { createReadStream } from 'fs';
 import { v4 as uuid } from 'uuid';
 import * as mime from 'mime';
 import * as fs from 'fs/promises';
@@ -74,15 +80,16 @@ export class PostService {
 
     try {
       await fs.writeFile(
+        // TODO: zmienna globalna do folderu storage i jeśli nie ma folderu to go stwórz
         path.join(__dirname, '../../storage', filename),
         file.buffer,
       );
+
+      // TODO: zmienna globalna do folderu storage
+      await fs.unlink(path.join(__dirname, '../../storage', post.img));
     } catch (error) {
       Logger.log(error);
     }
-
-    // TODO: dodanie możliwości usuwania już niepotrzebnego pliku png
-    console.log(updatePostDto);
 
     await PostEntity.update(
       { id: id },
@@ -102,5 +109,12 @@ export class PostService {
 
   async remove(id: string) {
     return await PostEntity.delete({ id });
+  }
+
+  async getFile(filename: string) {
+    const file = createReadStream(
+      path.join(process.cwd(), 'storage', `${filename}`),
+    );
+    return new StreamableFile(file);
   }
 }
