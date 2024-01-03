@@ -26,7 +26,7 @@ export class PostService {
 
     try {
       await fs.writeFile(
-        path.join(__dirname, '../../storage', filename),
+        path.join(process.cwd(), 'storage', filename),
         file.buffer,
       );
     } catch (error) {
@@ -80,13 +80,11 @@ export class PostService {
 
     try {
       await fs.writeFile(
-        // TODO: zmienna globalna do folderu storage i jeśli nie ma folderu to go stwórz
-        path.join(__dirname, '../../storage', filename),
+        path.join(process.cwd(), 'storage', filename),
         file.buffer,
       );
 
-      // TODO: zmienna globalna do folderu storage
-      await fs.unlink(path.join(__dirname, '../../storage', post.img));
+      await fs.unlink(path.join(process.cwd(), 'storage', post.img));
     } catch (error) {
       Logger.log(error);
     }
