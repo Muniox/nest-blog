@@ -11,7 +11,11 @@ import { Role } from '../types';
 
 @Injectable()
 export class UserService {
-  filter(user: UserEntity) {
+  filter(user: UserEntity): {
+    id: string;
+    email: string;
+    role: UserRoleEntity;
+  } {
     if (!user) throw new ForbiddenException("User don't exist");
 
     const { id, email, role } = user;
@@ -23,13 +27,13 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<UserResponse> {
-    const user = await this.findUserByEmail(createUserDto.email);
+    const user: UserEntity = await this.findUserByEmail(createUserDto.email);
 
     if (user) {
       throw new ForbiddenException('User already exists');
     }
 
-    const newUser = new UserEntity();
+    const newUser: UserEntity = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.hash = await hashData(createUserDto.password);
     newUser.role = await UserRoleEntity.findOne({
@@ -40,10 +44,10 @@ export class UserService {
   }
 
   async findAll(): Promise<UserResponse[]> {
-    const users = await UserEntity.find({
+    const users: UserEntity[] = await UserEntity.find({
       relations: { role: true },
     });
-    return users.map((user) => this.filter(user));
+    return users.map((user: UserEntity) => this.filter(user));
   }
 
   async findOne(id: string): Promise<UserEntity> {
@@ -57,12 +61,11 @@ export class UserService {
     return this.filter(await this.findOne(id));
   }
 
-  // Do sprawdzenia!
   async updateUserData(
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    const user = await this.findUserByEmail(updateUserDto.email);
+    const user: UserEntity = await this.findUserByEmail(updateUserDto.email);
 
     if (user?.email === updateUserDto.email) {
       throw new ForbiddenException(`User with this email already exist`);
@@ -76,7 +79,7 @@ export class UserService {
       },
     );
 
-    const updatedUser = await this.findOne(id);
+    const updatedUser: UserEntity = await this.findOne(id);
 
     if (!updatedUser) {
       throw new ForbiddenException(`User with this id don't exist`);
@@ -114,18 +117,18 @@ export class UserService {
     );
   }
 
-  async onApplicationBootstrap() {
+  async onApplicationBootstrap(): Promise<void> {
     await this.createUserRoles(Object.values(Role));
   }
 
-  async createUserRoles(roles: string[]) {
-    //pozbywam się z tablicy wszystkich duplikatów
+  async createUserRoles(roles: string[]): Promise<void> {
+    // pozbywam się z tablicy wszystkich duplikatów
     const uniqueRoleArray = [...new Set(roles)];
 
-    uniqueRoleArray.map(async (item) => {
+    uniqueRoleArray.map(async (item: string): Promise<void> => {
       const searchRoleType = await UserRoleEntity.findBy({ roleType: item });
       if (searchRoleType.length === 0) {
-        const role = new UserRoleEntity();
+        const role: UserRoleEntity = new UserRoleEntity();
         role.roleType = item;
         await role.save();
       }
