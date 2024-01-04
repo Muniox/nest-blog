@@ -31,17 +31,18 @@ export class UserController {
   }
 
   @Get('logout/:id')
-  async logoutUser(@Param('id') id: string) {
+  async logoutUser(@Param('id') id: string): Promise<void> {
     await this.userService.logoutUser(id);
   }
 
   @Get(':id')
+  @UseRole(Role.admin)
   async findOne(@Param('id') id: string): Promise<UserResponse> {
     return await this.userService.findOneUser(id);
   }
 
-  // update tylko dla admina, dodatkowe sprawdzenie poprawności hasła
   @Patch(':id')
+  @UseRole(Role.admin)
   async update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -50,7 +51,12 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseRole(Role.admin)
   async remove(@Param('id') id: string): Promise<MessageResponse> {
     return await this.userService.remove(id);
   }
+
+  // TODO: Dodatkowa ścieżka aby user mógł usunąć własne konto
+  // TODO: Dodatkowa ścieżka aby user mógł sprawdzić własne dane
+  // TODO: Dodatkowa ścieżka aby user mógł wprowadzić poprawki w własnych danych
 }
