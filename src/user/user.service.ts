@@ -61,7 +61,7 @@ export class UserService {
     return this.filter(await this.findOne(id));
   }
 
-  async updateUserData(
+  async update(
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
