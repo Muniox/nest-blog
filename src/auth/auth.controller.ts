@@ -32,13 +32,19 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('/login')
-  async login(@User() user: UserEntity, @Res() res: Response) {
+  async login(
+    @User() user: UserEntity,
+    @Res() res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     return this.authService.login(user, res);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
-  async logout(@User('sub') userId: string, @Res() res: Response) {
+  async logout(
+    @User('sub') userId: string,
+    @Res() res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     return this.authService.logout(userId, res);
   }
   @Public()
@@ -50,7 +56,7 @@ export class AuthController {
     @User('refreshToken') refreshToken: string,
     @User('sub') userId: string,
     @Res() res: Response,
-  ) {
+  ): Promise<Response<any, Record<string, any>>> {
     return this.authService.refreshTokens(userId, refreshToken, res);
   }
 }

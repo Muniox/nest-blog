@@ -48,7 +48,10 @@ export class AuthService {
       });
   }
 
-  async login(user: UserEntity, res: Response) {
+  async login(
+    user: UserEntity,
+    res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     const tokens = await this.getAndUpdateTokens(user);
 
     return res
@@ -60,8 +63,10 @@ export class AuthService {
       });
   }
 
-  async logout(userId: string, res: Response) {
-    // TODO: sprawić żeby nie można było wysyłać req na logout przez niezalogowanych użytkowników
+  async logout(
+    userId: string,
+    res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     await this.userService.logoutUser(userId);
 
     return res
@@ -73,7 +78,11 @@ export class AuthService {
       });
   }
 
-  async refreshTokens(userId: string, rt: string | null, res: Response) {
+  async refreshTokens(
+    userId: string,
+    rt: string | null,
+    res: Response,
+  ): Promise<Response<any, Record<string, any>>> {
     const user = await this.userService.findOne(userId);
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
@@ -106,7 +115,7 @@ export class AuthService {
     return user;
   }
 
-  private async getAndUpdateTokens(user: UserResponse) {
+  private async getAndUpdateTokens(user: UserResponse): Promise<Tokens> {
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
@@ -131,7 +140,10 @@ export class AuthService {
     };
   }
 
-  private async updateRtHash(userId: string, refreshToken: string) {
+  private async updateRtHash(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
     const hashRT = await hashData(refreshToken);
     await this.userService.updateUserHashRT(userId, hashRT);
   }

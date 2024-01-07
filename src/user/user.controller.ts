@@ -12,7 +12,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UserResponse } from '../types/user-response.type';
 import { MessageResponse } from '../types/message-response.type';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UseRole } from '../auth/decorators';
+import { User, UseRole } from '../auth/decorators';
 import { Role } from '../types';
 
 @Controller('user')
@@ -30,27 +30,42 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Delete()
+  async remove(@User('sub') userId: string): Promise<MessageResponse> {
+    return await this.userService.remove(userId);
+  }
+
+  @Patch()
+  async update(
+    @User('sub') userId: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserResponse> {
+    return await this.userService.update(userId, updateUserDto);
+  }
+
   @Get('logout/:id')
-  async logoutUser(@Param('id') id: string) {
+  async logoutUser(@Param('id') id: string): Promise<void> {
     await this.userService.logoutUser(id);
   }
 
   @Get(':id')
+  @UseRole(Role.admin)
   async findOne(@Param('id') id: string): Promise<UserResponse> {
     return await this.userService.findOneUser(id);
   }
 
-  // update tylko dla admina, dodatkowe sprawdzenie poprawności hasła
   @Patch(':id')
-  async update(
+  @UseRole(Role.admin)
+  async updateUserByAdmin(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    return await this.userService.updateUserData(id, updateUserDto);
+    return await this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<MessageResponse> {
+  @UseRole(Role.admin)
+  async removeUserByAdmin(@Param('id') id: string): Promise<MessageResponse> {
     return await this.userService.remove(id);
   }
 }

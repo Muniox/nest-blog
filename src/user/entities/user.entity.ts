@@ -5,10 +5,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRoleEntity } from './user-role.entity';
+import { PostEntity } from '../../post/entities/post.entity';
 
 @Entity({
   name: 'users',
@@ -28,12 +30,6 @@ export class UserEntity extends BaseEntity {
   })
   email: string;
 
-  @ManyToOne(() => UserRoleEntity, (userRole) => userRole.users, {
-    onDelete: 'SET NULL',
-  })
-  @JoinColumn({ name: 'roleId' })
-  role: UserRoleEntity;
-
   @Column()
   hash: string;
 
@@ -41,4 +37,13 @@ export class UserEntity extends BaseEntity {
     nullable: true,
   })
   hashedRT: string;
+
+  @ManyToOne(() => UserRoleEntity, (userRole) => userRole.users, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'roleId' })
+  role: UserRoleEntity;
+
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts: PostEntity[];
 }
