@@ -1,0 +1,10 @@
+node_modules
+test
+.gitignore
+.gitattributes
+.idea
+.git
+.prettierrc
+Dockerfile-dev
+Dockerfile-prod
+README.md
