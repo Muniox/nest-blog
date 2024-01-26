@@ -14,11 +14,16 @@ import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { UserEntity } from '../user/entities/user.entity';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class PostService {
-  constructor(private userService: UserService) {}
+  constructor(
+    @InjectRepository(PostEntity)
+    private postRepository: Repository<PostEntity>,
+    private userService: UserService,
+  ) {}
   async create(
     createPostDto: CreatePostDto,
     userId: string,
@@ -43,7 +48,7 @@ export class PostService {
     post.description = createPostDto.description;
     post.category = createPostDto.category;
     post.img = filename;
-    await post.save();
+    await this.postRepository.save(post);
 
     return {
       message: `post ${post.title} added`,
@@ -52,11 +57,11 @@ export class PostService {
   }
 
   async findAll(): Promise<PostEntity[]> {
-    return await PostEntity.find();
+    return await this.postRepository.find();
   }
 
   async findOne(id: string): Promise<PostEntity> {
-    return await PostEntity.findOne({
+    return await this.postRepository.findOne({
       where: { id },
       relations: { user: true },
     });
@@ -91,7 +96,7 @@ export class PostService {
       Logger.log(error);
     }
 
-    await PostEntity.update(
+    await this.postRepository.update(
       { id: id },
       {
         title: updatePostDto.title,
@@ -108,7 +113,7 @@ export class PostService {
   }
 
   async remove(id: string): Promise<DeleteResult> {
-    return await PostEntity.delete({ id });
+    return await this.postRepository.delete({ id });
   }
 
   getFile(filename: string): StreamableFile {

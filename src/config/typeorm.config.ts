@@ -11,8 +11,8 @@ export const getTypeOrmConfig = (
   password: configService.get<string>('DB_PASSWORD'),
   database: configService.get<string>('DB_DATABASE'),
   bigNumberStrings: false,
-  entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-  // autoLoadEntities: true,
+  // entities: [__dirname + '/../**/*.entity{.ts,.js}'],
+  autoLoadEntities: true,
   synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),
   logging: configService.get<boolean>('DB_LOGGING'),
 });

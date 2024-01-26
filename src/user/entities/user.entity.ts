@@ -1,5 +1,4 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -15,7 +14,7 @@ import { PostEntity } from '../../post/entities/post.entity';
 @Entity({
   name: 'users',
 })
-export class UserEntity extends BaseEntity {
+export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

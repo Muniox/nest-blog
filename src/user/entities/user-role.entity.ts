@@ -1,15 +1,9 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { UserEntity } from './user.entity';
 
 @Entity({ name: 'user_role' })
-export class UserRoleEntity extends BaseEntity {
+export class UserRoleEntity {
   @PrimaryGeneratedColumn('increment')
   id: number;
 
