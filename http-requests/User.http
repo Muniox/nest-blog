@@ -1,0 +1,73 @@
+# Need VS Code 'REST Client' Extensions
+
+#Config
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@userId = sdfsdfsdsdfdf 
+
+###
+
+#Create User
+#Only admin
+POST http://{{host}}/user
+Content-Type: application/json
+
+{
+  "email": "test22@email.com",
+  "password": "Testowe2!"
+}
+
+###
+
+#Get all user
+#Only admin
+GET http://{{host}}/user
+
+###
+
+#User delete account
+DELETE http://{{host}}/user
+
+###
+
+#User update data
+PATCH http://{{host}}/user
+Content-Type: application/json
+
+{
+  "email": "tes"
+}
+
+###
+
+#Logout user
+#Only admin
+
+GET http://{{host}}/user/logout/{{userId}}
+
+###
+
+#Get any User data
+#Only admin
+
+GET http://{{host}}/user/{{userId}}
+
+###
+
+#Update any User data
+#Only admin
+
+Patch http://{{host}}/user/{{userId}}
+ontent-Type: application/json
+
+{
+  "email": "tes"
+}
+
+###
+
+#Delete any User account
+#Only admin
+
+DELETE http://{{host}}/user/{{userId}}

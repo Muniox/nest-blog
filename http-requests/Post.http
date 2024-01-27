@@ -1,0 +1,44 @@
+# Need VS Code 'REST Client' Extensions
+
+#Config
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@postId = b6c7170a-4d07-4f05-9eb4-0c9b32667386
+@filename = c28d9015-977b-4848-8126-d75ac046ba6b.png
+
+
+###
+
+#User create post
+POST http://{{host}}/post/upload
+
+###
+
+#User get all posts
+GET http://{{host}}/post
+
+###
+
+#User get image
+GET http://{{host}}/post/image/{{filename}}
+
+###
+
+#User get post data
+GET http://{{host}}/post/{{postId}}
+
+###
+
+#User edit post data
+PATCH http://{{host}}/post/{{postId}}
+Content-Type: application/json
+
+{
+  "description": "test2"
+}
+
+###
+
+#User delete post
+DELETE http://{{host}}/post/{{postId}}
