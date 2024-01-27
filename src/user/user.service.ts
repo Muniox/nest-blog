@@ -1,4 +1,9 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
@@ -38,7 +43,7 @@ export class UserService {
     const user: UserEntity = await this.findUserByEmail(createUserDto.email);
 
     if (user) {
-      throw new ForbiddenException('User already exists');
+      throw new ConflictException('User already exists');
     }
 
     const newUser = new UserEntity();
@@ -76,7 +81,7 @@ export class UserService {
     const user: UserEntity = await this.findUserByEmail(updateUserDto.email);
 
     if (user?.email === updateUserDto.email) {
-      throw new ForbiddenException(`User with this email already exist`);
+      throw new ConflictException(`User with this email already exist`);
     }
 
     await this.userRepository.update(
