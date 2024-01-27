@@ -20,6 +20,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @UseRole(Role.admin)
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
     return await this.userService.create(createUserDto);
   }
@@ -44,6 +45,7 @@ export class UserController {
   }
 
   @Get('logout/:id')
+  @UseRole(Role.admin)
   async logoutUser(@Param('id') id: string): Promise<void> {
     await this.userService.logoutUser(id);
   }
