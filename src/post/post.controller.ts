@@ -79,6 +79,7 @@ export class PostController {
           maxSize: 1024,
         })
         .build({
+          fileIsRequired: false,
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }),
     )
