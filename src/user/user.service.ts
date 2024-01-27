@@ -1,16 +1,29 @@
-import { ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
 import { hashData } from '../utils';
-import { IsNull, Not } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { MessageResponse } from '../types/message-response.type';
 import { UserResponse } from '../types/user-response.type';
 import { UserRoleEntity } from './entities/user-role.entity';
 import { Role } from '../types';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
+  constructor(
+    @InjectRepository(UserEntity)
+    private userRepository: Repository<UserEntity>,
+    @InjectRepository(UserRoleEntity)
+    private userRoleRepository: Repository<UserRoleEntity>,
+  ) {}
+
   filter(user: UserEntity): {
     id: string;
     email: string;
@@ -30,28 +43,28 @@ export class UserService {
     const user: UserEntity = await this.findUserByEmail(createUserDto.email);
 
     if (user) {
-      throw new ForbiddenException('User already exists');
+      throw new ConflictException('User already exists');
     }
 
-    const newUser: UserEntity = new UserEntity();
+    const newUser = new UserEntity();
     newUser.email = createUserDto.email;
     newUser.hash = await hashData(createUserDto.password);
-    newUser.role = await UserRoleEntity.findOne({
+    newUser.role = await this.userRoleRepository.findOne({
       where: { roleType: 'user' },
     });
-    await newUser.save();
+    await this.userRepository.save(newUser);
     return this.filter(newUser);
   }
 
   async findAll(): Promise<UserResponse[]> {
-    const users: UserEntity[] = await UserEntity.find({
+    const users: UserEntity[] = await this.userRepository.find({
       relations: { role: true },
     });
     return users.map((user: UserEntity) => this.filter(user));
   }
 
   async findOne(id: string): Promise<UserEntity> {
-    return UserEntity.findOne({
+    return this.userRepository.findOne({
       where: { id },
       relations: { role: true },
     });
@@ -68,10 +81,10 @@ export class UserService {
     const user: UserEntity = await this.findUserByEmail(updateUserDto.email);
 
     if (user?.email === updateUserDto.email) {
-      throw new ForbiddenException(`User with this email already exist`);
+      throw new ConflictException(`User with this email already exist`);
     }
 
-    await UserEntity.update(
+    await this.userRepository.update(
       { id },
       {
         email: updateUserDto.email,
@@ -89,7 +102,7 @@ export class UserService {
   }
 
   async remove(id: string): Promise<MessageResponse> {
-    await UserEntity.delete({
+    await this.userRepository.delete({
       id,
     });
 
@@ -100,18 +113,18 @@ export class UserService {
   }
 
   async updateUserHashRT(id: string, hashRT: string): Promise<void> {
-    await UserEntity.update({ id }, { hashedRT: hashRT });
+    await this.userRepository.update({ id }, { hashedRT: hashRT });
   }
 
   async findUserByEmail(email: string): Promise<UserEntity> {
-    return await UserEntity.findOne({
+    return await this.userRepository.findOne({
       where: { email },
       relations: { role: true },
     });
   }
 
   async logoutUser(id: string): Promise<void> {
-    await UserEntity.update(
+    await this.userRepository.update(
       { id, hashedRT: Not(IsNull()) },
       { hashedRT: null },
     );
@@ -126,11 +139,13 @@ export class UserService {
     const uniqueRoleArray = [...new Set(roles)];
 
     uniqueRoleArray.map(async (item: string): Promise<void> => {
-      const searchRoleType = await UserRoleEntity.findBy({ roleType: item });
+      const searchRoleType = await this.userRoleRepository.findBy({
+        roleType: item,
+      });
       if (searchRoleType.length === 0) {
         const role: UserRoleEntity = new UserRoleEntity();
         role.roleType = item;
-        await role.save();
+        await this.userRoleRepository.save(role);
       }
     });
   }
