@@ -3,13 +3,11 @@ import { UserService } from './user.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
 import { UserRoleEntity } from './entities/user-role.entity';
-import { ForbiddenException } from '@nestjs/common';
+import { ConflictException } from '@nestjs/common';
+import { PostEntity } from '../post/entities/post.entity';
 
 describe('UserService', () => {
   let service: UserService;
-
-  const mockUserRepository = {};
-  const mockUserRoleRepository = {};
 
   // const user = {
   //   createdAt: new Date(),
@@ -21,6 +19,12 @@ describe('UserService', () => {
   //   hashedRT: 'sdfsdfsdf',
   //   updatedAt: new Date(),
   // };
+
+  const mockUserRepository = {
+    findOne: jest.fn().mockImplementation(),
+    save: jest.fn().mockImplementation((user) => Promise.resolve(user)),
+  };
+  const mockUserRoleRepository = {};
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -55,14 +59,14 @@ describe('UserService', () => {
           email: 'test@isemail.com',
           password: 'secret password',
         }),
-      ).rejects.toBeInstanceOf(ForbiddenException);
+      ).rejects.toBeInstanceOf(ConflictException);
 
       await expect(
         service.create({
           email: 'test@isemail.com',
           password: 'secret password',
         }),
-      ).rejects.toThrowError(ForbiddenException);
+      ).rejects.toThrowError(new ConflictException(`User already exists`));
     });
   });
 });
