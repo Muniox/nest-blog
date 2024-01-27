@@ -58,12 +58,14 @@ export class PostService {
 
   async findAll(): Promise<PostEntity[]> {
     return await this.postRepository.find();
+    //TODO: no author of post!
   }
 
   async findOne(id: string): Promise<PostEntity> {
     return await this.postRepository.findOne({
       where: { id },
       relations: { user: true },
+      //TODO: to many information, user with password in respond!
     });
   }
 
@@ -73,6 +75,7 @@ export class PostService {
     userId: string,
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
+    //TODO: Error, File is required when partial update!
     const post: PostEntity = await this.findOne(id);
 
     if (!post) {
