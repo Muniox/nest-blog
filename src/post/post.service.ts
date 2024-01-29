@@ -18,6 +18,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostResponse } from 'src/types/post-response';
 
+// TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()
 export class PostService {
   constructor(
