@@ -16,6 +16,7 @@ import * as path from 'path';
 import { UserEntity } from '../user/entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PostResponse } from 'src/types/post-response';
 
 @Injectable()
 export class PostService {
@@ -24,6 +25,39 @@ export class PostService {
     private postRepository: Repository<PostEntity>,
     private userService: UserService,
   ) {}
+
+  filter(post: PostEntity): PostResponse {
+    const {
+      id,
+      title,
+      description,
+      img,
+      createdAt,
+      updatedAt,
+      category,
+      user,
+    } = post;
+    const { role, email, id: userId } = user;
+    const { roleType } = role;
+
+    return {
+      id,
+      title,
+      description,
+      img,
+      createdAt,
+      updatedAt,
+      category,
+      user: {
+        id: userId,
+        email,
+        role: {
+          roleType,
+        },
+      },
+    };
+  }
+
   async create(
     createPostDto: CreatePostDto,
     userId: string,
@@ -56,17 +90,27 @@ export class PostService {
     };
   }
 
-  async findAll(): Promise<PostEntity[]> {
-    return await this.postRepository.find();
-    //TODO: no author of post!
+  async findAll(): Promise<PostResponse[]> {
+    const posts = await this.postRepository.find({
+      relations: {
+        user: {
+          role: true,
+        },
+      },
+    });
+    return posts.map((post) => this.filter(post));
   }
 
-  async findOne(id: string): Promise<PostEntity> {
-    return await this.postRepository.findOne({
+  async findOne(id: string): Promise<PostResponse> {
+    const user = await this.postRepository.findOne({
       where: { id },
-      relations: { user: true },
-      //TODO: to many information, user with password in respond!
+      relations: {
+        user: {
+          role: true,
+        },
+      },
     });
+    return this.filter(user);
   }
 
   async update(
@@ -76,7 +120,7 @@ export class PostService {
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
     //TODO: Error, File is required when partial update!
-    const post: PostEntity = await this.findOne(id);
+    const post: PostResponse = await this.findOne(id);
 
     if (!post) {
       throw new ForbiddenException('There is no post with that id');

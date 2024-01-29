@@ -24,11 +24,7 @@ export class UserService {
     private userRoleRepository: Repository<UserRoleEntity>,
   ) {}
 
-  filter(user: UserEntity): {
-    id: string;
-    email: string;
-    role: UserRoleEntity;
-  } {
+  filter(user: UserEntity): UserResponse {
     if (!user) throw new ForbiddenException("User don't exist");
 
     const { id, email, role } = user;

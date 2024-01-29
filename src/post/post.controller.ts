@@ -18,8 +18,8 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Public, User } from '../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { PostEntity } from './entities/post.entity';
 import { DeleteResult } from 'typeorm';
+import { PostResponse } from 'src/types/post-response';
 
 @Controller('post')
 export class PostController {
@@ -48,7 +48,7 @@ export class PostController {
   }
 
   @Get()
-  async findAll(): Promise<PostEntity[]> {
+  async findAll(): Promise<PostResponse[]> {
     return await this.postService.findAll();
   }
 
@@ -60,7 +60,7 @@ export class PostController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<PostEntity> {
+  async findOne(@Param('id') id: string): Promise<PostResponse> {
     return await this.postService.findOne(id);
   }
 
