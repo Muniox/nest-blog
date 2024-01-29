@@ -15,6 +15,7 @@ import { UserRoleEntity } from './entities/user-role.entity';
 import { Role } from '../types';
 import { InjectRepository } from '@nestjs/typeorm';
 
+// TODO: add username to user (needed for displaying who published post!)
 @Injectable()
 export class UserService {
   constructor(
