@@ -120,7 +120,6 @@ export class PostService {
     userId: string,
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    //TODO: Error, File is required when partial update!
     const post: PostResponse = await this.findOne(id);
 
     if (!post) {
