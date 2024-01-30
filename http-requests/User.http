@@ -4,27 +4,9 @@
 @hostname = localhost
 @port = 3000
 @host = {{hostname}}:{{port}}
-@userId = sdfsdfsdsdfdf 
+@userId = 1532d84e-94a9-4f47-be3d-b3558dc5e824
 
-###
-
-#Create User
-#Only admin
-POST http://{{host}}/user
-Content-Type: application/json
-
-{
-  "email": "test22@email.com",
-  "password": "Testowe2!"
-}
-
-###
-
-#Get all user
-#Only admin
-GET http://{{host}}/user
-
-###
+###  User  ###
 
 #User delete account
 DELETE http://{{host}}/user
@@ -39,27 +21,45 @@ Content-Type: application/json
   "email": "tes"
 }
 
+### Admin ###
+
+#Get all user
+#Only admin
+GET http://{{host}}/admin/user
+
+###
+
+#Create User
+#Only admin
+POST http://{{host}}/admin/user
+Content-Type: application/json
+
+{
+  "email": "test22@email.com",
+  "password": "Testowe2!"
+}
+
 ###
 
 #Logout user
 #Only admin
 
-GET http://{{host}}/user/logout/{{userId}}
+GET http://{{host}}/admin/user/logout/{{userId}}
 
 ###
 
 #Get any User data
 #Only admin
 
-GET http://{{host}}/user/{{userId}}
+GET http://{{host}}/admin/user/{{userId}}
 
 ###
 
 #Update any User data
 #Only admin
 
-Patch http://{{host}}/user/{{userId}}
-ontent-Type: application/json
+Patch http://{{host}}/admin/user/{{userId}}
+Content-Type: application/json
 
 {
   "email": "tes"
@@ -70,4 +70,4 @@ ontent-Type: application/json
 #Delete any User account
 #Only admin
 
-DELETE http://{{host}}/user/{{userId}}
+DELETE http://{{host}}/admin/user/{{userId}}
