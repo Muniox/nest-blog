@@ -1,15 +1,15 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthDto } from './dto';
-import { UserEntity } from '../user/entities/user.entity';
-import { hashData } from '../utils';
+import { AuthDto } from '../dto';
+import { UserEntity } from '../../user/entities/user.entity';
+import { hashData } from '../../utils';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { CookieNames, Tokens } from '../types';
+import { CookieNames, Tokens } from '../../types';
 import { Response } from 'express';
-import { AtCookieConfig, RtCookieConfig } from '../config';
+import { AtCookieConfig, RtCookieConfig } from '../../config';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../user/user.service';
-import { UserResponse } from '../types/user-response.type';
+import { UserService } from '../../user/services/user.service';
+import { UserResponse } from '../../types/user-response.type';
 
 @Injectable()
 export class AuthService {

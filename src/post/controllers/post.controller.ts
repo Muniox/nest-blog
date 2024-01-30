@@ -13,7 +13,7 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
-import { PostService } from '../post.service';
+import { PostService } from '../services/post.service';
 import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';

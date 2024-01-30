@@ -7,7 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserResponse } from '../../types/user-response.type';
 import { UseRole } from '../../auth/decorators';

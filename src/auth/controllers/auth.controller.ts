@@ -8,7 +8,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Tokens } from '../../types';
 import { Response } from 'express';
 import { RtGuard, LocalAuthGuard } from '../guards';

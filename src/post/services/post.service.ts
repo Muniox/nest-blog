@@ -5,19 +5,18 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PostEntity } from './entities/post.entity';
-import { UserService } from '../user/user.service';
+import { CreatePostDto, UpdatePostDto } from '../dto';
+import { PostEntity } from '../entities';
+import { UserService } from '../../user/services';
 import { createReadStream, ReadStream } from 'fs';
 import { v4 as uuid } from 'uuid';
 import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { UserEntity } from '../user/entities/user.entity';
+import { UserEntity } from '../../user/entities';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostResponse } from 'src/types/post-response';
+import { PostResponse } from '../../types';
 
 // TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()

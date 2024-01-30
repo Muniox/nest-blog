@@ -4,14 +4,11 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity, UserRoleEntity } from './entities';
-import { hashData } from '../utils';
+import { CreateUserDto, UpdateUserDto } from '../dto';
+import { UserEntity, UserRoleEntity } from '../entities';
+import { hashData } from '../../utils';
 import { IsNull, Not, Repository } from 'typeorm';
-import { MessageResponse } from '../types/message-response.type';
-import { UserResponse } from '../types/user-response.type';
-import { Role } from '../types';
+import { MessageResponse, UserResponse, Role } from '../../types';
 import { InjectRepository } from '@nestjs/typeorm';
 
 // TODO: add username to user (needed for displaying who published post!)
