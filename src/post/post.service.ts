@@ -59,7 +59,7 @@ export class PostService {
     };
   }
 
-  async create(
+  async createPostFiltered(
     createPostDto: CreatePostDto,
     userId: string,
     file: Express.Multer.File,
@@ -91,7 +91,7 @@ export class PostService {
     };
   }
 
-  async findAll(): Promise<PostResponse[]> {
+  async findAllPostsFiltered(): Promise<PostResponse[]> {
     const posts = await this.postRepository.find({
       relations: {
         user: {
@@ -102,7 +102,7 @@ export class PostService {
     return posts.map((post) => this.filter(post));
   }
 
-  async findOne(id: string): Promise<PostResponse> {
+  async findOnePostFiltered(id: string): Promise<PostResponse> {
     const user = await this.postRepository.findOne({
       where: { id },
       relations: {
@@ -117,17 +117,13 @@ export class PostService {
   async update(
     id: string,
     updatePostDto: UpdatePostDto,
-    userId: string,
+
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.findOne(id);
+    const post: PostResponse = await this.findOnePostFiltered(id);
 
     if (!post) {
       throw new ForbiddenException('There is no post with that id');
-    }
-
-    if (post.user.id !== userId) {
-      throw new ForbiddenException('You can only edit your posts');
     }
 
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
