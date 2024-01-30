@@ -9,15 +9,15 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
-import { PostService } from './post.service';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { UseRole } from '../auth/decorators';
+import { PostService } from '../post.service';
+import { UpdatePostDto } from '../dto';
+import { UseRole } from '../../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
 import { Role } from 'src/types';
 
 @Controller('admin/post')
-export class PostController {
+export class AdminPostController {
   constructor(private readonly postService: PostService) {}
 
   @Patch(':id')

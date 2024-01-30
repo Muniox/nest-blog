@@ -7,13 +7,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserResponse } from '../types/user-response.type';
-import { MessageResponse } from '../types/message-response.type';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UseRole } from '../auth/decorators';
-import { Role } from '../types';
+import { UserService } from '../user.service';
+import { CreateUserDto, UpdateUserDto } from '../dto';
+import { UserResponse } from '../../types/user-response.type';
+import { MessageResponse } from '../../types/message-response.type';
+import { User, UseRole } from '../../auth/decorators';
+import { Role } from '../../types';
 
 @Controller('user')
 export class UserController {

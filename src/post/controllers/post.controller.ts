@@ -13,10 +13,9 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
-import { PostService } from './post.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { Public, User } from '../auth/decorators';
+import { PostService } from '../post.service';
+import { UpdatePostDto, CreatePostDto } from '../dto';
+import { Public, User } from '../../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
 import { PostResponse } from 'src/types/post-response';

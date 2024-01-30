@@ -6,12 +6,11 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity, UserRoleEntity } from './entities';
 import { hashData } from '../utils';
 import { IsNull, Not, Repository } from 'typeorm';
 import { MessageResponse } from '../types/message-response.type';
 import { UserResponse } from '../types/user-response.type';
-import { UserRoleEntity } from './entities/user-role.entity';
 import { Role } from '../types';
 import { InjectRepository } from '@nestjs/typeorm';
 

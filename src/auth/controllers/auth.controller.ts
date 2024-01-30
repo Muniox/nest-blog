@@ -8,14 +8,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { Tokens } from '../types';
+import { AuthService } from '../auth.service';
+import { Tokens } from '../../types';
 import { Response } from 'express';
-import { RtGuard, LocalAuthGuard } from './guards';
-import { User, Public } from './decorators';
+import { RtGuard, LocalAuthGuard } from '../guards';
+import { User, Public } from '../decorators';
 import { Request } from 'express';
-import { UserEntity } from '../user/entities/user.entity';
-import { AuthDto } from './dto';
+import { UserEntity } from '../../user/entities/user.entity';
+import { AuthDto } from '../dto';
 
 @Controller('auth')
 export class AuthController {
