@@ -36,7 +36,9 @@ export class UserService {
     };
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponse> {
+  async createUserFiltered(
+    createUserDto: CreateUserDto,
+  ): Promise<UserResponse> {
     const user: UserEntity = await this.findUserByEmail(createUserDto.email);
 
     if (user) {
@@ -53,25 +55,25 @@ export class UserService {
     return this.filter(newUser);
   }
 
-  async findAll(): Promise<UserResponse[]> {
+  async findAllUsersFiltered(): Promise<UserResponse[]> {
     const users: UserEntity[] = await this.userRepository.find({
       relations: { role: true },
     });
     return users.map((user: UserEntity) => this.filter(user));
   }
 
-  async findOne(id: string): Promise<UserEntity> {
+  async findOneUser(id: string): Promise<UserEntity> {
     return this.userRepository.findOne({
       where: { id },
       relations: { role: true },
     });
   }
 
-  async findOneUser(id: string): Promise<UserResponse> {
-    return this.filter(await this.findOne(id));
+  async findOneUserFiltered(id: string): Promise<UserResponse> {
+    return this.filter(await this.findOneUser(id));
   }
 
-  async update(
+  async updateUserFiltered(
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
@@ -89,7 +91,7 @@ export class UserService {
       },
     );
 
-    const updatedUser: UserEntity = await this.findOne(id);
+    const updatedUser: UserEntity = await this.findOneUser(id);
 
     if (!updatedUser) {
       throw new ForbiddenException(`User with this id don't exist`);
@@ -98,7 +100,7 @@ export class UserService {
     return this.filter(updatedUser);
   }
 
-  async remove(id: string): Promise<MessageResponse> {
+  async removeUser(id: string): Promise<MessageResponse> {
     await this.userRepository.delete({
       id,
     });

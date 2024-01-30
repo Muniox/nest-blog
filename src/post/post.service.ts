@@ -75,7 +75,7 @@ export class PostService {
       Logger.log(error);
     }
 
-    const user: UserEntity = await this.userService.findOne(userId);
+    const user: UserEntity = await this.userService.findOneUser(userId);
 
     const post: PostEntity = new PostEntity();
     post.user = user;

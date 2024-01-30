@@ -35,7 +35,7 @@ export class AuthService {
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user = await this.userService.create(loginDto);
+    const user = await this.userService.createUserFiltered(loginDto);
 
     const tokens = await this.getAndUpdateTokens(user);
 
@@ -83,7 +83,7 @@ export class AuthService {
     rt: string | null,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    const user = await this.userService.findOne(userId);
+    const user = await this.userService.findOneUser(userId);
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
 

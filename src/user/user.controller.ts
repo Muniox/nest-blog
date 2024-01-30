@@ -22,18 +22,18 @@ export class UserController {
   @Post()
   @UseRole(Role.admin)
   async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
-    return await this.userService.create(createUserDto);
+    return await this.userService.createUserFiltered(createUserDto);
   }
 
   @Get()
   @UseRole(Role.admin)
   async findAll(): Promise<UserResponse[]> {
-    return await this.userService.findAll();
+    return await this.userService.findAllUsersFiltered();
   }
 
   @Delete()
   async remove(@User('sub') userId: string): Promise<MessageResponse> {
-    return await this.userService.remove(userId);
+    return await this.userService.removeUser(userId);
   }
 
   @Patch()
@@ -41,7 +41,7 @@ export class UserController {
     @User('sub') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    return await this.userService.update(userId, updateUserDto);
+    return await this.userService.updateUserFiltered(userId, updateUserDto);
   }
 
   @Get('logout/:id')
@@ -53,7 +53,7 @@ export class UserController {
   @Get(':id')
   @UseRole(Role.admin)
   async findOne(@Param('id') id: string): Promise<UserResponse> {
-    return await this.userService.findOneUser(id);
+    return await this.userService.findOneUserFiltered(id);
   }
 
   @Patch(':id')
@@ -62,12 +62,12 @@ export class UserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    return await this.userService.update(id, updateUserDto);
+    return await this.userService.updateUserFiltered(id, updateUserDto);
   }
 
   @Delete(':id')
   @UseRole(Role.admin)
   async removeUserByAdmin(@Param('id') id: string): Promise<MessageResponse> {
-    return await this.userService.remove(id);
+    return await this.userService.removeUser(id);
   }
 }

@@ -55,14 +55,14 @@ describe('UserService', () => {
         .mockResolvedValue({} as UserEntity);
 
       await expect(
-        service.create({
+        service.createUserFiltered({
           email: 'test@isemail.com',
           password: 'secret password',
         }),
       ).rejects.toBeInstanceOf(ConflictException);
 
       await expect(
-        service.create({
+        service.createUserFiltered({
           email: 'test@isemail.com',
           password: 'secret password',
         }),
