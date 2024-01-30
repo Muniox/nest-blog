@@ -16,12 +16,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
 import { Role } from 'src/types';
 
+@UseRole(Role.admin)
 @Controller('admin/post')
 export class AdminPostController {
   constructor(private readonly postService: PostService) {}
 
   @Patch(':id')
-  @UseRole(Role.admin)
   @UseInterceptors(FileInterceptor('file'))
   async updatePostByAdmin(
     @Param('id') id: string,
