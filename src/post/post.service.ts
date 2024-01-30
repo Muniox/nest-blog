@@ -127,12 +127,12 @@ export class PostService {
   }
 
   async update(
-    id: string,
-    filename: string,
     post: PostResponse | PostEntity,
     file: Express.Multer.File,
     updatePostDto: UpdatePostDto,
   ) {
+    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
+
     try {
       await fs.writeFile(
         path.join(process.cwd(), 'storage', filename),
@@ -145,7 +145,7 @@ export class PostService {
     }
 
     await this.postRepository.update(
-      { id: id },
+      { id: post.id },
       {
         title: updatePostDto.title,
         description: updatePostDto.description,
@@ -166,7 +166,6 @@ export class PostService {
     userId: string,
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    //TODO: post response powinien zwracac bez filtrowania
     const post: PostEntity = await this.findOnePost(id);
 
     if (!post) {
@@ -179,9 +178,7 @@ export class PostService {
       );
     }
 
-    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
-
-    return await this.update(id, filename, post, file, updatePostDto);
+    return await this.update(post, file, updatePostDto);
   }
 
   async updateByAdmin(
@@ -195,12 +192,22 @@ export class PostService {
       throw new ForbiddenException('There is no post with that id');
     }
 
-    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
-
-    return await this.update(id, filename, post, file, updatePostDto);
+    return await this.update(post, file, updatePostDto);
   }
 
-  async remove(id: string): Promise<DeleteResult> {
+  async removeByAdmin(id: string): Promise<DeleteResult> {
+    return await this.postRepository.delete({ id });
+  }
+
+  async removeByUser(id: string, userId: string): Promise<DeleteResult> {
+    const post: PostEntity = await this.findOnePost(id);
+
+    if (post.user.id === userId) {
+      throw new ConflictException(
+        'You can only delete posts of which you are the author',
+      );
+    }
+
     return await this.postRepository.delete({ id });
   }
 

@@ -40,5 +40,18 @@ Content-Type: application/json
 
 ###
 
+#Admin edit post data
+#Only admin
+PATCH http://{{host}}/post/admin/{{postId}}
+Content-Type: application/json
+
+{
+  "description": "test2"
+}
+
+###
+
 #User delete post
 DELETE http://{{host}}/post/{{postId}}
+
+// TODO: Admin delete!
