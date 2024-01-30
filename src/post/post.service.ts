@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -38,7 +39,7 @@ export class PostService {
       category,
       user,
     } = post;
-    const { role, email, id: userId } = user;
+    const { role, email } = user;
     const { roleType } = role;
 
     return {
@@ -50,7 +51,6 @@ export class PostService {
       updatedAt,
       category,
       user: {
-        id: userId,
         email,
         role: {
           roleType,
@@ -114,20 +114,25 @@ export class PostService {
     return this.filter(user);
   }
 
+  async findOnePost(id: string): Promise<PostEntity> {
+    const user = await this.postRepository.findOne({
+      where: { id },
+      relations: {
+        user: {
+          role: true,
+        },
+      },
+    });
+    return user;
+  }
+
   async update(
     id: string,
-    updatePostDto: UpdatePostDto,
-
+    filename: string,
+    post: PostResponse | PostEntity,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.findOnePostFiltered(id);
-
-    if (!post) {
-      throw new ForbiddenException('There is no post with that id');
-    }
-
-    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
-
+    updatePostDto: UpdatePostDto,
+  ) {
     try {
       await fs.writeFile(
         path.join(process.cwd(), 'storage', filename),
@@ -153,6 +158,46 @@ export class PostService {
       message: `post ${post.title} updated`,
       statusCode: 201,
     };
+  }
+
+  async updateByUser(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; statusCode: number }> {
+    //TODO: post response powinien zwracac bez filtrowania
+    const post: PostEntity = await this.findOnePost(id);
+
+    if (!post) {
+      throw new ForbiddenException('There is no post with that id');
+    }
+
+    if (post.user.id === userId) {
+      throw new ConflictException(
+        'You can only edit posts of which you are the author',
+      );
+    }
+
+    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
+
+    return await this.update(id, filename, post, file, updatePostDto);
+  }
+
+  async updateByAdmin(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; statusCode: number }> {
+    const post: PostResponse = await this.findOnePostFiltered(id);
+
+    if (!post) {
+      throw new ForbiddenException('There is no post with that id');
+    }
+
+    const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
+
+    return await this.update(id, filename, post, file, updatePostDto);
   }
 
   async remove(id: string): Promise<DeleteResult> {

@@ -69,11 +69,11 @@ export class PostController {
     return await this.postService.findOnePostFiltered(id);
   }
 
-  @Patch()
-  @UseRole(Role.admin)
+  @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async update(
-    @User('sub') id: string,
+    @User('sub') userId: string,
+    @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -90,10 +90,10 @@ export class PostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.update(id, updatePostDto, file);
+    return await this.postService.updateByUser(id, updatePostDto, userId, file);
   }
 
-  @Patch(':id')
+  @Patch('admin-edit/:id')
   @UseRole(Role.admin)
   @UseInterceptors(FileInterceptor('file'))
   async updatePostByAdmin(
@@ -114,7 +114,7 @@ export class PostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.update(id, updatePostDto, file);
+    return await this.postService.updateByAdmin(id, updatePostDto, file);
   }
 
   @Delete(':id')
