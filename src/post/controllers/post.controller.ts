@@ -69,7 +69,7 @@ export class PostController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
-  async update(
+  async updatePostByUser(
     @User('sub') userId: string,
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -88,14 +88,19 @@ export class PostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.updateByUser(id, updatePostDto, userId, file);
+    return await this.postService.updatePostByUser(
+      id,
+      updatePostDto,
+      userId,
+      file,
+    );
   }
 
   @Delete(':id')
-  async remove(
+  async removePostByUser(
     @Param('id') id: string,
     @User('sub') userId: string,
   ): Promise<DeleteResult> {
-    return await this.postService.removeByUser(id, userId);
+    return await this.postService.removePostByUser(id, userId);
   }
 }

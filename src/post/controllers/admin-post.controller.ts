@@ -41,11 +41,11 @@ export class AdminPostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.updateByAdmin(id, updatePostDto, file);
+    return await this.postService.updatePostByAdmin(id, updatePostDto, file);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.postService.removeByAdmin(id);
+  async removePostByAdmin(@Param('id') id: string): Promise<DeleteResult> {
+    return await this.postService.removePostByAdmin(id);
   }
 }

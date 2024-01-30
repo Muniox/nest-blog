@@ -160,7 +160,7 @@ export class PostService {
     };
   }
 
-  async updateByUser(
+  async updatePostByUser(
     id: string,
     updatePostDto: UpdatePostDto,
     userId: string,
@@ -181,7 +181,7 @@ export class PostService {
     return await this.update(post, file, updatePostDto);
   }
 
-  async updateByAdmin(
+  async updatePostByAdmin(
     id: string,
     updatePostDto: UpdatePostDto,
     file: Express.Multer.File,
@@ -195,11 +195,11 @@ export class PostService {
     return await this.update(post, file, updatePostDto);
   }
 
-  async removeByAdmin(id: string): Promise<DeleteResult> {
+  async removePostByAdmin(id: string): Promise<DeleteResult> {
     return await this.postRepository.delete({ id });
   }
 
-  async removeByUser(id: string, userId: string): Promise<DeleteResult> {
+  async removePostByUser(id: string, userId: string): Promise<DeleteResult> {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id === userId) {
