@@ -16,7 +16,9 @@ import * as path from 'path';
 import { UserEntity } from '../user/entities/user.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { PostResponse } from 'src/types/post-response';
 
+// TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()
 export class PostService {
   constructor(
@@ -24,7 +26,40 @@ export class PostService {
     private postRepository: Repository<PostEntity>,
     private userService: UserService,
   ) {}
-  async create(
+
+  filter(post: PostEntity): PostResponse {
+    const {
+      id,
+      title,
+      description,
+      img,
+      createdAt,
+      updatedAt,
+      category,
+      user,
+    } = post;
+    const { role, email, id: userId } = user;
+    const { roleType } = role;
+
+    return {
+      id,
+      title,
+      description,
+      img,
+      createdAt,
+      updatedAt,
+      category,
+      user: {
+        id: userId,
+        email,
+        role: {
+          roleType,
+        },
+      },
+    };
+  }
+
+  async createPostFiltered(
     createPostDto: CreatePostDto,
     userId: string,
     file: Express.Multer.File,
@@ -40,7 +75,7 @@ export class PostService {
       Logger.log(error);
     }
 
-    const user: UserEntity = await this.userService.findOne(userId);
+    const user: UserEntity = await this.userService.findOneUser(userId);
 
     const post: PostEntity = new PostEntity();
     post.user = user;
@@ -56,31 +91,39 @@ export class PostService {
     };
   }
 
-  async findAll(): Promise<PostEntity[]> {
-    return await this.postRepository.find();
+  async findAllPostsFiltered(): Promise<PostResponse[]> {
+    const posts = await this.postRepository.find({
+      relations: {
+        user: {
+          role: true,
+        },
+      },
+    });
+    return posts.map((post) => this.filter(post));
   }
 
-  async findOne(id: string): Promise<PostEntity> {
-    return await this.postRepository.findOne({
+  async findOnePostFiltered(id: string): Promise<PostResponse> {
+    const user = await this.postRepository.findOne({
       where: { id },
-      relations: { user: true },
+      relations: {
+        user: {
+          role: true,
+        },
+      },
     });
+    return this.filter(user);
   }
 
   async update(
     id: string,
     updatePostDto: UpdatePostDto,
-    userId: string,
+
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    const post: PostEntity = await this.findOne(id);
+    const post: PostResponse = await this.findOnePostFiltered(id);
 
     if (!post) {
       throw new ForbiddenException('There is no post with that id');
-    }
-
-    if (post.user.id !== userId) {
-      throw new ForbiddenException('You can only edit your posts');
     }
 
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
