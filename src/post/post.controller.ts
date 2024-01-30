@@ -16,11 +16,10 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { Public, UseRole, User } from '../auth/decorators';
+import { Public, User } from '../auth/decorators';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
 import { PostResponse } from 'src/types/post-response';
-import { Role } from 'src/types';
 
 @Controller('post')
 export class PostController {
@@ -69,34 +68,10 @@ export class PostController {
     return await this.postService.findOnePostFiltered(id);
   }
 
-  @Patch()
-  @UseRole(Role.admin)
+  @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async update(
-    @User('sub') id: string,
-    @Body() updatePostDto: UpdatePostDto,
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addFileTypeValidator({
-          fileType: 'image/jpeg',
-        })
-        .addMaxSizeValidator({
-          maxSize: 1024,
-        })
-        .build({
-          fileIsRequired: false,
-          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        }),
-    )
-    file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.update(id, updatePostDto, file);
-  }
-
-  @Patch(':id')
-  @UseRole(Role.admin)
-  @UseInterceptors(FileInterceptor('file'))
-  async updatePostByAdmin(
+    @User('sub') userId: string,
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(
@@ -114,11 +89,14 @@ export class PostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.update(id, updatePostDto, file);
+    return await this.postService.updateByUser(id, updatePostDto, userId, file);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.postService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @User('sub') userId: string,
+  ): Promise<DeleteResult> {
+    return await this.postService.removeByUser(id, userId);
   }
 }

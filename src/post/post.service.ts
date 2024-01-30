@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   Logger,
@@ -38,7 +39,7 @@ export class PostService {
       category,
       user,
     } = post;
-    const { role, email, id: userId } = user;
+    const { role, email } = user;
     const { roleType } = role;
 
     return {
@@ -50,7 +51,6 @@ export class PostService {
       updatedAt,
       category,
       user: {
-        id: userId,
         email,
         role: {
           roleType,
@@ -114,18 +114,23 @@ export class PostService {
     return this.filter(user);
   }
 
+  async findOnePost(id: string): Promise<PostEntity> {
+    const user = await this.postRepository.findOne({
+      where: { id },
+      relations: {
+        user: {
+          role: true,
+        },
+      },
+    });
+    return user;
+  }
+
   async update(
-    id: string,
-    updatePostDto: UpdatePostDto,
-
+    post: PostResponse | PostEntity,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.findOnePostFiltered(id);
-
-    if (!post) {
-      throw new ForbiddenException('There is no post with that id');
-    }
-
+    updatePostDto: UpdatePostDto,
+  ) {
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
 
     try {
@@ -140,7 +145,7 @@ export class PostService {
     }
 
     await this.postRepository.update(
-      { id: id },
+      { id: post.id },
       {
         title: updatePostDto.title,
         description: updatePostDto.description,
@@ -155,7 +160,54 @@ export class PostService {
     };
   }
 
-  async remove(id: string): Promise<DeleteResult> {
+  async updateByUser(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    userId: string,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; statusCode: number }> {
+    const post: PostEntity = await this.findOnePost(id);
+
+    if (!post) {
+      throw new ForbiddenException('There is no post with that id');
+    }
+
+    if (post.user.id === userId) {
+      throw new ConflictException(
+        'You can only edit posts of which you are the author',
+      );
+    }
+
+    return await this.update(post, file, updatePostDto);
+  }
+
+  async updateByAdmin(
+    id: string,
+    updatePostDto: UpdatePostDto,
+    file: Express.Multer.File,
+  ): Promise<{ message: string; statusCode: number }> {
+    const post: PostResponse = await this.findOnePostFiltered(id);
+
+    if (!post) {
+      throw new ForbiddenException('There is no post with that id');
+    }
+
+    return await this.update(post, file, updatePostDto);
+  }
+
+  async removeByAdmin(id: string): Promise<DeleteResult> {
+    return await this.postRepository.delete({ id });
+  }
+
+  async removeByUser(id: string, userId: string): Promise<DeleteResult> {
+    const post: PostEntity = await this.findOnePost(id);
+
+    if (post.user.id === userId) {
+      throw new ConflictException(
+        'You can only delete posts of which you are the author',
+      );
+    }
+
     return await this.postRepository.delete({ id });
   }
 
