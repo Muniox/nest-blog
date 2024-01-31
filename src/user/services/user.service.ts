@@ -4,12 +4,13 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { UpdateUserDto } from '../dto';
-import { UserEntity, UserRoleEntity } from '../entities';
-import { hashData } from '../../utils';
-import { Repository } from 'typeorm';
-import { MessageResponse, UserResponse, Role } from '../../types';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { UpdateUserDto } from '../dto';
+import { UserEntity } from '../entities';
+import { hashData } from '../../utils';
+import { MessageResponse, UserResponse } from '../../types';
 
 // TODO: add username to user (needed for displaying who published post!)
 @Injectable()
@@ -17,8 +18,6 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    @InjectRepository(UserRoleEntity)
-    private userRoleRepository: Repository<UserRoleEntity>,
   ) {}
 
   filter(user: UserEntity): UserResponse {
@@ -85,26 +84,6 @@ export class UserService {
     return await this.userRepository.findOne({
       where: { email },
       relations: { role: true },
-    });
-  }
-
-  async onApplicationBootstrap(): Promise<void> {
-    await this.createUserRoles(Object.values(Role));
-  }
-
-  async createUserRoles(roles: string[]): Promise<void> {
-    // pozbywam się z tablicy wszystkich duplikatów
-    const uniqueRoleArray = [...new Set(roles)];
-
-    uniqueRoleArray.map(async (item: string): Promise<void> => {
-      const searchRoleType = await this.userRoleRepository.findBy({
-        roleType: item,
-      });
-      if (searchRoleType.length === 0) {
-        const role: UserRoleEntity = new UserRoleEntity();
-        role.roleType = item;
-        await this.userRoleRepository.save(role);
-      }
     });
   }
 }

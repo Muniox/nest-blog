@@ -5,17 +5,18 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common';
-import { CreatePostDto, UpdatePostDto } from '../dto';
-import { PostEntity } from '../entities';
-import { UserService } from '../../user/services';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { createReadStream, ReadStream } from 'fs';
 import { v4 as uuid } from 'uuid';
 import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+import { CreatePostDto, UpdatePostDto } from '../dto';
+import { PostEntity } from '../entities';
+import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PostResponse } from '../../types';
 
 // TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)

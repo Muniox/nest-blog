@@ -9,11 +9,12 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
-import { Role } from 'src/types';
+import { Role } from '../../types';
 import { AdminPostService } from '../services';
 
 @UseRole(Role.admin)

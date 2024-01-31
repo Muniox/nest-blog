@@ -1,10 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
+
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
-import { IsNull, Not, Repository } from 'typeorm';
 import { MessageResponse, UserResponse } from '../../types';
-import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from './user.service';
 
 // TODO: add username to user (needed for displaying who published post!)

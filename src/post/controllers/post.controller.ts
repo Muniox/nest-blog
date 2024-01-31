@@ -13,12 +13,13 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
-import { PostService } from '../services/post.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+import { PostService } from '../services';
 import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
-import { PostResponse } from 'src/types/post-response';
+import { PostResponse } from '../../types';
 
 @Controller('post')
 export class PostController {

@@ -3,11 +3,11 @@ import {
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, Repository } from 'typeorm';
+
 import { UpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
-
-import { DeleteResult, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { PostResponse } from '../../types';
 import { PostService } from './post.service';
 
