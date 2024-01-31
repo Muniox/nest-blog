@@ -4,10 +4,10 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { CreateUserDto, UpdateUserDto } from '../dto';
+import { UpdateUserDto } from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { MessageResponse, UserResponse, Role } from '../../types';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -32,41 +32,11 @@ export class UserService {
     };
   }
 
-  async createUserFiltered(
-    createUserDto: CreateUserDto,
-  ): Promise<UserResponse> {
-    const user: UserEntity = await this.findUserByEmail(createUserDto.email);
-
-    if (user) {
-      throw new ConflictException('User already exists');
-    }
-
-    const newUser = new UserEntity();
-    newUser.email = createUserDto.email;
-    newUser.hash = await hashData(createUserDto.password);
-    newUser.role = await this.userRoleRepository.findOne({
-      where: { roleType: 'user' },
-    });
-    await this.userRepository.save(newUser);
-    return this.filter(newUser);
-  }
-
-  async findAllUsersFiltered(): Promise<UserResponse[]> {
-    const users: UserEntity[] = await this.userRepository.find({
-      relations: { role: true },
-    });
-    return users.map((user: UserEntity) => this.filter(user));
-  }
-
   async findOneUser(id: string): Promise<UserEntity> {
     return this.userRepository.findOne({
       where: { id },
       relations: { role: true },
     });
-  }
-
-  async findOneUserFiltered(id: string): Promise<UserResponse> {
-    return this.filter(await this.findOneUser(id));
   }
 
   async updateUserFiltered(
@@ -116,13 +86,6 @@ export class UserService {
       where: { email },
       relations: { role: true },
     });
-  }
-
-  async logoutUser(id: string): Promise<void> {
-    await this.userRepository.update(
-      { id, hashedRT: Not(IsNull()) },
-      { hashedRT: null },
-    );
   }
 
   async onApplicationBootstrap(): Promise<void> {

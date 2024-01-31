@@ -10,6 +10,7 @@ import { AtCookieConfig, RtCookieConfig } from '../../config';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../user/services/user.service';
 import { UserResponse } from '../../types/user-response.type';
+import { AdminUserService } from 'src/user/services/admin-user.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     private rtCookieConfig: RtCookieConfig,
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
+    private adminUserService: AdminUserService,
   ) {}
 
   private readonly jwtSecretActivationToken = this.configService.get<string>(
@@ -35,7 +37,7 @@ export class AuthService {
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user = await this.userService.createUserFiltered(loginDto);
+    const user = await this.adminUserService.createUserFiltered(loginDto);
 
     const tokens = await this.getAndUpdateTokens(user);
 
@@ -67,7 +69,7 @@ export class AuthService {
     userId: string,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    await this.userService.logoutUser(userId);
+    await this.adminUserService.logoutUser(userId);
 
     return res
       .clearCookie(CookieNames.ACCESS)

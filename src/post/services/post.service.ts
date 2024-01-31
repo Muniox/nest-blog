@@ -180,6 +180,18 @@ export class PostService {
     return await this.update(post, file, updatePostDto);
   }
 
+  async removePostByUser(id: string, userId: string) {
+    const post: PostEntity = await this.findOnePost(id);
+
+    if (post.user.id === userId) {
+      throw new ConflictException(
+        'You can only delete posts of which you are the author',
+      );
+    }
+
+    return await this.postRepository.delete({ id });
+  }
+
   getFile(filename: string): StreamableFile {
     const file: ReadStream = createReadStream(
       path.join(process.cwd(), 'storage', `${filename}`),
