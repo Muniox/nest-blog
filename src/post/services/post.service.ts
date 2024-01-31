@@ -160,7 +160,7 @@ export class PostService {
     };
   }
 
-  async updatePostByUser(
+  async updatePost(
     id: string,
     updatePostDto: UpdatePostDto,
     userId: string,
@@ -181,7 +181,7 @@ export class PostService {
     return await this.update(post, file, updatePostDto);
   }
 
-  async removePostByUser(id: string, userId: string) {
+  async removePost(id: string, userId: string) {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id === userId) {

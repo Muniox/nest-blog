@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Patch } from '@nestjs/common';
-import { UserService } from '../services/user.service';
+
+import { UserService } from '../services';
 import { UpdateUserDto } from '../dto';
-import { UserResponse } from '../../types/user-response.type';
-import { MessageResponse } from '../../types/message-response.type';
+import { UserResponse, MessageResponse } from '../../types';
 import { User } from '../../auth/decorators';
 
 @Controller('user')
@@ -10,12 +10,12 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Delete()
-  async remove(@User('sub') userId: string): Promise<MessageResponse> {
+  async removeUser(@User('sub') userId: string): Promise<MessageResponse> {
     return await this.userService.removeUser(userId);
   }
 
   @Patch()
-  async update(
+  async updateUser(
     @User('sub') userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
