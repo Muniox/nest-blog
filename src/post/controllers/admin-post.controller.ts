@@ -23,7 +23,7 @@ export class AdminPostController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
-  async updatePostByAdmin(
+  async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(
@@ -41,15 +41,11 @@ export class AdminPostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.adminPostService.updatePostByAdmin(
-      id,
-      updatePostDto,
-      file,
-    );
+    return await this.adminPostService.updatePost(id, updatePostDto, file);
   }
 
   @Delete(':id')
-  async removePostByAdmin(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.adminPostService.removePostByAdmin(id);
+  async removePost(@Param('id') id: string): Promise<DeleteResult> {
+    return await this.adminPostService.removePost(id);
   }
 }

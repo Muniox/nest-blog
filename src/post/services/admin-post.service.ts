@@ -41,7 +41,7 @@ export class AdminPostService {
     return await this.postService.update(post, file, updatePostDto);
   }
 
-  async updatePostByAdmin(
+  async updatePost(
     id: string,
     updatePostDto: UpdatePostDto,
     file: Express.Multer.File,
@@ -55,7 +55,7 @@ export class AdminPostService {
     return await this.postService.update(post, file, updatePostDto);
   }
 
-  async removePostByAdmin(id: string): Promise<DeleteResult> {
+  async removePost(id: string): Promise<DeleteResult> {
     return await this.postRepository.delete({ id });
   }
 }
