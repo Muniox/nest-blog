@@ -3,7 +3,7 @@ import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers';
 import { AtStrategy, LocalStrategy, RtStrategy } from './strategies';
 import { JwtModule } from '@nestjs/jwt';
-import { AtCookieConfig, RtCookieConfig } from '../config';
+import { AtCookieConfig, RtCookieConfig } from '../configs';
 import { UserModule } from '../user/user.module';
 
 @Module({

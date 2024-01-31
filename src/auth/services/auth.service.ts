@@ -6,7 +6,7 @@ import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { CookieNames, Tokens } from '../../types';
 import { Response } from 'express';
-import { AtCookieConfig, RtCookieConfig } from '../../config';
+import { AtCookieConfig, RtCookieConfig } from '../../configs';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from '../../user/services/user.service';
 import { UserResponse } from '../../types/user-response.type';
