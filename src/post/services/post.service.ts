@@ -14,7 +14,7 @@ import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { UserEntity } from '../../user/entities';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostResponse } from '../../types';
 
@@ -178,36 +178,6 @@ export class PostService {
     }
 
     return await this.update(post, file, updatePostDto);
-  }
-
-  async updatePostByAdmin(
-    id: string,
-    updatePostDto: UpdatePostDto,
-    file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.findOnePostFiltered(id);
-
-    if (!post) {
-      throw new ForbiddenException('There is no post with that id');
-    }
-
-    return await this.update(post, file, updatePostDto);
-  }
-
-  async removePostByAdmin(id: string): Promise<DeleteResult> {
-    return await this.postRepository.delete({ id });
-  }
-
-  async removePostByUser(id: string, userId: string): Promise<DeleteResult> {
-    const post: PostEntity = await this.findOnePost(id);
-
-    if (post.user.id === userId) {
-      throw new ConflictException(
-        'You can only delete posts of which you are the author',
-      );
-    }
-
-    return await this.postRepository.delete({ id });
   }
 
   getFile(filename: string): StreamableFile {
