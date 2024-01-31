@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Patch } from '@nestjs/common';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 import { UpdateUserDto } from '../dto';
 import { UserResponse } from '../../types/user-response.type';
 import { MessageResponse } from '../../types/message-response.type';

@@ -1,15 +1,15 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthDto } from './dto';
-import { UserEntity } from '../user/entities/user.entity';
-import { hashData } from '../utils';
-import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { CookieNames, Tokens } from '../types';
-import { Response } from 'express';
-import { AtCookieConfig, RtCookieConfig } from '../config';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../user/user.service';
-import { UserResponse } from '../types/user-response.type';
+import * as argon2 from 'argon2';
+import { Response } from 'express';
+
+import { CookieNames, Tokens, UserResponse } from '../../types';
+import { AtCookieConfig, RtCookieConfig } from '../../configs';
+import { UserService, AdminUserService } from '../../user/services';
+import { AuthDto } from '../dto';
+import { UserEntity } from '../../user/entities';
+import { hashData } from '../../utils';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +19,7 @@ export class AuthService {
     private rtCookieConfig: RtCookieConfig,
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
+    private adminUserService: AdminUserService,
   ) {}
 
   private readonly jwtSecretActivationToken = this.configService.get<string>(
@@ -35,7 +36,7 @@ export class AuthService {
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user = await this.userService.createUserFiltered(loginDto);
+    const user = await this.adminUserService.createUserFiltered(loginDto);
 
     const tokens = await this.getAndUpdateTokens(user);
 
@@ -67,7 +68,7 @@ export class AuthService {
     userId: string,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    await this.userService.logoutUser(userId);
+    await this.adminUserService.logoutUser(userId);
 
     return res
       .clearCookie(CookieNames.ACCESS)

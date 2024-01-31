@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+
 import { configService } from '../utils';
 
 export default new DataSource({

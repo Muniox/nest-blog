@@ -8,7 +8,7 @@
 @filename = c28d9015-977b-4848-8126-d75ac046ba6b.png
 
 
-###
+###  User  ###############################################################
 
 #User create post
 POST http://{{host}}/post/upload
@@ -40,9 +40,14 @@ Content-Type: application/json
 
 ###
 
-#Admin edit post data
+#User delete post
+DELETE http://{{host}}/post/{{postId}}
+
+###  Admin  ##############################################################
+
+#Admin edit any post data
 #Only admin
-PATCH http://{{host}}/post/admin/{{postId}}
+PATCH http://{{host}}admin/post/{{postId}}
 Content-Type: application/json
 
 {
@@ -51,7 +56,6 @@ Content-Type: application/json
 
 ###
 
-#User delete post
-DELETE http://{{host}}/post/{{postId}}
-
-// TODO: Admin delete!
+#Admin delete any post
+#Only admin
+DELETE http://{{host}}/admin/post/{{postId}}

@@ -8,13 +8,14 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { AuthService } from '../auth.service';
-import { Tokens } from '../../types';
+import { Request } from 'express';
 import { Response } from 'express';
+
+import { AuthService } from '../services';
+import { Tokens } from '../../types';
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
-import { Request } from 'express';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entities';
 import { AuthDto } from '../dto';
 
 @Controller('auth')

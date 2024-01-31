@@ -5,19 +5,19 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { PostEntity } from './entities/post.entity';
-import { UserService } from '../user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { createReadStream, ReadStream } from 'fs';
 import { v4 as uuid } from 'uuid';
 import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { UserEntity } from '../user/entities/user.entity';
-import { DeleteResult, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PostResponse } from 'src/types/post-response';
+
+import { CreatePostDto, UpdatePostDto } from '../dto';
+import { PostEntity } from '../entities';
+import { UserService } from '../../user/services';
+import { UserEntity } from '../../user/entities';
+import { PostResponse } from '../../types';
 
 // TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()
@@ -181,25 +181,7 @@ export class PostService {
     return await this.update(post, file, updatePostDto);
   }
 
-  async updatePostByAdmin(
-    id: string,
-    updatePostDto: UpdatePostDto,
-    file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.findOnePostFiltered(id);
-
-    if (!post) {
-      throw new ForbiddenException('There is no post with that id');
-    }
-
-    return await this.update(post, file, updatePostDto);
-  }
-
-  async removePostByAdmin(id: string): Promise<DeleteResult> {
-    return await this.postRepository.delete({ id });
-  }
-
-  async removePostByUser(id: string, userId: string): Promise<DeleteResult> {
+  async removePostByUser(id: string, userId: string) {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id === userId) {

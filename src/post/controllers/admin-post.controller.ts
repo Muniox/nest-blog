@@ -9,21 +9,22 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
 } from '@nestjs/common';
-import { PostService } from '../post.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+
 import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { DeleteResult } from 'typeorm';
-import { Role } from 'src/types';
+import { Role } from '../../types';
+import { AdminPostService } from '../services';
 
 @UseRole(Role.admin)
 @Controller('admin/post')
 export class AdminPostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(private readonly adminPostService: AdminPostService) {}
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
-  async updatePostByAdmin(
+  async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(
@@ -41,11 +42,11 @@ export class AdminPostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.updatePostByAdmin(id, updatePostDto, file);
+    return await this.adminPostService.updatePost(id, updatePostDto, file);
   }
 
   @Delete(':id')
-  async removePostByAdmin(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.postService.removePostByAdmin(id);
+  async removePost(@Param('id') id: string): Promise<DeleteResult> {
+    return await this.adminPostService.removePost(id);
   }
 }

@@ -6,7 +6,7 @@
 @host = {{hostname}}:{{port}}
 @userId = 1532d84e-94a9-4f47-be3d-b3558dc5e824
 
-###  User  ###
+###  User  ###############################################################
 
 #User delete account
 DELETE http://{{host}}/user
@@ -21,7 +21,7 @@ Content-Type: application/json
   "email": "tes"
 }
 
-### Admin ###
+###  Admin  ##############################################################
 
 #Get all user
 #Only admin

@@ -11,6 +11,7 @@ import {
 import { UserRoleEntity } from './user-role.entity';
 import { PostEntity } from '../../post/entities/post.entity';
 
+// TODO: add username to user (needed for displaying who published post!)
 @Entity({
   name: 'users',
 })
