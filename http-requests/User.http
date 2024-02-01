@@ -23,7 +23,7 @@ Content-Type: application/json
 
 ###  Admin  ##############################################################
 
-#Get all user
+#Get all users
 #Only admin
 GET http://{{host}}/admin/user
 
