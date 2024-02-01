@@ -8,8 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
 import { UserRoleEntity } from './user-role.entity';
-import { PostEntity } from '../../post/entities/post.entity';
+import { PostEntity } from '../../post/entities';
 
 // TODO: add username to user (needed for displaying who published post!)
 @Entity({

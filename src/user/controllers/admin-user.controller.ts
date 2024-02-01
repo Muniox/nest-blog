@@ -7,28 +7,26 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { UserService } from '../services/user.service';
+
 import { CreateUserDto, UpdateUserDto } from '../dto';
-import { UserResponse } from '../../types/user-response.type';
+import { UserResponse, Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
-import { Role, MessageResponse } from '../../types';
-import { AdminUserService } from '../services/admin-user.service';
+import { AdminUserService } from '../services';
 
 @UseRole(Role.admin)
 @Controller('admin/user')
 export class AdminUserController {
-  constructor(
-    private userService: UserService,
-    private adminUserService: AdminUserService,
-  ) {}
+  constructor(private adminUserService: AdminUserService) {}
 
   @Post()
-  async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<UserResponse> {
     return await this.adminUserService.createUserFiltered(createUserDto);
   }
 
   @Get()
-  async findAll(): Promise<UserResponse[]> {
+  async findAllUsers(): Promise<UserResponse[]> {
     return await this.adminUserService.findAllUsersFiltered();
   }
 
@@ -38,12 +36,12 @@ export class AdminUserController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserResponse> {
+  async findOneUser(@Param('id') id: string): Promise<UserResponse> {
     return await this.adminUserService.findOneUserFiltered(id);
   }
 
   @Patch(':id')
-  async updateUserByAdmin(
+  async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
@@ -51,7 +49,7 @@ export class AdminUserController {
   }
 
   @Delete(':id')
-  async removeUserByAdmin(@Param('id') id: string): Promise<MessageResponse> {
+  async removeUser(@Param('id') id: string): Promise<MessageResponse> {
     return await this.adminUserService.removeUser(id);
   }
 }

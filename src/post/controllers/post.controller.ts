@@ -27,7 +27,7 @@ export class PostController {
 
   @Post('/upload')
   @UseInterceptors(FileInterceptor('file'))
-  async create(
+  async createPost(
     @Body() createPostDto: CreatePostDto,
     @User('sub') userId: string,
     @UploadedFile(
@@ -52,7 +52,7 @@ export class PostController {
   }
 
   @Get()
-  async findAll(): Promise<PostResponse[]> {
+  async findAllPosts(): Promise<PostResponse[]> {
     return await this.postService.findAllPostsFiltered();
   }
 
@@ -64,13 +64,13 @@ export class PostController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<PostResponse> {
+  async findOnePost(@Param('id') id: string): Promise<PostResponse> {
     return await this.postService.findOnePostFiltered(id);
   }
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
-  async updatePostByUser(
+  async updatePost(
     @User('sub') userId: string,
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -89,12 +89,7 @@ export class PostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.updatePostByUser(
-      id,
-      updatePostDto,
-      userId,
-      file,
-    );
+    return await this.postService.updatePost(id, updatePostDto, userId, file);
   }
 
   @Delete(':id')
@@ -102,6 +97,6 @@ export class PostController {
     @Param('id') id: string,
     @User('sub') userId: string,
   ): Promise<DeleteResult> {
-    return await this.postService.removePostByUser(id, userId);
+    return await this.postService.removePost(id, userId);
   }
 }
