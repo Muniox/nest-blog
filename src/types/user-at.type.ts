@@ -5,3 +5,11 @@ export type UserATRequest = {
   exp: number;
   refreshToken: string;
 };
+
+export enum UserATRequestData {
+  sub = 'sub',
+  email = 'email',
+  iat = 'iat',
+  exp = 'exp',
+  refreshToken = 'refreshToken',
+}

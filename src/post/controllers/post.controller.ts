@@ -19,7 +19,7 @@ import { PostService } from '../services';
 import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
-import { PostResponse } from '../../types';
+import { PostResponse, UserATRequestData } from '../../types';
 
 @Controller('post')
 export class PostController {
@@ -29,7 +29,7 @@ export class PostController {
   @UseInterceptors(FileInterceptor('file'))
   async createPost(
     @Body() createPostDto: CreatePostDto,
-    @User('sub') userId: string,
+    @User(UserATRequestData.sub) userId: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -71,7 +71,7 @@ export class PostController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async updatePost(
-    @User('sub') userId: string,
+    @User(UserATRequestData.sub) userId: string,
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
     @UploadedFile(
@@ -95,7 +95,7 @@ export class PostController {
   @Delete(':id')
   async removePostByUser(
     @Param('id') id: string,
-    @User('sub') userId: string,
+    @User(UserATRequestData.sub) userId: string,
   ): Promise<DeleteResult> {
     return await this.postService.removePost(id, userId);
   }
