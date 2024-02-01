@@ -36,7 +36,7 @@ export class PostController {
           fileType: 'image/jpeg',
         })
         .addMaxSizeValidator({
-          maxSize: 1024,
+          maxSize: 1000000,
         })
         .build({
           errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -80,7 +80,7 @@ export class PostController {
           fileType: 'image/jpeg',
         })
         .addMaxSizeValidator({
-          maxSize: 1024,
+          maxSize: 1000000,
         })
         .build({
           fileIsRequired: false,

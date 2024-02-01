@@ -33,7 +33,7 @@ export class AdminPostController {
           fileType: 'image/jpeg',
         })
         .addMaxSizeValidator({
-          maxSize: 1024,
+          maxSize: 1000000,
         })
         .build({
           fileIsRequired: false,
