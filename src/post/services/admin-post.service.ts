@@ -11,7 +11,6 @@ import { PostEntity } from '../entities';
 import { PostResponse } from '../../types';
 import { PostService } from './post.service';
 
-// TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()
 export class AdminPostService {
   constructor(

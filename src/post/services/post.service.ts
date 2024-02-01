@@ -12,6 +12,7 @@ import { v4 as uuid } from 'uuid';
 import * as mime from 'mime';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import * as sanitizeHtml from 'sanitize-html';
 
 import { CreatePostDto, UpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
@@ -19,7 +20,6 @@ import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
 import { PostResponse } from '../../types';
 
-// TODO: sanitize description using dompurify (https://www.npmjs.com/package/dompurify)
 @Injectable()
 export class PostService {
   constructor(
@@ -79,9 +79,9 @@ export class PostService {
 
     const post: PostEntity = new PostEntity();
     post.user = user;
-    post.title = createPostDto.title;
-    post.description = createPostDto.description;
-    post.category = createPostDto.category;
+    post.title = sanitizeHtml(createPostDto.title);
+    post.description = sanitizeHtml(createPostDto.description);
+    post.category = sanitizeHtml(createPostDto.category);
     post.img = filename;
     await this.postRepository.save(post);
 
@@ -147,10 +147,10 @@ export class PostService {
     await this.postRepository.update(
       { id: post.id },
       {
-        title: updatePostDto.title,
-        description: updatePostDto.description,
+        title: sanitizeHtml(updatePostDto.title),
+        description: sanitizeHtml(updatePostDto.description),
         img: file ? filename : post.img,
-        category: updatePostDto.category,
+        category: sanitizeHtml(updatePostDto.category),
       },
     );
 
