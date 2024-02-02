@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { Role, UserATRequest } from '../../types';
+import { Role, UserTokenRequest } from '../../types';
 import { ROLES_KEY } from '../decorators';
 import { UserService } from '../../user/services';
 
@@ -27,7 +27,7 @@ export class RolesGuard implements CanActivate {
       return true;
     }
 
-    const { user }: { user: UserATRequest } = context
+    const { user }: { user: UserTokenRequest } = context
       .switchToHttp()
       .getRequest();
     const getUserWithRole = await this.userService.findOneUser(user.sub);

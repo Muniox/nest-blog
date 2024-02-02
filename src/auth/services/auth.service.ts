@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { Response } from 'express';
 
-import { CookieNames, Tokens, UserResponse } from '../../types';
+import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
 import { AtCookieConfig, RtCookieConfig } from '../../configs';
 import { UserService, AdminUserService } from '../../user/services';
 import { AuthDto } from '../dto';
@@ -122,8 +122,10 @@ export class AuthService {
     return tokens;
   }
 
+  // Rfresh Token and Access Token payload
+  // TODO: if add username update tokens!
   async getTokens(userId: string, email: string): Promise<Tokens> {
-    const payload = { sub: userId, email };
+    const payload: JwtPayload = { sub: userId, email }; //TODO: This could be better code
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.jwtSecretActivationToken,

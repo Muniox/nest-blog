@@ -4,12 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 
-import { CookieNames } from '../../types';
-
-type JwtPayload = {
-  sub: string;
-  email: string;
-};
+import { CookieNames, JwtPayload } from '../../types';
 
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
