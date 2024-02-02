@@ -23,9 +23,10 @@ export class UserService {
   filter(user: UserEntity): UserResponse {
     if (!user) throw new ForbiddenException("User don't exist");
 
-    const { id, email, role } = user;
+    const { id, email, role, username } = user;
     return {
       id,
+      username,
       email,
       role,
     };
@@ -42,17 +43,24 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    const user: UserEntity = await this.findUserByEmail(updateUserDto.email);
+    const user: UserEntity = await this.findOneUser(id);
 
-    if (user?.email === updateUserDto.email) {
+    if (user.email === updateUserDto.email) {
       throw new ConflictException(`User with this email already exist`);
+    }
+
+    if (user.username === updateUserDto.username) {
+      throw new ConflictException(`User with this username already exist`);
     }
 
     await this.userRepository.update(
       { id },
       {
         email: updateUserDto.email,
-        hash: await hashData(updateUserDto.password),
+        username: updateUserDto.username,
+        hash: updateUserDto.password
+          ? await hashData(updateUserDto.password)
+          : user.hash,
       },
     );
 
@@ -80,9 +88,17 @@ export class UserService {
     await this.userRepository.update({ id }, { hashedRT: hashRT });
   }
 
+  // jeśli to zmienisz zmienisz również walidaję! w local stretegy
   async findUserByEmail(email: string): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: { email },
+      relations: { role: true },
+    });
+  }
+
+  async findUserByEmailOrUsername(email: string, username: string) {
+    return await this.userRepository.findOne({
+      where: [{ email }, { username }],
       relations: { role: true },
     });
   }

@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 
@@ -22,9 +26,18 @@ export class AdminUserService {
   async createUserFiltered(
     createUserDto: CreateUserDto,
   ): Promise<UserResponse> {
-    const user: UserEntity = await this.userService.findUserByEmail(
+    const user: UserEntity = await this.userService.findUserByEmailOrUsername(
       createUserDto.email,
+      createUserDto.username,
     );
+
+    if (user?.email === createUserDto.email) {
+      throw new ConflictException('User with that email already exists');
+    }
+
+    if (user?.username === createUserDto.username) {
+      throw new ConflictException('User with that username already exists');
+    }
 
     if (user) {
       throw new ConflictException('User already exists');
@@ -32,6 +45,7 @@ export class AdminUserService {
 
     const newUser = new UserEntity();
     newUser.email = createUserDto.email;
+    newUser.username = createUserDto.username;
     newUser.hash = await hashData(createUserDto.password);
     newUser.role = await this.userRoleRepository.findOne({
       where: { roleType: 'user' },

@@ -117,15 +117,17 @@ export class AuthService {
   }
 
   private async getAndUpdateTokens(user: UserResponse): Promise<Tokens> {
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens({
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    });
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
   // Rfresh Token and Access Token payload
-  // TODO: if add username update tokens!
-  async getTokens(userId: string, email: string): Promise<Tokens> {
-    const payload: JwtPayload = { sub: userId, email }; //TODO: This could be better code
+  async getTokens(payload: JwtPayload): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.jwtSecretActivationToken,

@@ -39,7 +39,7 @@ export class PostService {
       category,
       user,
     } = post;
-    const { role, email } = user;
+    const { role, username } = user;
     const { roleType } = role;
 
     return {
@@ -51,7 +51,7 @@ export class PostService {
       updatedAt,
       category,
       user: {
-        email,
+        username,
         role: {
           roleType,
         },

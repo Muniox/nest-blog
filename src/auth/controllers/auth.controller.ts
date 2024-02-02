@@ -47,6 +47,7 @@ export class AuthController {
   ): Promise<Response<any, Record<string, any>>> {
     return this.authService.logout(userId, res);
   }
+
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)

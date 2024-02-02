@@ -1,6 +1,7 @@
 export type UserTokenRequest = {
   sub: string; //userId
   email: string; //userEmail
+  surname: string;
   iat: number;
   exp: number;
   refreshToken?: string;
