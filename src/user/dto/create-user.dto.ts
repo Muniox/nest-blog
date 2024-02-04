@@ -2,32 +2,29 @@ import {
   IsEmail,
   IsNotEmpty,
   IsString,
-  Matches,
+  IsStrongPassword,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
-  @IsNotEmpty()
   @MaxLength(64)
   email: string;
 
   @IsNotEmpty()
-  @IsNotEmpty()
+  @IsString()
   @MaxLength(14)
+  @MinLength(4)
   username: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @MinLength(6)
+  @IsStrongPassword({
+    minLength: 6,
+    minLowercase: 1,
+    minUppercase: 1,
+    minNumbers: 1,
+    minSymbols: 1,
+  })
   @MaxLength(16)
-  @Matches(
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,12}$/,
-    {
-      message:
-        'Password Must contain at least 1 lowercase letter, 1 uppercase letter, 1 digit, and 1 special character (!,@,#,$,%,^,&,*). Minimum 8 characters, maximum 24 characters.',
-    },
-  )
   password: string;
 }
