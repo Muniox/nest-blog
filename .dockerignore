@@ -5,8 +5,8 @@ test
 .idea
 .git
 .prettierrc
-Dockerfile-dev
+Dockerfile
 Dockerfile-prod
-docker-compose-dev.yml
+docker-compose.yml
 docker-compose-prod.yml
 README.md
