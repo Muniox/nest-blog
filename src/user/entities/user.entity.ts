@@ -1,5 +1,4 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -9,13 +8,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserRoleEntity } from './user-role.entity';
-import { PostEntity } from '../../post/entities/post.entity';
 
+import { UserRoleEntity } from './user-role.entity';
+import { PostEntity } from '../../post/entities';
+
+// TODO: add username to user (needed for displaying who published post!)
 @Entity({
   name: 'users',
 })
-export class UserEntity extends BaseEntity {
+export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -24,6 +25,11 @@ export class UserEntity extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({
+    unique: true,
+  })
+  username: string;
 
   @Column({
     unique: true,

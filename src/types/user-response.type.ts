@@ -1,3 +1,6 @@
-import { UserEntity } from '../user/entities/user.entity';
+import { UserEntity } from '../user/entities';
 
-export type UserResponse = Pick<UserEntity, 'id' | 'email' | 'role'>;
+export type UserResponse = Pick<
+  UserEntity,
+  'id' | 'email' | 'role' | 'username'
+>;

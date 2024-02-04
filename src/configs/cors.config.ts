@@ -2,7 +2,6 @@ import {
   CorsOptions,
   CustomOrigin,
 } from '@nestjs/common/interfaces/external/cors-options.interface';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 

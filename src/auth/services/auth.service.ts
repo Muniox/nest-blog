@@ -1,15 +1,15 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthDto } from './dto';
-import { UserEntity } from '../user/entities/user.entity';
-import { hashData } from '../utils';
-import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
-import { CookieNames, Tokens } from '../types';
-import { Response } from 'express';
-import { AtCookieConfig, RtCookieConfig } from '../config';
 import { ConfigService } from '@nestjs/config';
-import { UserService } from '../user/user.service';
-import { UserResponse } from '../types/user-response.type';
+import * as argon2 from 'argon2';
+import { Response } from 'express';
+
+import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
+import { AtCookieConfig, RtCookieConfig } from '../../configs';
+import { UserService, AdminUserService } from '../../user/services';
+import { AuthDto } from '../dto';
+import { UserEntity } from '../../user/entities';
+import { hashData } from '../../utils';
 
 @Injectable()
 export class AuthService {
@@ -19,25 +19,26 @@ export class AuthService {
     private rtCookieConfig: RtCookieConfig,
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
+    private adminUserService: AdminUserService,
   ) {}
 
-  private readonly jwtSecretActivationToken = this.configService.get<string>(
-    'JWT_SECRET_ACCESS_TOKEN',
-  );
+  private readonly jwtSecretActivationToken: string =
+    this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN');
 
-  private readonly jwtExpirationTimeActivationToken =
+  private readonly jwtExpirationTimeActivationToken: string =
     this.configService.get<string>('JWT_EXPIRATION_TIME_ACCESS_TOKEN');
 
-  private readonly jwtSecretRefreshToken = this.configService.get<string>(
-    'JWT_SECRET_REFRESH_TOKEN',
-  );
-  private readonly jwtExpirationTimeRefreshToken =
+  private readonly jwtSecretRefreshToken: string =
+    this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN');
+
+  private readonly jwtExpirationTimeRefreshToken: string =
     this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user = await this.userService.create(loginDto);
+    const user: UserResponse =
+      await this.adminUserService.createUserFiltered(loginDto);
 
-    const tokens = await this.getAndUpdateTokens(user);
+    const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     return res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
@@ -52,7 +53,7 @@ export class AuthService {
     user: UserEntity,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    const tokens = await this.getAndUpdateTokens(user);
+    const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     return res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
@@ -67,7 +68,7 @@ export class AuthService {
     userId: string,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    await this.userService.logoutUser(userId);
+    await this.adminUserService.logoutUser(userId);
 
     return res
       .clearCookie(CookieNames.ACCESS)
@@ -83,14 +84,14 @@ export class AuthService {
     rt: string | null,
     res: Response,
   ): Promise<Response<any, Record<string, any>>> {
-    const user = await this.userService.findOne(userId);
+    const user: UserEntity = await this.userService.findOneUser(userId);
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
 
-    const rtMatches = await argon2.verify(user.hashedRT, rt);
+    const rtMatches: boolean = await argon2.verify(user.hashedRT, rt);
     if (!rtMatches) throw new UnauthorizedException();
 
-    const tokens = await this.getAndUpdateTokens(user);
+    const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     return res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
@@ -102,7 +103,7 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
-    const user = await this.userService.findUserByEmail(email);
+    const user: UserEntity = await this.userService.findUserByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException();
@@ -116,14 +117,18 @@ export class AuthService {
   }
 
   private async getAndUpdateTokens(user: UserResponse): Promise<Tokens> {
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens: Tokens = await this.getTokens({
+      sub: user.id,
+      email: user.email,
+      username: user.username,
+    });
     await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
-  async getTokens(userId: string, email: string): Promise<Tokens> {
-    const payload = { sub: userId, email };
-    const [at, rt] = await Promise.all([
+  // Rfresh Token and Access Token payload
+  async getTokens(payload: JwtPayload): Promise<Tokens> {
+    const [at, rt]: [at: string, rt: string] = await Promise.all([
       this.jwtService.signAsync(payload, {
         secret: this.jwtSecretActivationToken,
         expiresIn: this.jwtExpirationTimeActivationToken,
@@ -144,7 +149,7 @@ export class AuthService {
     userId: string,
     refreshToken: string,
   ): Promise<void> {
-    const hashRT = await hashData(refreshToken);
+    const hashRT: string = await hashData(refreshToken);
     await this.userService.updateUserHashRT(userId, hashRT);
   }
 }

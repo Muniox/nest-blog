@@ -1,5 +1,4 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
@@ -8,12 +7,13 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from '../../user/entities/user.entity';
+
+import { UserEntity } from '../../user/entities';
 
 @Entity({
   name: 'posts',
 })
-export class PostEntity extends BaseEntity {
+export class PostEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
