@@ -12,6 +12,26 @@
 
 #User create post
 POST http://{{host}}/post/upload
+Content-Type: multipart/form-data; boundary=myBoundary
+
+--myBoundary
+Content-Disposition: form-data; name="file"; filename="test.jpg"
+Content-Type: image/jpeg
+
+< ./test.jpg
+--myBoundary
+Content-Disposition: form-data; name="title"
+
+test
+--myBoundary
+Content-Disposition: form-data; name="description"
+
+test
+--myBoundary
+Content-Disposition: form-data; name="category"
+
+test
+--myBoundary--
 
 ###
 

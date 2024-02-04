@@ -4,15 +4,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request } from 'express';
+
 import { Response } from 'express';
 
 import { AuthService } from '../services';
-import { Tokens } from '../../types';
+import { Tokens, UserATRequestData, UserRTRequestData } from '../../types';
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';
@@ -43,19 +42,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
-    @User('sub') userId: string,
+    @User(UserATRequestData.sub) userId: string,
     @Res() res: Response,
   ): Promise<Response<any, Record<string, any>>> {
     return this.authService.logout(userId, res);
   }
+
   @Public()
   @UseGuards(RtGuard)
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   async refreshTokens(
-    @Req() req: Request,
-    @User('refreshToken') refreshToken: string,
-    @User('sub') userId: string,
+    @User(UserRTRequestData.refreshToken) refreshToken: string,
+    @User(UserRTRequestData.sub) userId: string,
     @Res() res: Response,
   ): Promise<Response<any, Record<string, any>>> {
     return this.authService.refreshTokens(userId, refreshToken, res);

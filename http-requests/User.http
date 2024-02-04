@@ -18,12 +18,13 @@ PATCH http://{{host}}/user
 Content-Type: application/json
 
 {
-  "email": "tes"
+  "email": "test22@email.pl",
+  "username": "Test2"
 }
 
 ###  Admin  ##############################################################
 
-#Get all user
+#Get all users
 #Only admin
 GET http://{{host}}/admin/user
 
@@ -35,8 +36,9 @@ POST http://{{host}}/admin/user
 Content-Type: application/json
 
 {
-  "email": "test22@email.com",
-  "password": "Testowe2!"
+  "email": "test223@email.com",
+  "password": "Testowe2!!",
+  "username": "Shinden2"
 }
 
 ###
@@ -50,7 +52,7 @@ GET http://{{host}}/admin/user/logout/{{userId}}
 
 #Get any User data
 #Only admin
-
+// return 403 Forbiden, "message": "User don't exist"
 GET http://{{host}}/admin/user/{{userId}}
 
 ###

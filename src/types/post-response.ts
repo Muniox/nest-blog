@@ -7,7 +7,7 @@ export type PostResponse = {
   updatedAt: Date;
   category: string;
   user: {
-    email: string;
+    username: string;
     role: {
       roleType: string;
     };

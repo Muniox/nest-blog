@@ -14,6 +14,11 @@ export class AuthDto {
   email: string;
 
   @IsNotEmpty()
+  @IsNotEmpty()
+  @MaxLength(14)
+  username: string;
+
+  @IsNotEmpty()
   @IsString()
   @MinLength(6)
   @MaxLength(16)
