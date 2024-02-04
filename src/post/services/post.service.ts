@@ -92,18 +92,18 @@ export class PostService {
   }
 
   async findAllPostsFiltered(): Promise<PostResponse[]> {
-    const posts = await this.postRepository.find({
+    const posts: PostEntity[] = await this.postRepository.find({
       relations: {
         user: {
           role: true,
         },
       },
     });
-    return posts.map((post) => this.filter(post));
+    return posts.map((post: PostEntity) => this.filter(post));
   }
 
   async findOnePostFiltered(id: string): Promise<PostResponse> {
-    const user = await this.postRepository.findOne({
+    const user: PostEntity = await this.postRepository.findOne({
       where: { id },
       relations: {
         user: {
@@ -115,7 +115,7 @@ export class PostService {
   }
 
   async findOnePost(id: string): Promise<PostEntity> {
-    const user = await this.postRepository.findOne({
+    return await this.postRepository.findOne({
       where: { id },
       relations: {
         user: {
@@ -123,7 +123,6 @@ export class PostService {
         },
       },
     });
-    return user;
   }
 
   async update(

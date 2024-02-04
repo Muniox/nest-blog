@@ -4,6 +4,7 @@ import { Reflector } from '@nestjs/core';
 import { Role, UserTokenRequest } from '../../types';
 import { ROLES_KEY } from '../decorators';
 import { UserService } from '../../user/services';
+import { UserEntity } from '../../user/entities';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -13,10 +14,10 @@ export class RolesGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredRoles: Role[] = this.reflector.getAllAndOverride<Role[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredRoles) {
       return true;
@@ -25,8 +26,10 @@ export class RolesGuard implements CanActivate {
     const { user }: { user: UserTokenRequest } = context
       .switchToHttp()
       .getRequest();
-    const getUserWithRole = await this.userService.findOneUser(user.sub);
-    return requiredRoles.some((role) =>
+    const getUserWithRole: UserEntity = await this.userService.findOneUser(
+      user.sub,
+    );
+    return requiredRoles.some((role: Role) =>
       getUserWithRole.role.roleType.includes(role),
     );
   }

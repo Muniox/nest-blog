@@ -22,7 +22,15 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     });
   }
 
-  validate(req: Request, payload: JwtPayload) {
+  validate(
+    req: Request,
+    payload: JwtPayload,
+  ): {
+    sub: string;
+    email: string;
+    username: string;
+    refreshToken: string;
+  } {
     const refreshToken: string = req.cookies?.[CookieNames.REFRESH];
     return {
       ...payload,

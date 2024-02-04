@@ -3,7 +3,7 @@ import { config } from 'dotenv';
 
 config();
 
-export const configService = new ConfigService();
+export const configService: ConfigService = new ConfigService();
 
 export const isProduction = (): boolean => {
   return (

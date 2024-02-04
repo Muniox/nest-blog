@@ -23,7 +23,8 @@ export class UserService {
   filter(user: UserEntity): UserResponse {
     if (!user) throw new ForbiddenException("User don't exist");
 
-    const { id, email, role, username } = user;
+    const { id, email, role, username }: UserResponse = user;
+
     return {
       id,
       username,
@@ -96,7 +97,10 @@ export class UserService {
     });
   }
 
-  async findUserByEmailOrUsername(email: string, username: string) {
+  async findUserByEmailOrUsername(
+    email: string,
+    username: string,
+  ): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: [{ email }, { username }],
       relations: { role: true },

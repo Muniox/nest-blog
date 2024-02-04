@@ -1,4 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+
 import {
   UserTokenRequest,
   UserATRequestData,
@@ -6,7 +7,10 @@ import {
 } from '../../types';
 
 export const User = createParamDecorator(
-  (data: UserATRequestData | UserRTRequestData, ctx: ExecutionContext) => {
+  (
+    data: UserATRequestData | UserRTRequestData,
+    ctx: ExecutionContext,
+  ): string | number | UserTokenRequest => {
     const request = ctx.switchToHttp().getRequest();
     const user: UserTokenRequest = request.user;
 

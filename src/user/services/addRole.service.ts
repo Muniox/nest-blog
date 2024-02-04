@@ -18,12 +18,13 @@ export class AddRoleService {
 
   async createUserRoles(roles: string[]): Promise<void> {
     // pozbywam się z tablicy wszystkich duplikatów
-    const uniqueRoleArray = [...new Set(roles)];
+    const uniqueRoleArray: string[] = [...new Set(roles)];
 
     uniqueRoleArray.map(async (item: string): Promise<void> => {
-      const searchRoleType = await this.userRoleRepository.findBy({
-        roleType: item,
-      });
+      const searchRoleType: UserRoleEntity[] =
+        await this.userRoleRepository.findBy({
+          roleType: item,
+        });
       if (searchRoleType.length === 0) {
         const role: UserRoleEntity = new UserRoleEntity();
         role.roleType = item;
