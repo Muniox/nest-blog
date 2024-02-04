@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { UserEntity } from '../entities/user.entity';
-import { UserRoleEntity } from '../entities/user-role.entity';
+import { UserEntity, UserRoleEntity } from '../entities';
 import { ConflictException } from '@nestjs/common';
 // import { PostEntity } from '../../post/entities/post.entity';
 
