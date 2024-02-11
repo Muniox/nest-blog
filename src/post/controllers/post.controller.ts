@@ -20,7 +20,9 @@ import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
 import { PostResponse, UserATRequestData } from '../../types';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}

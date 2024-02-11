@@ -12,7 +12,9 @@ import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserResponse, Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminUserService } from '../services';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('admin/user')
 @UseRole(Role.admin)
 @Controller('admin/user')
 export class AdminUserController {

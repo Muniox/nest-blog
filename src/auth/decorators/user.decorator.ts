@@ -5,6 +5,7 @@ import {
   UserATRequestData,
   UserRTRequestData,
 } from '../../types';
+import { UserEntity } from '../../user/entities';
 
 export const User = createParamDecorator(
   (
@@ -12,7 +13,7 @@ export const User = createParamDecorator(
     ctx: ExecutionContext,
   ): string | number | UserTokenRequest => {
     const request = ctx.switchToHttp().getRequest();
-    const user: UserTokenRequest = request.user;
+    const user: UserTokenRequest | UserEntity = request.user;
 
     return data ? user?.[data] : user;
   },

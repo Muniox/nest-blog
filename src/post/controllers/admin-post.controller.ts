@@ -10,6 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags } from '@nestjs/swagger';
 
 import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
@@ -17,6 +18,7 @@ import { DeleteResult } from 'typeorm';
 import { Role } from '../../types';
 import { AdminPostService } from '../services';
 
+@ApiTags('admin/post')
 @UseRole(Role.admin)
 @Controller('admin/post')
 export class AdminPostController {

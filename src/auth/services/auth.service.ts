@@ -49,19 +49,14 @@ export class AuthService {
       });
   }
 
-  async login(
-    user: UserEntity,
-    res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  async login(user: UserEntity, res: Response): Promise<UserResponse> {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
-    return res
+    res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig)
-      .json({
-        message: `User logged in`,
-        statusCode: HttpStatus.OK,
-      });
+      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig);
+
+    return this.userService.filter(user);
   }
 
   async logout(

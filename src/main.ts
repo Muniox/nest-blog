@@ -7,6 +7,7 @@ import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 import { Cors } from './configs';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -22,6 +23,15 @@ async function bootstrap() {
       },
     }),
   );
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('nest-blog')
+    .setDescription('The blog API description')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api', app, document);
+
   app.use(helmet());
   app.use(cookieParser());
 
