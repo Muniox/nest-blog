@@ -23,9 +23,8 @@ import { UserEntity } from '../../user/entities';
 import { AuthDto } from '../dto';
 import {
   ApiBadRequestResponse,
-  ApiBasicAuth,
   ApiBody,
-  ApiCookieAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -40,15 +39,47 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
   @ApiCreatedResponse({
-    description: 'Create User object as response',
-    type: Promise<Tokens>,
+    description: 'Successful response after valid registration',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          example: 'User was registered',
+          type: 'string',
+        },
+        statusCode: {
+          example: HttpStatus.CREATED,
+          type: 'number',
+        },
+      },
+    },
+  })
+  @ApiConflictResponse({
+    description:
+      'Conflict error after try to register User that have email or username taken',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          default: 'User with that email already exists',
+          type: 'string',
+        },
+        error: {
+          type: 'string',
+          default: 'Conflict',
+        },
+        statusCode: {
+          default: HttpStatus.CONFLICT,
+          type: 'number',
+        },
+      },
+    },
   })
   @ApiBadRequestResponse({})
   async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
     return this.authService.register(dto, res);
   }
 
-  @ApiBasicAuth()
   @ApiBody({
     description: 'user login data',
     type: LoginDto,
@@ -64,7 +95,6 @@ export class AuthController {
     return this.authService.login(user, res);
   }
 
-  @ApiCookieAuth()
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
@@ -82,7 +112,7 @@ export class AuthController {
     @User(UserRTRequestData.refreshToken) refreshToken: string,
     @User(UserRTRequestData.sub) userId: string,
     @Res() res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  ): Promise<Response> {
     return this.authService.refreshTokens(userId, refreshToken, res);
   }
 }
