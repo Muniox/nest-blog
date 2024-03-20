@@ -22,13 +22,13 @@ import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';
 import { AuthDto } from '../dto';
 import {
-  ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { LoginDto } from '../dto/login.dto';
+import { registerConfilctResponse, registerCreatedResponse } from '../swagger';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -38,44 +38,12 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  @ApiCreatedResponse({
-    description: 'Successful response after valid registration',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          example: 'User was registered',
-          type: 'string',
-        },
-        statusCode: {
-          example: HttpStatus.CREATED,
-          type: 'number',
-        },
-      },
-    },
+  @ApiBody({
+    description: 'user register data',
+    type: AuthDto,
   })
-  @ApiConflictResponse({
-    description:
-      'Conflict error after try to register User that have email or username taken',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          default: 'User with that email already exists',
-          type: 'string',
-        },
-        error: {
-          type: 'string',
-          default: 'Conflict',
-        },
-        statusCode: {
-          default: HttpStatus.CONFLICT,
-          type: 'number',
-        },
-      },
-    },
-  })
-  @ApiBadRequestResponse({})
+  @ApiCreatedResponse(registerCreatedResponse)
+  @ApiConflictResponse(registerConfilctResponse)
   async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
     return this.authService.register(dto, res);
   }

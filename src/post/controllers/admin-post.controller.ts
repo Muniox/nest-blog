@@ -10,7 +10,13 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
@@ -26,6 +32,19 @@ export class AdminPostController {
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({
+    summary: 'update selected post',
+    description: 'Admin can update selected post',
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+  })
+  @ApiBody({
+    description: 'post update data',
+    type: UpdatePostDto,
+  })
+  @ApiConsumes('multipart/form-data')
   async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
