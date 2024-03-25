@@ -11,35 +11,35 @@ import {
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserResponse, Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
-import { AdminUserService } from '../services';
+import { AdminPanelUserService } from '../services';
 import { ApiTags } from '@nestjs/swagger';
 
-@ApiTags('admin/user')
+@ApiTags('admin-panel')
 @UseRole(Role.admin)
-@Controller('admin/user')
-export class AdminUserController {
-  constructor(private adminUserService: AdminUserService) {}
+@Controller('admin-panel/user')
+export class AdminPanelUserController {
+  constructor(private adminPanelUserService: AdminPanelUserService) {}
 
   @Post()
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<UserResponse> {
-    return await this.adminUserService.createUserFiltered(createUserDto);
+    return await this.adminPanelUserService.createUserFiltered(createUserDto);
   }
 
   @Get()
   async findAllUsers(): Promise<UserResponse[]> {
-    return await this.adminUserService.findAllUsersFiltered();
+    return await this.adminPanelUserService.findAllUsersFiltered();
   }
 
   @Get('logout/:id')
   async logoutUser(@Param('id') id: string): Promise<void> {
-    await this.adminUserService.logoutUser(id);
+    await this.adminPanelUserService.logoutUser(id);
   }
 
   @Get(':id')
   async findOneUser(@Param('id') id: string): Promise<UserResponse> {
-    return await this.adminUserService.findOneUserFiltered(id);
+    return await this.adminPanelUserService.findOneUserFiltered(id);
   }
 
   @Patch(':id')
@@ -47,11 +47,14 @@ export class AdminUserController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<UserResponse> {
-    return await this.adminUserService.updateUserFiltered(id, updateUserDto);
+    return await this.adminPanelUserService.updateUserFiltered(
+      id,
+      updateUserDto,
+    );
   }
 
   @Delete(':id')
   async removeUser(@Param('id') id: string): Promise<MessageResponse> {
-    return await this.adminUserService.removeUser(id);
+    return await this.adminPanelUserService.removeUser(id);
   }
 }

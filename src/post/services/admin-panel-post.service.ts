@@ -12,7 +12,7 @@ import { PostResponse } from '../../types';
 import { PostService } from './post.service';
 
 @Injectable()
-export class AdminPostService {
+export class AdminPanelPostService {
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,

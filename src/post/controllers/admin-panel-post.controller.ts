@@ -22,13 +22,13 @@ import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
 import { Role } from '../../types';
-import { AdminPostService } from '../services';
+import { AdminPanelPostService } from '../services';
 
-@ApiTags('admin/post')
+@ApiTags('admin-panel')
 @UseRole(Role.admin)
-@Controller('admin/post')
-export class AdminPostController {
-  constructor(private readonly adminPostService: AdminPostService) {}
+@Controller('admin-panel/post')
+export class AdminPanelPostController {
+  constructor(private readonly adminPanelPostService: AdminPanelPostService) {}
 
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
@@ -63,11 +63,11 @@ export class AdminPostController {
     )
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
-    return await this.adminPostService.updatePost(id, updatePostDto, file);
+    return await this.adminPanelPostService.updatePost(id, updatePostDto, file);
   }
 
   @Delete(':id')
   async removePost(@Param('id') id: string): Promise<DeleteResult> {
-    return await this.adminPostService.removePost(id);
+    return await this.adminPanelPostService.removePost(id);
   }
 }

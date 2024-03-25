@@ -6,7 +6,7 @@ import { Response } from 'express';
 
 import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
 import { AtCookieConfig, RtCookieConfig } from '../../configs';
-import { UserService, AdminUserService } from '../../user/services';
+import { UserService, AdminPanelUserService } from '../../user/services';
 import { AuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
@@ -19,7 +19,7 @@ export class AuthService {
     private rtCookieConfig: RtCookieConfig,
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
-    private adminUserService: AdminUserService,
+    private adminUserService: AdminPanelUserService,
   ) {}
 
   private readonly jwtSecretActivationToken: string =

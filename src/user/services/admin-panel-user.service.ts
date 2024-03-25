@@ -10,7 +10,7 @@ import { UserService } from './user.service';
 
 // TODO: add username to user (needed for displaying who published post!)
 @Injectable()
-export class AdminUserService {
+export class AdminPanelUserService {
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
