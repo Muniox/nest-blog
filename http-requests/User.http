@@ -22,17 +22,17 @@ Content-Type: application/json
   "username": "Test2"
 }
 
-###  Admin  ##############################################################
+###  Admin panel  ##############################################################
 
 #Get all users
 #Only admin
-GET http://{{host}}/admin/user
+GET http://{{host}}/admin-panel/user
 
 ###
 
 #Create User
 #Only admin
-POST http://{{host}}/admin/user
+POST http://{{host}}/admin-panel/user
 Content-Type: application/json
 
 {
@@ -53,14 +53,14 @@ GET http://{{host}}/admin/user/logout/{{userId}}
 #Get any User data
 #Only admin
 // return 403 Forbiden, "message": "User don't exist"
-GET http://{{host}}/admin/user/{{userId}}
+GET http://{{host}}/admin-panel/user/{{userId}}
 
 ###
 
 #Update any User data
 #Only admin
 
-Patch http://{{host}}/admin/user/{{userId}}
+Patch http://{{host}}/admin-panel/user/{{userId}}
 Content-Type: application/json
 
 {
@@ -72,4 +72,4 @@ Content-Type: application/json
 #Delete any User account
 #Only admin
 
-DELETE http://{{host}}/admin/user/{{userId}}
+DELETE http://{{host}}/admin-panel/user/{{userId}}
