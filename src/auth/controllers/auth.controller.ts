@@ -28,7 +28,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { LoginDto } from '../dto/login.dto';
-import { registerConfilctResponse, registerCreatedResponse } from '../swagger';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -42,8 +41,11 @@ export class AuthController {
     description: 'user register data',
     type: AuthDto,
   })
-  @ApiCreatedResponse(registerCreatedResponse)
-  @ApiConflictResponse(registerConfilctResponse)
+  @ApiCreatedResponse({ description: 'User was registered succesfully' })
+  @ApiConflictResponse({
+    description:
+      'Conflict error after try to register User that have email or username taken',
+  })
   async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
     return this.authService.register(dto, res);
   }

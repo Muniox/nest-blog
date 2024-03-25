@@ -7,12 +7,17 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import {
+  ApiConflictResponse,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserResponse, Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('admin-panel')
 @UseRole(Role.admin)
@@ -20,6 +25,17 @@ import { ApiTags } from '@nestjs/swagger';
 export class AdminPanelUserController {
   constructor(private adminPanelUserService: AdminPanelUserService) {}
 
+  @ApiOperation({
+    summary: 'admin create user account',
+    description: 'Admin can create user account',
+  })
+  @ApiCreatedResponse({
+    description: 'Return User Entity',
+  })
+  @ApiConflictResponse({
+    description:
+      'Conflict error after try to register User that have email or username taken',
+  })
   @Post()
   async createUser(
     @Body() createUserDto: CreateUserDto,
