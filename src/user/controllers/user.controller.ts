@@ -29,13 +29,15 @@ export class UserController {
     return await this.userService.removeUser(userId);
   }
 
-  //TODO: powinno chyba zwracać, że użytkownik został zaktualizowany poprawnie i kod 200?
   @ApiOperation({
     summary: 'user update his profile',
     description: 'User can update his profile',
   })
   @ApiResponseProperty({
     type: UserEntity,
+  })
+  @ApiOkResponse({
+    description: 'Return updated user entity',
   })
   @Patch()
   async updateUser(

@@ -10,6 +10,7 @@ import {
 import {
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
@@ -43,6 +44,13 @@ export class AdminPanelUserController {
     return await this.adminPanelUserService.createUserFiltered(createUserDto);
   }
 
+  @ApiOperation({
+    summary: 'admin get all users data',
+    description: 'Admin can display all users data',
+  })
+  @ApiOkResponse({
+    description: 'Return all users data',
+  })
   @Get()
   async findAllUsers(): Promise<UserResponse[]> {
     return await this.adminPanelUserService.findAllUsersFiltered();

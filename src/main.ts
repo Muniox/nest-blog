@@ -27,7 +27,7 @@ async function bootstrap() {
   const swaggerConfig = new DocumentBuilder()
     .setTitle('nest-blog')
     .setDescription('The blog API description')
-    .setVersion('1.0')
+    .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
