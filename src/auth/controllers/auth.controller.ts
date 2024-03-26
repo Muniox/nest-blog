@@ -59,7 +59,7 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary: 'user login',
+    summary: 'user log in',
     description: 'After registration user can login',
   })
   @ApiOkResponse({ description: 'User succesfully log in' })
