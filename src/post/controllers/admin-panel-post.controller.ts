@@ -11,8 +11,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBody,
   ApiConsumes,
+  ApiForbiddenResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -36,13 +37,14 @@ export class AdminPanelPostController {
     summary: 'update selected post',
     description: 'Admin can update selected post',
   })
+  @ApiOkResponse({ description: 'Post was updated' })
+  @ApiForbiddenResponse({
+    description:
+      "User have no access to this resource or resources don't exist",
+  })
   @ApiParam({
     name: 'id',
     format: 'uuid',
-  })
-  @ApiBody({
-    description: 'post update data',
-    type: UpdatePostDto,
   })
   @ApiConsumes('multipart/form-data')
   async updatePost(
@@ -66,6 +68,19 @@ export class AdminPanelPostController {
     return await this.adminPanelPostService.updatePost(id, updatePostDto, file);
   }
 
+  @ApiOperation({
+    summary: 'delete selected post',
+    description: 'Admin can delete selected post',
+  })
+  @ApiOkResponse({ description: 'Selected Post was deleted' })
+  @ApiForbiddenResponse({
+    description:
+      "User have no access to this resource or resources don't exist",
+  })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+  })
   @Delete(':id')
   async removePost(@Param('id') id: string): Promise<DeleteResult> {
     return await this.adminPanelPostService.removePost(id);

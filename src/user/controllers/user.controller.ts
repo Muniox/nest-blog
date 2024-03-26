@@ -17,8 +17,9 @@ import { UserEntity } from '../entities';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  // TODO: czy nie powinienj zwracać no content zamiast ok 200?
   @ApiOperation({
-    summary: 'user delet his account',
+    summary: 'delete account',
     description: 'User can delete his account',
   })
   @ApiOkResponse({ description: 'User was deleted' })
@@ -30,7 +31,7 @@ export class UserController {
   }
 
   @ApiOperation({
-    summary: 'user update his profile',
+    summary: 'update profile',
     description: 'User can update his profile',
   })
   @ApiResponseProperty({
