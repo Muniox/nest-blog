@@ -20,16 +20,28 @@ import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
 import { PostResponse, UserATRequestData } from '../../types';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import {
+  ApiConsumes,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('post')
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post('/upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({
+    summary: 'create post',
+    description: 'user can create post',
+  })
+  @ApiOkResponse({ description: 'Post created' })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  @Post('/upload')
   async createPost(
     @Body() createPostDto: CreatePostDto,
     @User(UserATRequestData.sub) userId: string,

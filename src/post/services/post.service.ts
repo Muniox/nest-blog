@@ -86,7 +86,7 @@ export class PostService {
     await this.postRepository.save(post);
 
     return {
-      message: `post ${post.title} added`,
+      message: `post created`,
       statusCode: 201,
     };
   }

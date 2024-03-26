@@ -16,6 +16,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto } from '../dto';
@@ -40,6 +41,7 @@ export class AdminPanelUserController {
     description:
       'Conflict error after try to register User that have email or username taken',
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Post()
   async createUser(
     @Body() createUserDto: CreateUserDto,
@@ -54,6 +56,7 @@ export class AdminPanelUserController {
   @ApiOkResponse({
     description: 'Return all users data',
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Get()
   async findAllUsers(): Promise<UserResponse[]> {
     return await this.adminPanelUserService.findAllUsersFiltered();
@@ -68,6 +71,7 @@ export class AdminPanelUserController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiParam({
     name: 'id',
     format: 'uuid',
@@ -86,6 +90,7 @@ export class AdminPanelUserController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiParam({
     name: 'id',
     format: 'uuid',
@@ -108,6 +113,7 @@ export class AdminPanelUserController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiParam({
     name: 'id',
     format: 'uuid',
@@ -136,6 +142,7 @@ export class AdminPanelUserController {
     name: 'id',
     format: 'uuid',
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Delete(':id')
   async removeUser(@Param('id') id: string): Promise<MessageResponse> {
     return await this.adminPanelUserService.removeUser(id);

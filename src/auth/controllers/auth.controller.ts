@@ -38,9 +38,6 @@ import { LoginDto } from '../dto/login.dto';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
-  @HttpCode(HttpStatus.CREATED)
-  @Post('/register')
   @ApiOperation({
     summary: 'register user',
     description: 'Register new user',
@@ -54,6 +51,9 @@ export class AuthController {
     description:
       'Email or password is not correct or does not meet security requirements',
   })
+  @Public()
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/register')
   async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
     return this.authService.register(dto, res);
   }
@@ -83,7 +83,7 @@ export class AuthController {
     description: 'User can log out of the api',
   })
   @ApiOkResponse({ description: 'User succesfully log out' })
-  @ApiUnauthorizedResponse({ description: 'User must be logged in to log out' })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
@@ -100,7 +100,7 @@ export class AuthController {
   @ApiOkResponse({ description: 'Tokens were refreshed' })
   @ApiUnauthorizedResponse({
     description:
-      'User must be logged in to refresh token or refresh token expired',
+      'User must be logged in to refresh tokens or refresh token expired',
   })
   @Public()
   @UseGuards(RtGuard)

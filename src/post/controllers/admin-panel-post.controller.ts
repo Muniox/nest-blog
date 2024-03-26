@@ -17,6 +17,7 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { UpdatePostDto } from '../dto';
@@ -31,8 +32,6 @@ import { AdminPanelPostService } from '../services';
 export class AdminPanelPostController {
   constructor(private readonly adminPanelPostService: AdminPanelPostService) {}
 
-  @Patch(':id')
-  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({
     summary: 'update selected post',
     description: 'Admin can update selected post',
@@ -42,11 +41,14 @@ export class AdminPanelPostController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiParam({
     name: 'id',
     format: 'uuid',
   })
   @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  @Patch(':id')
   async updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -77,6 +79,7 @@ export class AdminPanelPostController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiParam({
     name: 'id',
     format: 'uuid',

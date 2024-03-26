@@ -4,6 +4,7 @@ import {
   ApiOperation,
   ApiResponseProperty,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
 import { UserService } from '../services';
@@ -23,6 +24,7 @@ export class UserController {
     description: 'User can delete his account',
   })
   @ApiOkResponse({ description: 'User was deleted' })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Delete()
   async removeUser(
     @User(UserATRequestData.sub) userId: string,
@@ -34,11 +36,12 @@ export class UserController {
     summary: 'update profile',
     description: 'User can update his profile',
   })
-  @ApiResponseProperty({
-    type: UserEntity,
-  })
   @ApiOkResponse({
     description: 'Return updated user entity',
+  })
+  @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @ApiResponseProperty({
+    type: UserEntity,
   })
   @Patch()
   async updateUser(
