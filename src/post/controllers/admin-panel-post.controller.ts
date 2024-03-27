@@ -18,6 +18,7 @@ import {
   ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
+  ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
 import { UpdatePostDto } from '../dto';
@@ -42,6 +43,10 @@ export class AdminPanelPostController {
       "User have no access to this resource or resources don't exist",
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @ApiUnprocessableEntityResponse({
+    description:
+      'Wrong file extension or image size is to large, or file was no attached',
+  })
   @ApiParam({
     name: 'id',
     format: 'uuid',
