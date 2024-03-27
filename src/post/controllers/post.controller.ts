@@ -113,7 +113,7 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: 'update selected post',
+    summary: 'update selected post by author',
     description:
       'The user can update a selected post of which he/she is the author',
   })
@@ -157,7 +157,7 @@ export class PostController {
   }
 
   @ApiOperation({
-    summary: 'delete selected post',
+    summary: 'delete selected post by author',
     description:
       'The user can delete a selected post of which he/she is the author',
   })
