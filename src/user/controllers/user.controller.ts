@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Patch } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiOkResponse,
   ApiOperation,
   ApiResponseProperty,
@@ -40,6 +41,7 @@ export class UserController {
     description: 'Return updated user entity',
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiResponseProperty({
     type: UserEntity,
   })

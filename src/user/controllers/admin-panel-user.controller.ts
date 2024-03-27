@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiForbiddenResponse,
@@ -41,6 +42,7 @@ export class AdminPanelUserController {
     description:
       'Conflict error after try to register User that have email or username taken',
   })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Post()
   async createUser(
@@ -114,6 +116,7 @@ export class AdminPanelUserController {
       "User have no access to this resource or resources don't exist",
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiParam({
     name: 'id',
     format: 'uuid',

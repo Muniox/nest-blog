@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
+  ApiBadRequestResponse,
   ApiConsumes,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -47,6 +48,7 @@ export class AdminPanelPostController {
     description:
       'Wrong file extension or image size is to large, or file was no attached',
   })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiParam({
     name: 'id',
     format: 'uuid',

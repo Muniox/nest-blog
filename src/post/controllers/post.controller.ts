@@ -21,6 +21,7 @@ import { Public, User } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
 import { PostResponse, UserATRequestData } from '../../types';
 import {
+  ApiBadRequestResponse,
   ApiConsumes,
   ApiForbiddenResponse,
   ApiOkResponse,
@@ -46,6 +47,7 @@ export class PostController {
     description:
       'Wrong file extension or image size is to large, or file was no attached',
   })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('file'))
   @Post('/upload')
@@ -127,6 +129,7 @@ export class PostController {
     description:
       'Wrong file extension or image size is to large, or file was no attached',
   })
+  @ApiBadRequestResponse({ description: 'Provided wrong data' })
   @ApiParam({
     name: 'id',
     format: 'uuid',
