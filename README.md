@@ -3,14 +3,14 @@
 ## Table of content
 
 - [General Info](#general-info)
-- [Demo](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#demo)
-- [Technologies/frameworks/libraries used on back-end side of project](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#technologiesframeworkslibraries-used-on-front-end-side-of-project)
-- [Routes](https://github.com/Muniox/blog-megak-back/tree/develop#routes)
-- [How to test api](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#how-to-test-api)
+- [Demo](#demo)
+- [Technologies/frameworks/libraries used on back-end side of project](#technologiesframeworkslibraries-used-on-front-end-side-of-project)
+- [Routes](#routes)
+- [How to test api](#how-to-test-api)
 - [How to make user with admin privilage]()
-- [What has been accomplished](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#what-has-been-accomplished)
-- [What has not been accomplished](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#what-has-not-been-accomplished)
-- [How to run api](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#how-to-run-api)
+- [What has been accomplished](#what-has-been-accomplished)
+- [What has not been accomplished](#what-has-not-been-accomplished)
+- [How to run api](#how-to-run-api)
 - [Link to front-end]()
 
 ## General info
