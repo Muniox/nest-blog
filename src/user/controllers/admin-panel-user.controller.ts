@@ -10,6 +10,7 @@ import {
 import {
   ApiBadRequestResponse,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiForbiddenResponse,
   ApiNoContentResponse,
@@ -31,6 +32,7 @@ import { AdminPanelUserService } from '../services';
 export class AdminPanelUserController {
   constructor(private adminPanelUserService: AdminPanelUserService) {}
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'create user account',
     description: 'Admin can create user account',
@@ -51,6 +53,7 @@ export class AdminPanelUserController {
     return await this.adminPanelUserService.createUserFiltered(createUserDto);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'get all users data',
     description: 'Admin can display all users data',
@@ -64,6 +67,7 @@ export class AdminPanelUserController {
     return await this.adminPanelUserService.findAllUsersFiltered();
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'logout selected user',
     description: 'Admin can logout selected user',
@@ -83,6 +87,7 @@ export class AdminPanelUserController {
     await this.adminPanelUserService.logoutUser(id);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'get selected user data',
     description: 'Admin can get selected user data',
@@ -102,6 +107,7 @@ export class AdminPanelUserController {
     return await this.adminPanelUserService.findOneUserFiltered(id);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'update selected user data',
     description: 'Admin can update selected user data',
@@ -132,6 +138,7 @@ export class AdminPanelUserController {
     );
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete selected user account',
     description: 'Admin can delete selected user account',

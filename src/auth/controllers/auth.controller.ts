@@ -25,6 +25,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
+  ApiCookieAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
@@ -78,6 +79,7 @@ export class AuthController {
     return this.authService.login(user, res);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'user log out',
     description: 'User can log out of the api',
@@ -93,6 +95,7 @@ export class AuthController {
     return this.authService.logout(userId, res);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'refresh tokens',
     description: 'User can refresh tokens after access token expired',

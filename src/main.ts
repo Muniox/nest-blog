@@ -25,6 +25,10 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
+    .addCookieAuth('Access', {
+      type: 'apiKey',
+      in: 'cookie',
+    })
     .setTitle('nest-blog')
     .setDescription('The blog API description')
     .setVersion('0.0.1')

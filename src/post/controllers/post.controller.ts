@@ -23,6 +23,7 @@ import { PostResponse, UserATRequestData } from '../../types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
+  ApiCookieAuth,
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
@@ -37,6 +38,7 @@ import {
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'create post',
     description: 'user can create post',
@@ -114,6 +116,7 @@ export class PostController {
     return await this.postService.findOnePostFiltered(id);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'update selected post by author',
     description:
@@ -159,6 +162,7 @@ export class PostController {
     return await this.postService.updatePost(id, updatePostDto, userId, file);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete selected post by author',
     description:

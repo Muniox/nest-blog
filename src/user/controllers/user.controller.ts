@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Patch } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
   ApiResponseProperty,
@@ -20,6 +21,7 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // TODO: czy nie powinienj zwracać no content zamiast ok 200?
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete account',
     description: 'User can delete his account',
@@ -33,6 +35,7 @@ export class UserController {
     return await this.userService.removeUser(userId);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'update profile',
     description: 'User can update his profile',

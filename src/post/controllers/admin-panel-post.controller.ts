@@ -13,6 +13,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
+  ApiCookieAuth,
   ApiForbiddenResponse,
   ApiOkResponse,
   ApiOperation,
@@ -34,6 +35,7 @@ import { AdminPanelPostService } from '../services';
 export class AdminPanelPostController {
   constructor(private readonly adminPanelPostService: AdminPanelPostService) {}
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'update selected post',
     description: 'Admin can update selected post',
@@ -77,6 +79,7 @@ export class AdminPanelPostController {
     return await this.adminPanelPostService.updatePost(id, updatePostDto, file);
   }
 
+  @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete selected post',
     description: 'Admin can delete selected post',
