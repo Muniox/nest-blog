@@ -86,7 +86,7 @@ export class PostService {
     await this.postRepository.save(post);
 
     return {
-      message: `post ${post.title} added`,
+      message: `post created`,
       statusCode: 201,
     };
   }
@@ -192,10 +192,11 @@ export class PostService {
     return await this.postRepository.delete({ id });
   }
 
-  getFile(filename: string): StreamableFile {
-    const file: ReadStream = createReadStream(
-      path.join(process.cwd(), 'storage', `${filename}`),
-    );
+  // TODO: Stwórz guarda który zwraca false jeśli plik w storage nie istnieje?
+  async getFile(filename: string): Promise<StreamableFile> {
+    const pathFile = path.join(process.cwd(), 'storage', `${filename}`);
+    const file: ReadStream = createReadStream(pathFile);
+
     return new StreamableFile(file);
   }
 }

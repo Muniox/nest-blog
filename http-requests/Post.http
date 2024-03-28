@@ -63,11 +63,11 @@ Content-Type: application/json
 #User delete post
 DELETE http://{{host}}/post/{{postId}}
 
-###  Admin  ##############################################################
+###  Admin panel  ##############################################################
 
 #Admin edit any post data
 #Only admin
-PATCH http://{{host}}admin/post/{{postId}}
+PATCH http://{{host}}admin-panel/post/{{postId}}
 Content-Type: application/json
 
 {
@@ -78,4 +78,4 @@ Content-Type: application/json
 
 #Admin delete any post
 #Only admin
-DELETE http://{{host}}/admin/post/{{postId}}
+DELETE http://{{host}}/admin-panel/post/{{postId}}

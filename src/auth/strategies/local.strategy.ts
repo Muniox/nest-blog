@@ -13,6 +13,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  //check if I can use loginDto here
   async validate(email: string, password: string): Promise<UserEntity> {
     const user: UserEntity = await this.authService.validateUser(
       email,
