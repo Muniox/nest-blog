@@ -2,7 +2,7 @@
 
 ## Table of content
 
-- [General Info](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#general-info)
+- [General Info](#general-info)
 - [Demo](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#demo)
 - [Technologies/frameworks/libraries used on back-end side of project](https://github.com/Muniox/blog-megak-back/blob/develop/README.md#technologiesframeworkslibraries-used-on-front-end-side-of-project)
 - [Routes](https://github.com/Muniox/blog-megak-back/tree/develop#routes)
