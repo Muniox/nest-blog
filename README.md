@@ -29,35 +29,35 @@ MySQL, Node.js, Express.js, Nest.js
 
 #### user
 
-DELETE /user
-PATCH /user
+- DELETE /user
+- PATCH /user
 
 #### admin-panel
 
-POST /admin-panel/user
-GET /admin-panel/user
-GET /admin-panel/user/logout/{id}
-GET /admin-panel/user/user/{id}
-PATCH /admin-panel/user/{id}
-DELETE /admin-panel/user/{id}
-PATCH /admin-panel/post/{id}
-DELETE /admin-panel/post/{id}
+- POST /admin-panel/user
+- GET /admin-panel/user
+- GET /admin-panel/user/logout/{id}
+- GET /admin-panel/user/user/{id}
+- PATCH /admin-panel/user/{id}
+- DELETE /admin-panel/user/{id}
+- PATCH /admin-panel/post/{id}
+- DELETE /admin-panel/post/{id}
 
 #### auth
 
-POST /auth/register
-POST /auth/login
-POST /auth/logout
-POST /auth/refresh
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
+- POST /auth/refresh
 
 #### post
 
-POST /post/upload
-GET /post
-GET /post/image/{filename}
-GET /post/{id}
-PATCH /post/{id}
-DELETE /post/{id}
+- POST /post/upload
+- GET /post
+- GET /post/image/{filename}
+- GET /post/{id}
+- PATCH /post/{id}
+- DELETE /post/{id}
 
 ### How to test api
 
