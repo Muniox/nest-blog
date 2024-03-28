@@ -30,7 +30,9 @@ async function bootstrap() {
       in: 'cookie',
     })
     .setTitle('nest-blog')
-    .setDescription('The blog API description')
+    .setDescription(
+      'The blog API description.\n\n After creating an account and logging in, it is not necessary to add a cookie value to the swagger authorize input.',
+    )
     .setVersion('0.0.1')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
