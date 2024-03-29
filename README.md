@@ -119,6 +119,12 @@ $ docker compose up
 
 this command will run deocker development setup
 
+after setup write this URL in web browser
+
+```
+http://localhost:3000
+```
+
 ## Front-end
 
 Not implemented yet
