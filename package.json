@@ -1,4 +1,5 @@
 {
+  "main": "app.js",
   "name": "nest-blog",
   "version": "0.0.1",
   "description": "",

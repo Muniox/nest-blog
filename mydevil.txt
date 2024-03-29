@@ -1,0 +1,28 @@
+mydevil.net hosting need: 
+
+in package.json:
+"main": "app.js"
+
+in public_nodejs/dist:
+app.js
+
+//-------------------------
+The root directory of the Node.js project (i.e. the directory where the app.js file is located) 
+must be /usr/home/login/domains/domain/public_nodejs. 
+You should also delete the index.html file 
+with the rm command /usr/home/login/domains/domain/public_nodejs/public/index.html
+
+//-------------------------
+Our hosting configuration assumes that the main Node.js application file has the name app.js. 
+If that file has a different name then change it to 
+app.js and in the package.json file change the value for the "main" key to app.js.
+
+Links:
+https://wiki.mydevil.net/Express.js
+https://wiki.mydevil.net/Node.js
+
+files needed for production:
+all files in dist
+.env
+package-lock.json
+package.json
