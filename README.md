@@ -63,7 +63,7 @@ MySQL, Node.js, Express.js, Nest.js
 
 #### Swagger docs
 
-http://localhost:3000/api
+https://nest-blog.truemuniox.usermd.net/api
 
 #### http-requests
 
@@ -102,6 +102,8 @@ In folder are implemented http request for VS code (REST client extension needed
 - [ ] post pagination
 - [ ] status draft for posts
 - [ ] e-mail confirmation of account creation
+- [ ] migration from MySQL to PostgreSQL
+- [ ] migration from TypeORM to Prisma for better type safety
 
 ## How to run api
 
