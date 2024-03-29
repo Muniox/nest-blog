@@ -100,6 +100,8 @@ In folder are implemented http request for VS code (REST client extension needed
 - [ ] no 403 error for route /post/image/{filename} (route guard setup)
 - [ ] creation of list post category with CRUD options
 - [ ] post pagination
+- [ ] status draft for posts
+- [ ] e-mail confirmation of account creation
 
 ## How to run api
 
