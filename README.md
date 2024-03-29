@@ -107,13 +107,16 @@ In folder are implemented http request for VS code (REST client extension needed
 
 ## How to run api
 
-go to api directory and run
+Windows - install Rancher or Docker Desktop
+Linux, Mac - install docker
+
+go to nest-blog folder directory and run command
 
 ```
 $ docker compose up
 ```
 
-this command will run developer deocker setup
+this command will run deocker development setup
 
 ## Front-end
 
