@@ -108,6 +108,7 @@ In folder are implemented http request for VS code (REST client extension needed
 ## How to run api
 
 Windows - install Rancher or Docker Desktop
+
 Linux, Mac - install docker
 
 go to nest-blog folder directory and run command
