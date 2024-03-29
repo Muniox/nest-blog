@@ -79,7 +79,7 @@ In folder are implemented http request for VS code (REST client extension needed
 - [x] Databse connection
 - [x] Entity Repository pattern
 - [x] CRUD posts
-- [x] admin panel
+- [x] admin panel (CRUD posts, CRUD users, logout selected user)
 - [x] Permision scope for user/admin
 - [x] Verifying environment variables in the .env file
 - [x] File storage on server
