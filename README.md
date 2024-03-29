@@ -99,6 +99,7 @@ In folder are implemented http request for VS code (REST client extension needed
 - [ ] Unit tests are incomplete due to a lack of time
 - [ ] no 403 error for route /post/image/{filename} (route guard setup)
 - [ ] creation of list post category with CRUD options
+- [ ] post pagination
 
 ## How to run api
 
