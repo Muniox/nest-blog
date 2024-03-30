@@ -43,7 +43,7 @@ export class AuthController {
     summary: 'register user',
     description: 'Register new user',
   })
-  @ApiCreatedResponse({ description: 'User was registered succesfully' })
+  @ApiCreatedResponse({ description: 'User was registered successfully' })
   @ApiConflictResponse({
     description:
       'Conflict error after try to register User that have email or username taken',
@@ -63,7 +63,7 @@ export class AuthController {
     summary: 'user log in',
     description: 'After registration user can login',
   })
-  @ApiOkResponse({ description: 'User succesfully log in' })
+  @ApiOkResponse({ description: 'User successfully log in' })
   @ApiUnauthorizedResponse({ description: 'Wrong username or password' })
   @ApiBody({
     type: LoginDto,
@@ -84,7 +84,7 @@ export class AuthController {
     summary: 'user log out',
     description: 'User can log out of the api',
   })
-  @ApiOkResponse({ description: 'User succesfully log out' })
+  @ApiOkResponse({ description: 'User successfully log out' })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @HttpCode(HttpStatus.OK)
   @Post('/logout')

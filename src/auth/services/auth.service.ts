@@ -66,8 +66,14 @@ export class AuthService {
     await this.adminUserService.logoutUser(userId);
 
     return res
-      .clearCookie(CookieNames.ACCESS)
-      .clearCookie(CookieNames.REFRESH)
+      .clearCookie(CookieNames.ACCESS, {
+        domain: this.configService.get<string>('APP_DOMAIN'),
+        path: '/',
+      })
+      .clearCookie(CookieNames.REFRESH, {
+        domain: this.configService.get<string>('APP_DOMAIN'),
+        path: this.configService.get<string>('APP_REFRESH_PATH'),
+      })
       .json({
         message: 'User was logged out',
         statusCode: HttpStatus.OK,
