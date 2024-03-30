@@ -72,7 +72,7 @@ export class AuthService {
       })
       .clearCookie(CookieNames.REFRESH, {
         domain: this.configService.get<string>('APP_DOMAIN'),
-        path: '/auth/refresh',
+        path: this.configService.get<string>('APP_REFRESH_PATH'),
       })
       .json({
         message: 'User was logged out',
