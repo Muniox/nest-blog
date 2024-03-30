@@ -20,7 +20,7 @@ import { UserEntity } from '../entities';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // TODO: czy nie powinienj zwracać no content zamiast ok 200?
+  // TODO: czy nie powinien zwracać no content zamiast ok 200?
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete account',
