@@ -98,10 +98,12 @@ In folder are implemented http request for VS code (REST client extension needed
 
 - [ ] Unit tests are incomplete due to a lack of time
 - [ ] no 403 error for route /post/image/{filename} (route guard setup)
+- [ ] no 403 error for logged users on route /auth/login and /auth/register
 - [ ] creation of list post category with CRUD options
 - [ ] post pagination
-- [ ] status draft for posts
-- [ ] e-mail confirmation of account creation
+- [ ] status draft for post
+- [ ] e-mail confirmation for account creation
+- [ ] e-mail confirmation for forgot password
 - [ ] migration from MySQL to PostgreSQL
 - [ ] migration from TypeORM to Prisma for better type safety
 
