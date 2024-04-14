@@ -4,12 +4,12 @@
 
 - [General Info](#general-info)
 - [Demo](#demo)
-- [Technologies/frameworks/libraries used on back-end side of project](#technologiesframeworkslibraries-used-on-front-end-side-of-project)
+- [Technologies/frameworks/libraries used on back-end side of project](#technologiesframeworkslibraries-used-on-back-end-side-of-project)
 - [Routes](#routes)
 - [How to test api](#how-to-test-api)
-- [How to make user with admin privilage]()
+- [How to make user with admin privilege]()
 - [What has been accomplished](#what-has-been-accomplished)
-- [What has not been accomplished](#what-has-not-been-accomplished)
+- [What has not been accomplished](#What-has-not-been-accomplished)
 - [How to run api](#how-to-run-api)
 - [Link to front-end]()
 
@@ -59,7 +59,7 @@ MySQL, Node.js, Express.js, Nest.js
 - PATCH /post/{id}
 - DELETE /post/{id}
 
-### How to test api
+## How to test api
 
 #### Swagger docs
 
@@ -69,18 +69,20 @@ https://nest-blog.truemuniox.usermd.net/api
 
 In folder are implemented http request for VS code (REST client extension needed)
 
-### How to make user with admin privilage
+### How to make user with admin privilege
+
+Change is only possible in database (change role in user table)
 
 ### What has been accomplished
 
 - [x] Authentication
 - [x] Authorization (JWT refresh-token)
 - [x] Asynchronous api (non blocking requests)
-- [x] Databse connection
+- [x] Database connection
 - [x] Entity Repository pattern
 - [x] CRUD posts
 - [x] admin panel (CRUD posts, CRUD users, logout selected user)
-- [x] Permision scope for user/admin
+- [x] Permission scope for user/admin
 - [x] Verifying environment variables in the .env file
 - [x] File storage on server
 - [x] Hashing passwords and refresh-token(argon2)
@@ -94,7 +96,7 @@ In folder are implemented http request for VS code (REST client extension needed
 - [x] setup TypeORM migrations
 - [x] simple docker prod/dev setup
 
-## What has not been accomplished on the back-end
+## What has not been accomplished
 
 - [ ] Unit tests are incomplete due to a lack of time
 - [ ] no 403 error for route /post/image/{filename} (route guard setup)
@@ -104,7 +106,7 @@ In folder are implemented http request for VS code (REST client extension needed
 - [ ] status draft for post
 - [ ] e-mail confirmation for account creation
 - [ ] e-mail confirmation for forgot password
-- [ ] migration from MySQL to PostgreSQL
+- [ ] migration from MySQL to PostgresSQL
 - [ ] migration from TypeORM to Prisma for better type safety
 
 ## How to run api
