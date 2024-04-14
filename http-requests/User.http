@@ -1,0 +1,75 @@
+# Need VS Code 'REST Client' Extensions
+
+#Config
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@userId = 1532d84e-94a9-4f47-be3d-b3558dc5e824
+
+###  User  ###############################################################
+
+#User delete account
+DELETE http://{{host}}/user
+
+###
+
+#User update data
+PATCH http://{{host}}/user
+Content-Type: application/json
+
+{
+  "email": "test22@email.pl",
+  "username": "Test2"
+}
+
+###  Admin panel  ##############################################################
+
+#Get all users
+#Only admin
+GET http://{{host}}/admin-panel/user
+
+###
+
+#Create User
+#Only admin
+POST http://{{host}}/admin-panel/user
+Content-Type: application/json
+
+{
+  "email": "test223@email.com",
+  "password": "Testowe2!!",
+  "username": "Shinden2"
+}
+
+###
+
+#Logout user
+#Only admin
+
+GET http://{{host}}/admin/user/logout/{{userId}}
+
+###
+
+#Get any User data
+#Only admin
+// return 403 Forbiden, "message": "User don't exist"
+GET http://{{host}}/admin-panel/user/{{userId}}
+
+###
+
+#Update any User data
+#Only admin
+
+Patch http://{{host}}/admin-panel/user/{{userId}}
+Content-Type: application/json
+
+{
+  "email": "tes"
+}
+
+###
+
+#Delete any User account
+#Only admin
+
+DELETE http://{{host}}/admin-panel/user/{{userId}}

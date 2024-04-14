@@ -1,0 +1,38 @@
+# Need VS Code 'REST Client' Extensions
+
+#Config
+@hostname = localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+
+###
+
+#User Register
+POST http://{{host}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test22@email.com",
+  "password": "Testowe2!",
+  "username": "Test"
+}
+###
+
+#User Login
+POST http://{{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "test22@email.com",
+  "password": "Testowe2!"
+}
+###
+
+#User Logout
+POST http://{{host}}/auth/logout
+
+###
+
+#Get Refresh Token
+POST http://{{host}}/auth/refresh
+
