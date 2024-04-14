@@ -1,73 +1,134 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# nest-blog
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Table of content
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [General Info](#general-info)
+- [Demo](#demo)
+- [Technologies/frameworks/libraries used on back-end side of project](#technologiesframeworkslibraries-used-on-back-end-side-of-project)
+- [Routes](#routes)
+- [How to test api](#how-to-test-api)
+- [How to make user with admin privilege]()
+- [What has been accomplished](#what-has-been-accomplished)
+- [What has not been accomplished](#What-has-not-been-accomplished)
+- [How to run api](#how-to-run-api)
+- [Link to front-end]()
 
-## Description
+## General info
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+A blog api built on the Nest.js framework. It was created to try its hand at implementing jwt authentication using a refresh token. Below I present the full range of implemented functionality.
 
-## Installation
+## Demo
 
-```bash
-$ npm install
+Api is in the process of being implemented on the server
+
+## Technologies/frameworks/libraries used on back-end side of project
+
+MySQL, Node.js, Express.js, Nest.js
+
+## Routes
+
+#### user
+
+- DELETE /user
+- PATCH /user
+
+#### admin-panel
+
+- POST /admin-panel/user
+- GET /admin-panel/user
+- GET /admin-panel/user/logout/{id}
+- GET /admin-panel/user/user/{id}
+- PATCH /admin-panel/user/{id}
+- DELETE /admin-panel/user/{id}
+- PATCH /admin-panel/post/{id}
+- DELETE /admin-panel/post/{id}
+
+#### auth
+
+- POST /auth/register
+- POST /auth/login
+- POST /auth/logout
+- POST /auth/refresh
+
+#### post
+
+- POST /post/upload
+- GET /post
+- GET /post/image/{filename}
+- GET /post/{id}
+- PATCH /post/{id}
+- DELETE /post/{id}
+
+## How to test api
+
+#### Swagger docs
+
+https://nest-blog.truemuniox.usermd.net/api
+
+#### http-requests
+
+In folder are implemented http request for VS code (REST client extension needed)
+
+### How to make user with admin privilege
+
+Change is only possible in database (change role in user table)
+
+### What has been accomplished
+
+- [x] Authentication
+- [x] Authorization (JWT refresh-token)
+- [x] Asynchronous api (non blocking requests)
+- [x] Database connection
+- [x] Entity Repository pattern
+- [x] CRUD posts
+- [x] admin panel (CRUD posts, CRUD users, logout selected user)
+- [x] Permission scope for user/admin
+- [x] Verifying environment variables in the .env file
+- [x] File storage on server
+- [x] Hashing passwords and refresh-token(argon2)
+- [x] Error handling
+- [x] Development/Production mode (NODE_ENV)
+- [x] strategy for limiting network traffic (@nestjs/throttler)
+- [x] Helmet (Helmet can help protect your app from some well-known web vulnerabilities by setting HTTP headers appropriately)
+- [x] CORS (Cross-origin resource sharing (CORS) is a mechanism that allows resources to be requested from another domain)
+- [x] Swagger documentation
+- [x] Sanitizing post description and title provided in body request (sanitize-html)
+- [x] setup TypeORM migrations
+- [x] simple docker prod/dev setup
+
+## What has not been accomplished
+
+- [ ] Unit tests are incomplete due to a lack of time
+- [ ] no 403 error for route /post/image/{filename} (route guard setup)
+- [ ] no 403 error for logged users on route /auth/login and /auth/register
+- [ ] creation of list post category with CRUD options
+- [ ] post pagination
+- [ ] status draft for post
+- [ ] e-mail confirmation for account creation
+- [ ] e-mail confirmation for forgot password
+- [ ] migration from MySQL to PostgresSQL
+- [ ] migration from TypeORM to Prisma for better type safety
+
+## How to run api
+
+Windows - install Rancher or Docker Desktop
+
+Linux, Mac - install docker
+
+go to nest-blog folder directory and run command
+
+```
+$ docker compose up
 ```
 
-## Running the app
+this command will run deocker development setup
 
-```bash
-# development
-$ npm run start
+after setup write this URL in web browser
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+http://localhost:3000
 ```
 
-## Test
+## Front-end
 
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Not implemented yet

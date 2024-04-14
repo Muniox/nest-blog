@@ -46,8 +46,9 @@ async function bootstrap() {
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('APP_PORT');
+  const MODE = configService.get<number>('NODE_ENV');
   await app.listen(PORT, () =>
-    Logger.log(`Application is working on port ${PORT}`),
+    Logger.log(`Application is working on port ${PORT} in ${MODE} mode`),
   );
 }
 bootstrap();
