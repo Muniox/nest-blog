@@ -32,6 +32,7 @@ import {
   ApiUnauthorizedResponse,
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
+import { SkipThrottle } from '@nestjs/throttler';
 
 @ApiTags('post')
 @Controller('post')
@@ -95,6 +96,7 @@ export class PostController {
   @ApiOkResponse({ description: 'Return image' })
   @ApiForbiddenResponse({ description: 'not implemented yet' })
   @Public()
+  @SkipThrottle()
   @Header('Content-Type', 'image/jpeg')
   @Get('image/:filename')
   async getFile(@Param('filename') filename: string): Promise<StreamableFile> {
