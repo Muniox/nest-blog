@@ -20,7 +20,9 @@ export class PostEntity {
   @Column()
   title: string;
 
-  @Column()
+  @Column({
+    type: 'longtext',
+  })
   description: string;
 
   @Column()
