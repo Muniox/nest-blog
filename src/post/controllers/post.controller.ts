@@ -112,6 +112,10 @@ export class PostController {
     description:
       "User have no access to this resource or resources don't exist",
   })
+  @ApiParam({
+    name: 'id',
+    format: 'uuid',
+  })
   @Public()
   @Get(':id')
   async findOnePost(@Param('id') id: string): Promise<PostResponse> {

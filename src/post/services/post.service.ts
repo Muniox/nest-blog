@@ -28,6 +28,7 @@ export class PostService {
     private userService: UserService,
   ) {}
 
+  // TODO: zmienić filter na interceptor
   filter(post: PostEntity): PostResponse {
     const {
       id,
@@ -103,7 +104,7 @@ export class PostService {
   }
 
   async findOnePostFiltered(id: string): Promise<PostResponse> {
-    const user: PostEntity = await this.postRepository.findOne({
+    const post: PostEntity = await this.postRepository.findOne({
       where: { id },
       relations: {
         user: {
@@ -111,11 +112,16 @@ export class PostService {
         },
       },
     });
-    return this.filter(user);
+
+    if (!post) {
+      throw new ForbiddenException(`Post with this id don't exist`);
+    }
+
+    return this.filter(post);
   }
 
   async findOnePost(id: string): Promise<PostEntity> {
-    return await this.postRepository.findOne({
+    const post = await this.postRepository.findOne({
       where: { id },
       relations: {
         user: {
@@ -123,6 +129,12 @@ export class PostService {
         },
       },
     });
+
+    if (!post) {
+      throw new ForbiddenException(`Post with this id don't exist`);
+    }
+
+    return post;
   }
 
   async update(
@@ -166,10 +178,6 @@ export class PostService {
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
     const post: PostEntity = await this.findOnePost(id);
-
-    if (!post) {
-      throw new ForbiddenException('There is no post with that id');
-    }
 
     if (post.user.id === userId) {
       throw new ConflictException(
