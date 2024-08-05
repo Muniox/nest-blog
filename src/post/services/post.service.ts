@@ -179,7 +179,7 @@ export class PostService {
   ): Promise<{ message: string; statusCode: number }> {
     const post: PostEntity = await this.findOnePost(id);
 
-    if (post.user.id === userId) {
+    if (post.user.id !== userId) {
       throw new ConflictException(
         'You can only edit posts of which you are the author',
       );
