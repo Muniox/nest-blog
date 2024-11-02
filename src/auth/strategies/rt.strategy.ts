@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -19,6 +19,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       ]),
       secretOrKey: configService.get<string>('JWT_SECRET_REFRESH_TOKEN'),
       passReqToCallback: true,
+      ignoreExpiration: true, //I will handle expiration time myself
     });
   }
 
@@ -32,6 +33,11 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
     refreshToken: string;
   } {
     const refreshToken: string = req.cookies?.[CookieNames.REFRESH];
+
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      throw new UnauthorizedException('Refresh token has expired.');
+    }
+
     return {
       ...payload,
       refreshToken,

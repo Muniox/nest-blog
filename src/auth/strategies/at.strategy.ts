@@ -1,5 +1,5 @@
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
@@ -18,10 +18,14 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
         },
       ]),
       secretOrKey: configService.get<string>('JWT_SECRET_ACCESS_TOKEN'),
+      ignoreExpiration: true, //I will handle expiration time myself
     });
   }
 
   validate(payload: JwtPayload): JwtPayload {
+    if (payload.exp < Math.floor(Date.now() / 1000)) {
+      throw new UnauthorizedException('Authorization token has expired.');
+    }
     return payload;
   }
 }
