@@ -9,6 +9,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PostModule } from './post/post.module';
+import { AutomapperModule } from '@automapper/nestjs';
+import { classes } from '@automapper/classes';
 
 @Module({
   imports: [
@@ -19,6 +21,9 @@ import { PostModule } from './post/post.module';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: getThrottlerConfig,
+    }),
+    AutomapperModule.forRoot({
+      strategyInitializer: classes(),
     }),
     DatabaseModule,
     UserModule,

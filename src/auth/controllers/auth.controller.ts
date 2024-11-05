@@ -33,6 +33,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { LoginDto } from '../dto/login.dto';
+import { ReadUserDto } from '../dto/read-user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -63,7 +64,7 @@ export class AuthController {
     summary: 'user log in',
     description: 'After registration user can login',
   })
-  @ApiOkResponse({ description: 'User successfully log in' })
+  @ApiOkResponse({ description: 'User successfully log in', type: ReadUserDto })
   @ApiUnauthorizedResponse({ description: 'Wrong username or password' })
   @ApiBody({
     type: LoginDto,
@@ -75,7 +76,7 @@ export class AuthController {
   async login(
     @User() user: UserEntity,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<UserResponse> {
+  ): Promise<ReadUserDto> {
     return this.authService.login(user, res);
   }
 

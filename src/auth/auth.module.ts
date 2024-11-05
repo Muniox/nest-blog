@@ -6,6 +6,7 @@ import { AtCookieConfig, RtCookieConfig } from '../configs';
 import { AuthService } from './services';
 import { AuthController } from './controllers';
 import { UserModule } from '../user/user.module';
+import { UserMapper } from './mappers/user.mapper';
 
 @Module({
   imports: [JwtModule.register({}), UserModule],
@@ -17,6 +18,7 @@ import { UserModule } from '../user/user.module';
     LocalStrategy,
     RtCookieConfig,
     AtCookieConfig,
+    UserMapper,
   ],
 })
 export class AuthModule {}

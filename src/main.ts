@@ -8,6 +8,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { Cors } from './configs';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { isProduction } from './utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +16,7 @@ async function bootstrap() {
     new ValidationPipe({
       // validateCustomDecorators: true, //make error for globally only dunno why??
       transform: true,
-      disableErrorMessages: false,
+      disableErrorMessages: isProduction(),
       whitelist: true,
       forbidNonWhitelisted: true,
       transformOptions: {

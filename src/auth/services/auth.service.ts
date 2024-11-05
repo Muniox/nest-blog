@@ -3,6 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { Response } from 'express';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 
 import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
 import { AtCookieConfig, RtCookieConfig } from '../../configs';
@@ -10,6 +12,7 @@ import { UserService, AdminPanelUserService } from '../../user/services';
 import { AuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
+import { ReadUserDto } from '../dto/read-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +23,7 @@ export class AuthService {
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
     private adminUserService: AdminPanelUserService,
+    @InjectMapper() private readonly classMapper: Mapper,
   ) {}
 
   private readonly jwtSecretActivationToken: string =
@@ -49,14 +53,16 @@ export class AuthService {
       });
   }
 
-  async login(user: UserEntity, res: Response): Promise<UserResponse> {
+  async login(user: UserEntity, res: Response): Promise<ReadUserDto> {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
+
+    const mappToUserDTO = this.classMapper.map(user, UserEntity, ReadUserDto);
 
     res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
       .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig);
 
-    return this.userService.filter(user);
+    return mappToUserDTO;
   }
 
   async logout(
