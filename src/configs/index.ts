@@ -5,3 +5,4 @@ export * from './at-cookie.config';
 export * from './rt-cookie.confige';
 export * from './cors.config';
 export * from './throttler.config';
+export * from './swagger.config';
