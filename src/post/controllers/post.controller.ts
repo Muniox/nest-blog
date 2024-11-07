@@ -96,7 +96,7 @@ export class PostController {
     description: 'user display selected image',
   })
   @ApiOkResponse({ description: 'Return image' })
-  @ApiBadRequestResponse()
+  @ApiForbiddenResponse({ description: "File dosen't exist" })
   @UseGuards(new FileExistGuard())
   @Public()
   @SkipThrottle()

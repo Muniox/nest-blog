@@ -1,5 +1,10 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { catchError, from, map, Observable } from 'rxjs';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { catchError, from, map, Observable, throwError } from 'rxjs';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 
@@ -16,7 +21,8 @@ export class FileExistGuard implements CanActivate {
     return from(fs.readFile(pathFile)).pipe(
       map(() => true),
       catchError((err) => {
-        if (err.code === 'ENOENT') return from([false]);
+        if (err.code === 'ENOENT')
+          return throwError(() => new ForbiddenException("File dosen't exist"));
         throw err;
       }),
     );
