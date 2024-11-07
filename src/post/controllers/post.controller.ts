@@ -12,6 +12,7 @@ import {
   Header,
   ParseFilePipeBuilder,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -33,6 +34,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
+import { FileExistGuard } from '../guards/file-exist.guard';
 
 @ApiTags('post')
 @Controller('post')
@@ -94,7 +96,8 @@ export class PostController {
     description: 'user display selected image',
   })
   @ApiOkResponse({ description: 'Return image' })
-  @ApiForbiddenResponse({ description: 'not implemented yet' })
+  // @ApiForbiddenResponse({ description: 'not implemented yet' })
+  @UseGuards(new FileExistGuard())
   @Public()
   @SkipThrottle()
   @Header('Content-Type', 'image/jpeg')

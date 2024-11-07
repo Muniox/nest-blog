@@ -200,7 +200,6 @@ export class PostService {
     return await this.postRepository.delete({ id });
   }
 
-  // TODO: Stwórz guarda który zwraca false jeśli plik w storage nie istnieje?
   async getFile(filename: string): Promise<StreamableFile> {
     const pathFile = path.join(process.cwd(), 'storage', `${filename}`);
     const file: ReadStream = createReadStream(pathFile);
