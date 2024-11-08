@@ -6,3 +6,5 @@ export * from './rt-cookie.confige';
 export * from './cors.config';
 export * from './throttler.config';
 export * from './swagger.config';
+export * from './jwt-access-token.config';
+export * from './jwt-refresh-token.config';

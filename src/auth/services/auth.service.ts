@@ -7,7 +7,12 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
 import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
-import { AtCookieConfig, RtCookieConfig } from '../../configs';
+import {
+  AtCookieConfig,
+  JwtAccessTokenConfig,
+  JwtRefreshTokenConfig,
+  RtCookieConfig,
+} from '../../configs';
 import { UserService, AdminPanelUserService } from '../../user/services';
 import { AuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
@@ -23,20 +28,10 @@ export class AuthService {
     private atCookieConfig: AtCookieConfig,
     private userService: UserService,
     private adminUserService: AdminPanelUserService,
+    private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
+    private jwtAccesTokenConfig: JwtAccessTokenConfig,
     @InjectMapper() private readonly classMapper: Mapper,
   ) {}
-
-  private readonly jwtSecretActivationToken: string =
-    this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN');
-
-  private readonly jwtExpirationTimeActivationToken: string =
-    this.configService.get<string>('JWT_EXPIRATION_TIME_ACCESS_TOKEN');
-
-  private readonly jwtSecretRefreshToken: string =
-    this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN');
-
-  private readonly jwtExpirationTimeRefreshToken: string =
-    this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
     const user: UserResponse =
@@ -135,20 +130,17 @@ export class AuthService {
 
   // Rfresh Token and Access Token payload
   async getTokens(payload: JwtPayload): Promise<Tokens> {
-    const [at, rt]: [at: string, rt: string] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: this.jwtSecretActivationToken,
-        expiresIn: this.jwtExpirationTimeActivationToken,
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: this.jwtSecretRefreshToken,
-        expiresIn: this.jwtExpirationTimeRefreshToken,
-      }),
+    const [accessToken, refreshToken]: [
+      accessToken: string,
+      refreshToken: string,
+    ] = await Promise.all([
+      this.jwtService.signAsync(payload, this.jwtAccesTokenConfig),
+      this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig),
     ]);
 
     return {
-      accessToken: at,
-      refreshToken: rt,
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -156,7 +148,7 @@ export class AuthService {
     userId: string,
     refreshToken: string,
   ): Promise<void> {
-    const hashRT: string = await hashData(refreshToken);
-    await this.userService.updateUserHashRT(userId, hashRT);
+    const hashedRefreshToken: string = await hashData(refreshToken);
+    await this.userService.updateUserHashRT(userId, hashedRefreshToken);
   }
 }

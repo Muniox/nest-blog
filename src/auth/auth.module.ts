@@ -2,7 +2,12 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { AtStrategy, LocalStrategy, RtStrategy } from './strategies';
-import { AtCookieConfig, RtCookieConfig } from '../configs';
+import {
+  AtCookieConfig,
+  JwtAccessTokenConfig,
+  JwtRefreshTokenConfig,
+  RtCookieConfig,
+} from '../configs';
 import { AuthService } from './services';
 import { AuthController } from './controllers';
 import { UserModule } from '../user/user.module';
@@ -19,6 +24,8 @@ import { UserMapper } from './mappers/user.mapper';
     RtCookieConfig,
     AtCookieConfig,
     UserMapper,
+    JwtAccessTokenConfig,
+    JwtRefreshTokenConfig,
   ],
 })
 export class AuthModule {}
