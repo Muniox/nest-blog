@@ -11,12 +11,7 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from '../services';
-import {
-  Tokens,
-  UserATRequestData,
-  UserResponse,
-  UserRTRequestData,
-} from '../../types';
+import { Tokens, UserATRequestData, UserRTRequestData } from '../../types';
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';

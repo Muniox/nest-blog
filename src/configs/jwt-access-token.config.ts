@@ -4,8 +4,6 @@ import { JwtSignOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtAccessTokenConfig implements JwtSignOptions {
-  constructor(private configService: ConfigService) {}
-
   secret?: string | Buffer = this.configService.get<string>(
     'JWT_SECRET_ACCESS_TOKEN',
   );
@@ -13,4 +11,12 @@ export class JwtAccessTokenConfig implements JwtSignOptions {
   expiresIn?: string | number = this.configService.get<string>(
     'JWT_EXPIRATION_TIME_ACCESS_TOKEN',
   );
+  constructor(private configService: ConfigService) {}
+
+  get config() {
+    return {
+      secret: this.secret,
+      expiresIn: this.expiresIn,
+    };
+  }
 }

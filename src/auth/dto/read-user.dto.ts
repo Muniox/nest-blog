@@ -18,16 +18,16 @@ export class ReadUserDto {
   email: string;
 
   @ApiProperty({
-    description: 'user role',
-    example: 'user',
-  })
-  @AutoMap()
-  role: string;
-
-  @ApiProperty({
     description: 'username',
     example: 'test9',
   })
   @AutoMap()
   username: string;
+
+  @ApiProperty({
+    description: 'user role',
+    example: 'user',
+  })
+  @AutoMap()
+  role: string;
 }

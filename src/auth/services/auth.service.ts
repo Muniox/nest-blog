@@ -134,8 +134,8 @@ export class AuthService {
       accessToken: string,
       refreshToken: string,
     ] = await Promise.all([
-      this.jwtService.signAsync(payload, this.jwtAccesTokenConfig),
-      this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig),
+      this.jwtService.signAsync(payload, this.jwtAccesTokenConfig.config),
+      this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig.config),
     ]);
 
     return {
