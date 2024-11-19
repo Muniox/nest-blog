@@ -13,7 +13,6 @@ import { AutoMap } from '@automapper/classes';
 import { UserRoleEntity } from './user-role.entity';
 import { PostEntity } from '../../post/entities';
 
-// TODO: add username to user (needed for displaying who published post!)
 @Entity({
   name: 'users',
 })
@@ -22,7 +21,6 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @AutoMap()
   @CreateDateColumn()
   createdAt: Date;
 
@@ -45,20 +43,19 @@ export class UserEntity {
   @Column()
   hash: string;
 
-  @AutoMap()
   @Column({
     nullable: true,
   })
   hashedRT: string;
 
-  @AutoMap()
+  @AutoMap(() => UserRoleEntity)
   @ManyToOne(() => UserRoleEntity, (userRole) => userRole.users, {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'roleId' })
   role: UserRoleEntity;
 
-  @AutoMap()
+  @AutoMap(() => [PostEntity])
   @OneToMany(() => PostEntity, (post) => post.user)
   posts: PostEntity[];
 }

@@ -11,7 +11,7 @@ import {
 import { AuthService } from './services';
 import { AuthController } from './controllers';
 import { UserModule } from '../user/user.module';
-import { UserMapper } from './mappers/user.mapper';
+import { AuthMapper } from './mappers/auth.mapper';
 
 @Module({
   imports: [JwtModule.register({}), UserModule],
@@ -23,7 +23,7 @@ import { UserMapper } from './mappers/user.mapper';
     LocalStrategy,
     RtCookieConfig,
     AtCookieConfig,
-    UserMapper,
+    AuthMapper,
     JwtAccessTokenConfig,
     JwtRefreshTokenConfig,
   ],

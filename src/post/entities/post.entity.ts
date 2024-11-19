@@ -9,37 +9,47 @@ import {
 } from 'typeorm';
 
 import { UserEntity } from '../../user/entities';
+import { AutoMap } from '@automapper/classes';
+import { User } from 'src/auth/decorators';
 
 @Entity({
   name: 'posts',
 })
 export class PostEntity {
+  @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @AutoMap()
   @Column()
   title: string;
 
+  @AutoMap()
   @Column({
     type: 'longtext',
   })
   description: string;
 
+  @AutoMap()
   @Column()
   img: string;
 
+  @AutoMap()
   @CreateDateColumn()
   createdAt: Date;
 
+  @AutoMap()
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AutoMap(() => UserEntity)
   @ManyToOne(() => UserEntity, (user) => user.posts, {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'userId' })
   user: UserEntity;
 
+  @AutoMap()
   @Column()
   category: string;
 }

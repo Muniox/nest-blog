@@ -6,7 +6,7 @@ import { Response } from 'express';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
-import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
+import { CookieNames, JwtPayload, Tokens } from '../../types';
 import {
   AtCookieConfig,
   JwtAccessTokenConfig,
@@ -17,7 +17,8 @@ import { UserService, AdminPanelUserService } from '../../user/services';
 import { AuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
-import { ReadUserDto } from '../dto/read-user.dto';
+import { ReadAuthUserDto } from '../dto/read-auth-user.dto';
+import { AutomapperReadUserDto } from 'src/user/dto/automapper-read-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -34,8 +35,8 @@ export class AuthService {
   ) {}
 
   async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user: UserResponse =
-      await this.adminUserService.createUserFiltered(loginDto);
+    const user: AutomapperReadUserDto =
+      await this.adminUserService.createUser(loginDto);
 
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
@@ -48,10 +49,14 @@ export class AuthService {
       });
   }
 
-  async login(user: UserEntity, res: Response): Promise<ReadUserDto> {
+  async login(user: UserEntity, res: Response): Promise<ReadAuthUserDto> {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
-    const mappToUserDTO = this.classMapper.map(user, UserEntity, ReadUserDto);
+    const mappToUserDTO = this.classMapper.map(
+      user,
+      UserEntity,
+      ReadAuthUserDto,
+    );
 
     res
       .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
@@ -118,7 +123,9 @@ export class AuthService {
     return user;
   }
 
-  private async getAndUpdateTokens(user: UserResponse): Promise<Tokens> {
+  private async getAndUpdateTokens(
+    user: UserEntity | AutomapperReadUserDto,
+  ): Promise<Tokens> {
     const tokens: Tokens = await this.getTokens({
       sub: user.id,
       email: user.email,

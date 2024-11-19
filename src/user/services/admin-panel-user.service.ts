@@ -5,8 +5,12 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
-import { MessageResponse, UserResponse } from '../../types';
+import { MessageResponse } from '../../types';
 import { UserService } from './user.service';
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
+import { AutomapperCreateUserDto } from '../dto/automapper-create-user.dto';
+import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
 // TODO: add username to user (needed for displaying who published post!)
 @Injectable()
@@ -16,56 +20,69 @@ export class AdminPanelUserService {
     private userRepository: Repository<UserEntity>,
     @InjectRepository(UserRoleEntity)
     private userRoleRepository: Repository<UserRoleEntity>,
+    @InjectMapper() private readonly automapper: Mapper,
     private userService: UserService,
   ) {}
 
-  async createUserFiltered(
+  async createUser(
     createUserDto: CreateUserDto,
-  ): Promise<UserResponse> {
-    const user: UserEntity = await this.userService.findUserByEmailOrUsername(
-      createUserDto.email,
-      createUserDto.username,
-    );
+  ): Promise<AutomapperReadUserDto> {
+    const checkUser: UserEntity =
+      await this.userService.findUserByEmailOrUsername(
+        createUserDto.email,
+        createUserDto.username,
+      );
 
-    if (user?.email === createUserDto.email) {
+    if (checkUser?.email === createUserDto.email) {
       throw new ConflictException('User with that email already exists');
     }
 
-    if (user?.username === createUserDto.username) {
+    if (checkUser?.username === createUserDto.username) {
       throw new ConflictException('User with that username already exists');
     }
 
-    if (user) {
+    if (checkUser) {
       throw new ConflictException('User already exists');
     }
 
-    const newUser = new UserEntity();
-    newUser.email = createUserDto.email;
-    newUser.username = createUserDto.username;
-    newUser.hash = await hashData(createUserDto.password);
-    newUser.role = await this.userRoleRepository.findOne({
-      where: { roleType: 'user' },
-    });
-    await this.userRepository.save(newUser);
-    return this.userService.filter(newUser);
+    const user = await this.automapper.mapAsync(
+      {
+        ...createUserDto,
+        role: await this.userRoleRepository.findOne({
+          where: { roleType: 'user' },
+        }),
+        hash: await hashData(createUserDto.password),
+      },
+      AutomapperCreateUserDto,
+      UserEntity,
+    );
+
+    return await this.automapper.mapAsync(
+      await this.userRepository.save(user),
+      UserEntity,
+      AutomapperReadUserDto,
+    );
   }
 
-  async findAllUsersFiltered(): Promise<UserResponse[]> {
-    const users: UserEntity[] = await this.userRepository.find({
-      relations: { role: true },
-    });
-    return users.map((user: UserEntity) => this.userService.filter(user));
+  async findOneUserMapped(id: string): Promise<AutomapperReadUserDto> {
+    return this.userService.findOneUserMapped(id);
   }
 
-  async findOneUserFiltered(id: string): Promise<UserResponse> {
-    return this.userService.filter(await this.userService.findOneUser(id));
+  async findAllUsersMapped(): Promise<AutomapperReadUserDto[]> {
+    return this.automapper.mapArrayAsync(
+      await this.userRepository.find({
+        relations: { role: true },
+      }),
+      UserEntity,
+      AutomapperReadUserDto,
+    );
   }
 
-  async updateUserFiltered(
+  async updateUserMapped(
     id: string,
     updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
-    return await this.userService.updateUserFiltered(id, updateUserDto);
+  ): Promise<AutomapperReadUserDto> {
+    return await this.userService.updateUserMapped(id, updateUserDto);
   }
 
   async removeUser(id: string): Promise<MessageResponse> {

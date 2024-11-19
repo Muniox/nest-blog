@@ -14,6 +14,7 @@ import { UpdateUserDto } from '../dto';
 import { UserResponse, MessageResponse, UserATRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
+import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -52,7 +53,7 @@ export class UserController {
   async updateUser(
     @User(UserATRequestData.sub) userId: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
-    return await this.userService.updateUserFiltered(userId, updateUserDto);
+  ): Promise<AutomapperReadUserDto> {
+    return await this.userService.updateUserMapped(userId, updateUserDto);
   }
 }

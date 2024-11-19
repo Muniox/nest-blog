@@ -25,6 +25,7 @@ import { CreateUserDto, UpdateUserDto } from '../dto';
 import { UserResponse, Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
+import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
 @ApiTags('admin-panel')
 @UseRole(Role.admin)
@@ -49,8 +50,8 @@ export class AdminPanelUserController {
   @Post()
   async createUser(
     @Body() createUserDto: CreateUserDto,
-  ): Promise<UserResponse> {
-    return await this.adminPanelUserService.createUserFiltered(createUserDto);
+  ): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.createUser(createUserDto);
   }
 
   @ApiCookieAuth()
@@ -63,8 +64,8 @@ export class AdminPanelUserController {
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Get()
-  async findAllUsers(): Promise<UserResponse[]> {
-    return await this.adminPanelUserService.findAllUsersFiltered();
+  async findAllUsers(): Promise<AutomapperReadUserDto[]> {
+    return await this.adminPanelUserService.findAllUsersMapped();
   }
 
   @ApiCookieAuth()
@@ -103,8 +104,8 @@ export class AdminPanelUserController {
     format: 'uuid',
   })
   @Get(':id')
-  async findOneUser(@Param('id') id: string): Promise<UserResponse> {
-    return await this.adminPanelUserService.findOneUserFiltered(id);
+  async findOneUser(@Param('id') id: string): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.findOneUserMapped(id);
   }
 
   @ApiCookieAuth()
@@ -131,11 +132,8 @@ export class AdminPanelUserController {
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
-    return await this.adminPanelUserService.updateUserFiltered(
-      id,
-      updateUserDto,
-    );
+  ): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.updateUserMapped(id, updateUserDto);
   }
 
   @ApiCookieAuth()
