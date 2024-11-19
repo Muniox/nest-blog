@@ -2,17 +2,19 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 
-import { CreateUserDto, UpdateUserDto } from '../dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  AutomapperCreateUserDto,
+  AutomapperReadUserDto,
+} from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
 import { MessageResponse } from '../../types';
 import { UserService } from './user.service';
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { AutomapperCreateUserDto } from '../dto/automapper-create-user.dto';
-import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
-// TODO: add username to user (needed for displaying who published post!)
 @Injectable()
 export class AdminPanelUserService {
   constructor(

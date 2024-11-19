@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { classes } from '@automapper/classes';
+import { AutomapperModule } from '@automapper/nestjs';
+
+import { DatabaseModule } from './database/database.module';
 import { Cors, envValidationObjectSchema, getThrottlerConfig } from './configs';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard, RolesGuard } from './auth/guards';
-import { APP_GUARD } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { PostModule } from './post/post.module';
-import { AutomapperModule } from '@automapper/nestjs';
-import { classes } from '@automapper/classes';
 
 @Module({
   imports: [

@@ -2,16 +2,17 @@ import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { UpdateUserDto } from '../dto';
+import {
+  UpdateUserDto,
+  AutomapperReadUserDto,
+  AutomapperUpdateUserDto,
+} from '../dto';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
 import { MessageResponse } from '../../types';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
-import { AutomapperUpdateUserDto } from '../dto/automapper-update-user.dto';
 
-// TODO: add username to user (needed for displaying who published post!)
 @Injectable()
 export class UserService {
   constructor(

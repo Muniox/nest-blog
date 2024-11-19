@@ -10,7 +10,6 @@ import {
 
 import { UserEntity } from '../../user/entities';
 import { AutoMap } from '@automapper/classes';
-import { User } from 'src/auth/decorators';
 
 @Entity({
   name: 'posts',

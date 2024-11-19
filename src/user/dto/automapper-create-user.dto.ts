@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+
 import { UserRoleEntity } from '../entities';
 
 export class AutomapperCreateUserDto {

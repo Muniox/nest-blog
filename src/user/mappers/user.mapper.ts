@@ -1,10 +1,13 @@
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { createMap, forMember, mapFrom, type Mapper } from '@automapper/core';
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../../user/entities';
-import { AutomapperCreateUserDto } from '../dto/automapper-create-user.dto';
-import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
-import { AutomapperUpdateUserDto } from '../dto/automapper-update-user.dto';
+
+import { UserEntity } from '../entities';
+import {
+  AutomapperCreateUserDto,
+  AutomapperReadUserDto,
+  AutomapperUpdateUserDto,
+} from '../dto';
 
 @Injectable()
 export class UserMapper extends AutomapperProfile {

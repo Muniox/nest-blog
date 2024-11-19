@@ -7,15 +7,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-
-import { Response } from 'express';
-
-import { AuthService } from '../services';
-import { Tokens, UserATRequestData, UserRTRequestData } from '../../types';
-import { RtGuard, LocalAuthGuard } from '../guards';
-import { User, Public } from '../decorators';
-import { UserEntity } from '../../user/entities';
-import { AuthDto } from '../dto';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -27,8 +18,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { LoginDto } from '../dto/login.dto';
-import { ReadAuthUserDto } from '../dto/read-auth-user.dto';
+
+import { Response } from 'express';
+
+import { AuthService } from '../services';
+import { Tokens, UserATRequestData, UserRTRequestData } from '../../types';
+import { RtGuard, LocalAuthGuard } from '../guards';
+import { User, Public } from '../decorators';
+import { UserEntity } from '../../user/entities';
+import { LoginDto, ReadAuthUserDto, AuthDto } from '../dto';
 
 @ApiTags('auth')
 @Controller('auth')

@@ -11,7 +11,7 @@ import {
 import { AuthService } from './services';
 import { AuthController } from './controllers';
 import { UserModule } from '../user/user.module';
-import { AuthMapper } from './mappers/auth.mapper';
+import { AuthMapper } from './mappers';
 
 @Module({
   imports: [JwtModule.register({}), UserModule],

@@ -4,7 +4,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { getTypeOrmConfig } from '../configs';
 
-// TODO: Change TypeOrm to prizma for better return type safety
 @Module({
   imports: [
     TypeOrmModule.forRootAsync({

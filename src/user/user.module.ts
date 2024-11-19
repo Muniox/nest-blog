@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService, AdminPanelUserService, AddRoleService } from './services';
 import { UserController, AdminPanelUserController } from './controllers';
 import { UserEntity, UserRoleEntity } from './entities';
-import { UserMapper } from './mappers/user.mapper';
+import { UserMapper } from './mappers';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, UserRoleEntity])],

@@ -21,11 +21,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { CreateUserDto, UpdateUserDto } from '../dto';
-import { UserResponse, Role, MessageResponse } from '../../types';
+import { CreateUserDto, UpdateUserDto, AutomapperReadUserDto } from '../dto';
+import { Role, MessageResponse } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
-import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
 @ApiTags('admin-panel')
 @UseRole(Role.admin)
