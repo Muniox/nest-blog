@@ -80,6 +80,7 @@ export class AuthController {
     return this.authService.login(user, res);
   }
 
+  // @TODO: Zastanowić się czy nie zrobić no content?
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'user log out',

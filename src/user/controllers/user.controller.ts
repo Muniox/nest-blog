@@ -1,4 +1,11 @@
-import { Body, Controller, Delete, HttpCode, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
@@ -33,7 +40,7 @@ export class UserController {
     // type: MessageResponse,
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async removeUser(
     @User(UserAaccessTokenRequestData.userId) userId: string,
