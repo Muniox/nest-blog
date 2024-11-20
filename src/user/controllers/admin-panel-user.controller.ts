@@ -39,6 +39,7 @@ export class AdminPanelUserController {
   })
   @ApiCreatedResponse({
     description: 'Return User Entity',
+    type: AutomapperReadUserDto,
   })
   @ApiConflictResponse({
     description:
@@ -60,6 +61,7 @@ export class AdminPanelUserController {
   })
   @ApiOkResponse({
     description: 'Return all users data',
+    type: [AutomapperReadUserDto],
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Get()
@@ -92,7 +94,10 @@ export class AdminPanelUserController {
     summary: 'get selected user data',
     description: 'Admin can get selected user data',
   })
-  @ApiOkResponse({ description: 'Return User Entity (user object)' })
+  @ApiOkResponse({
+    description: 'Return User Entity (user object)',
+    type: AutomapperReadUserDto,
+  })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",

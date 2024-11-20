@@ -2,9 +2,9 @@ import { Body, Controller, Delete, HttpCode, Patch } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiResponseProperty,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -27,9 +27,10 @@ export class UserController {
     summary: 'delete account',
     description: 'User can delete his account',
   })
-  @ApiResponse({
-    status: 204,
+  @ApiNoContentResponse({
     description: 'User was deleted',
+    // @TODO: add class respsonse for MessageResponse
+    // type: MessageResponse,
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @HttpCode(204)
@@ -47,6 +48,7 @@ export class UserController {
   })
   @ApiOkResponse({
     description: 'Return updated user entity',
+    type: AutomapperReadUserDto,
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiBadRequestResponse({ description: 'Provided wrong data' })
