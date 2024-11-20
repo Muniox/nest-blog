@@ -12,7 +12,7 @@ import {
 
 import { UserService } from '../services';
 import { UpdateUserDto } from '../dto';
-import { MessageResponse, UserATRequestData } from '../../types';
+import { MessageResponse, UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
 import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
@@ -35,7 +35,7 @@ export class UserController {
   @HttpCode(204)
   @Delete()
   async removeUser(
-    @User(UserATRequestData.sub) userId: string,
+    @User(UserAaccessTokenRequestData.userId) userId: string,
   ): Promise<MessageResponse> {
     return await this.userService.removeUser(userId);
   }
@@ -55,7 +55,7 @@ export class UserController {
   })
   @Patch()
   async updateUser(
-    @User(UserATRequestData.sub) userId: string,
+    @User(UserAaccessTokenRequestData.userId) userId: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.userService.updateUserMapped(userId, updateUserDto);

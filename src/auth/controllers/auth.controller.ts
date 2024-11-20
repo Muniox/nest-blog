@@ -22,7 +22,11 @@ import {
 import { Response } from 'express';
 
 import { AuthService } from '../services';
-import { Tokens, UserATRequestData, UserRTRequestData } from '../../types';
+import {
+  Tokens,
+  UserAaccessTokenRequestData,
+  UserRefreshTokenRequestData,
+} from '../../types';
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';
@@ -86,7 +90,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
-    @User(UserATRequestData.sub) userId: string,
+    @User(UserAaccessTokenRequestData.userId) userId: string,
     @Res() res: Response,
   ): Promise<Response> {
     return this.authService.logout(userId, res);
@@ -107,8 +111,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/refresh')
   async refreshTokens(
-    @User(UserRTRequestData.refreshToken) refreshToken: string,
-    @User(UserRTRequestData.sub) userId: string,
+    @User(UserRefreshTokenRequestData.refreshToken) refreshToken: string,
+    @User(UserRefreshTokenRequestData.userId) userId: string,
     @Res() res: Response,
   ): Promise<Response> {
     return this.authService.refreshTokens(userId, refreshToken, res);

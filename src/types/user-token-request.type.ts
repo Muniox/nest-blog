@@ -9,20 +9,21 @@ export type UserTokenRequest = {
 
 //TODO check if in access token data should be surname
 // Access Token data
-export enum UserATRequestData {
-  sub = 'sub',
+export enum UserAaccessTokenRequestData {
+  userId = 'sub',
   email = 'email',
   username = 'username',
-  iat = 'iat',
-  exp = 'exp',
+  issuedAt = 'iat',
+  expirationAt = 'exp',
 }
 
 //TODO check if in refresh token data should be surname
 // Refresh Token data
-export enum UserRTRequestData {
-  sub = 'sub',
+export enum UserRefreshTokenRequestData {
+  userId = 'sub',
   email = 'email',
-  iat = 'iat',
-  exp = 'exp',
+  username = 'username',
+  issuedAt = 'iat',
+  expirationAt = 'exp',
   refreshToken = 'refreshToken',
 }
