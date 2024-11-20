@@ -6,12 +6,12 @@ import { Response } from 'express';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
-import { CookieNames, JwtPayload, Tokens } from '../../types';
+import { CookieName, JwtPayload, Tokens } from '../../types';
 import {
-  AtCookieConfig,
+  AccessTokenCookieConfig,
   JwtAccessTokenConfig,
   JwtRefreshTokenConfig,
-  RtCookieConfig,
+  RefreshTokenCookieConfig,
 } from '../../configs';
 import { UserService, AdminPanelUserService } from '../../user/services';
 import { AuthDto } from '../dto';
@@ -25,8 +25,8 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-    private rtCookieConfig: RtCookieConfig,
-    private atCookieConfig: AtCookieConfig,
+    private refreshTokenCookieConfig: RefreshTokenCookieConfig,
+    private accessTokenCookieConfig: AccessTokenCookieConfig,
     private userService: UserService,
     private adminUserService: AdminPanelUserService,
     private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
@@ -41,8 +41,16 @@ export class AuthService {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     return res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig)
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      )
       .json({
         message: 'User was registered',
         statusCode: HttpStatus.CREATED,
@@ -59,8 +67,16 @@ export class AuthService {
     );
 
     res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig);
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      );
 
     return mappToUserDTO;
   }
@@ -72,11 +88,11 @@ export class AuthService {
     await this.adminUserService.logoutUser(userId);
 
     return res
-      .clearCookie(CookieNames.ACCESS, {
+      .clearCookie(CookieName.ACCESS, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: '/',
       })
-      .clearCookie(CookieNames.REFRESH, {
+      .clearCookie(CookieName.REFRESH, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: this.configService.get<string>('APP_REFRESH_PATH'),
       })
@@ -101,8 +117,16 @@ export class AuthService {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     return res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig)
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      )
       .json({
         message: `Tokens were refreshed`,
         statusCode: HttpStatus.OK,

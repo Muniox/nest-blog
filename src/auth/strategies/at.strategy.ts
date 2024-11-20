@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 
-import { CookieNames, JwtAccessToken, JwtReturnPayload } from '../../types';
+import { CookieName, JwtAccessToken, JwtReturnPayload } from '../../types';
 
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
@@ -13,7 +13,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request): string | null => {
           return req && req.cookies
-            ? req.cookies?.[CookieNames.ACCESS] ?? null
+            ? req.cookies?.[CookieName.ACCESS] ?? null
             : null;
         },
       ]),

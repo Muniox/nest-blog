@@ -3,10 +3,10 @@ import { JwtModule } from '@nestjs/jwt';
 
 import { AtStrategy, LocalStrategy, RtStrategy } from './strategies';
 import {
-  AtCookieConfig,
+  AccessTokenCookieConfig,
   JwtAccessTokenConfig,
   JwtRefreshTokenConfig,
-  RtCookieConfig,
+  RefreshTokenCookieConfig,
 } from '../configs';
 import { AuthService } from './services';
 import { AuthController } from './controllers';
@@ -21,8 +21,8 @@ import { AuthMapper } from './mappers';
     RtStrategy,
     AtStrategy,
     LocalStrategy,
-    RtCookieConfig,
-    AtCookieConfig,
+    RefreshTokenCookieConfig,
+    AccessTokenCookieConfig,
     AuthMapper,
     JwtAccessTokenConfig,
     JwtRefreshTokenConfig,

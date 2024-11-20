@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 
-import { CookieNames, JwtRefreshToken, JwtReturnPayload } from '../../types';
+import { CookieName, JwtRefreshToken, JwtReturnPayload } from '../../types';
 
 @Injectable()
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -13,7 +13,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
       jwtFromRequest: ExtractJwt.fromExtractors([
         (req: Request): string | null => {
           return req && req.cookies
-            ? req.cookies?.[CookieNames.REFRESH] ?? null
+            ? req.cookies?.[CookieName.REFRESH] ?? null
             : null;
         },
       ]),
@@ -24,7 +24,7 @@ export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   }
 
   validate(req: Request, payload: JwtReturnPayload): JwtRefreshToken {
-    const refreshToken: string = req.cookies?.[CookieNames.REFRESH];
+    const refreshToken: string = req.cookies?.[CookieName.REFRESH];
 
     if (payload.exp < Math.floor(Date.now() / 1000)) {
       throw new UnauthorizedException('Refresh token has expired.');

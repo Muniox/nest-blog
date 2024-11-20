@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, Patch } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiResponse,
   ApiResponseProperty,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -11,7 +12,7 @@ import {
 
 import { UserService } from '../services';
 import { UpdateUserDto } from '../dto';
-import { UserResponse, MessageResponse, UserATRequestData } from '../../types';
+import { MessageResponse, UserATRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
 import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
@@ -21,14 +22,17 @@ import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // TODO: czy nie powinien zwracać no content zamiast ok 200?
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete account',
     description: 'User can delete his account',
   })
-  @ApiOkResponse({ description: 'User was deleted' })
+  @ApiResponse({
+    status: 204,
+    description: 'User was deleted',
+  })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @HttpCode(204)
   @Delete()
   async removeUser(
     @User(UserATRequestData.sub) userId: string,
