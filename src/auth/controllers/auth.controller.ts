@@ -23,6 +23,7 @@ import { Response } from 'express';
 
 import { AuthService } from '../services';
 import {
+  MessageResponse,
   Tokens,
   UserAaccessTokenRequestData,
   UserRefreshTokenRequestData,
@@ -59,9 +60,9 @@ export class AuthController {
   @Post('/register')
   async register(
     @Body() dto: ValidationRequestAuthDto,
-    @Res() res: Response,
-  ): Promise<Tokens> {
-    return this.authService.register(dto, res);
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<MessageResponse> {
+    return await this.authService.register(dto, res);
   }
 
   @ApiOperation({
@@ -84,7 +85,7 @@ export class AuthController {
     @User() user: UserEntity,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AutomapperReadAuthUserDto> {
-    return this.authService.login(user, res);
+    return await this.authService.login(user, res);
   }
 
   // @TODO: Zastanowić się czy nie zrobić no content?
@@ -99,9 +100,9 @@ export class AuthController {
   @Post('/logout')
   async logout(
     @User(UserAaccessTokenRequestData.userId) userId: string,
-    @Res() res: Response,
-  ): Promise<Response> {
-    return this.authService.logout(userId, res);
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<MessageResponse> {
+    return await this.authService.logout(userId, res);
   }
 
   @ApiCookieAuth()
@@ -123,6 +124,6 @@ export class AuthController {
     @User(UserRefreshTokenRequestData.userId) userId: string,
     @Res() res: Response,
   ): Promise<Response> {
-    return this.authService.refreshTokens(userId, refreshToken, res);
+    return await this.authService.refreshTokens(userId, refreshToken, res);
   }
 }

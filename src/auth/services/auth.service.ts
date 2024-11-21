@@ -6,7 +6,7 @@ import { Response } from 'express';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
-import { CookieName, JwtPayload, Tokens } from '../../types';
+import { CookieName, JwtPayload, MessageResponse, Tokens } from '../../types';
 import {
   AccessTokenCookieConfig,
   JwtAccessTokenConfig,
@@ -37,13 +37,13 @@ export class AuthService {
   async register(
     loginDto: ValidationRequestAuthDto,
     res: Response,
-  ): Promise<any> {
+  ): Promise<MessageResponse> {
     const user: AutomapperReadUserDto =
       await this.adminUserService.createUser(loginDto);
 
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
-    return res
+    res
       .cookie(
         CookieName.REFRESH,
         tokens.refreshToken,
@@ -53,11 +53,12 @@ export class AuthService {
         CookieName.ACCESS,
         tokens.accessToken,
         this.accessTokenCookieConfig,
-      )
-      .json({
-        message: 'User was registered',
-        statusCode: HttpStatus.CREATED,
-      });
+      );
+
+    return {
+      message: 'User was registered',
+      statusCode: HttpStatus.CREATED,
+    };
   }
 
   async login(
@@ -87,13 +88,10 @@ export class AuthService {
     return mappToUserDTO;
   }
 
-  async logout(
-    userId: string,
-    res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  async logout(userId: string, res: Response): Promise<MessageResponse> {
     await this.adminUserService.logoutUser(userId);
 
-    return res
+    res
       .clearCookie(CookieName.ACCESS, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: '/',
@@ -101,11 +99,12 @@ export class AuthService {
       .clearCookie(CookieName.REFRESH, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: this.configService.get<string>('APP_REFRESH_PATH'),
-      })
-      .json({
-        message: 'User was logged out',
-        statusCode: HttpStatus.OK,
       });
+
+    return {
+      message: 'User was logged out',
+      statusCode: HttpStatus.OK,
+    };
   }
 
   async refreshTokens(

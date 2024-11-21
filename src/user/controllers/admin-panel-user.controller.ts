@@ -92,7 +92,7 @@ export class AdminPanelUserController {
   })
   @Get('logout/:id')
   async logoutUser(@Param('id') id: string): Promise<void> {
-    await this.adminPanelUserService.logoutUser(id);
+    return await this.adminPanelUserService.logoutUser(id);
   }
 
   @ApiCookieAuth()
