@@ -9,7 +9,7 @@ import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
 import {
-  UpdateUserDto,
+  ValidationRequestUpdateUserDto,
   AutomapperReadUserDto,
   AutomapperUpdateUserDto,
 } from '../dto';
@@ -44,7 +44,7 @@ export class UserService {
 
   async updateUserMapped(
     id: string,
-    updateUserDto: UpdateUserDto,
+    updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     const checkUser: UserEntity = await this.findUserByEmailOrUsername(
       updateUserDto.email,

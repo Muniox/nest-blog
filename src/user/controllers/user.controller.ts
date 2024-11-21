@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 
 import { UserService } from '../services';
-import { UpdateUserDto } from '../dto';
+import { ValidationRequestUpdateUserDto } from '../dto';
 import { UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
@@ -63,7 +63,7 @@ export class UserController {
   @Patch()
   async updateUser(
     @User(UserAaccessTokenRequestData.userId) userId: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.userService.updateUserMapped(userId, updateUserDto);
   }

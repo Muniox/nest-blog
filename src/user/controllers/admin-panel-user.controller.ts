@@ -23,7 +23,11 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { CreateUserDto, UpdateUserDto, AutomapperReadUserDto } from '../dto';
+import {
+  ValidationRequestCreateUserDto,
+  ValidationRequestUpdateUserDto,
+  AutomapperReadUserDto,
+} from '../dto';
 import { Role } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
@@ -51,7 +55,7 @@ export class AdminPanelUserController {
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Post()
   async createUser(
-    @Body() createUserDto: CreateUserDto,
+    @Body() createUserDto: ValidationRequestCreateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.adminPanelUserService.createUser(createUserDto);
   }
@@ -137,7 +141,7 @@ export class AdminPanelUserController {
   @Patch(':id')
   async updateUser(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
+    @Body() updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.adminPanelUserService.updateUserMapped(id, updateUserDto);
   }

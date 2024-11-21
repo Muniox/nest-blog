@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 
 import {
-  CreateUserDto,
-  UpdateUserDto,
+  ValidationRequestCreateUserDto,
+  ValidationRequestUpdateUserDto,
   AutomapperCreateUserDto,
   AutomapperReadUserDto,
 } from '../dto';
@@ -26,7 +26,7 @@ export class AdminPanelUserService {
   ) {}
 
   async createUser(
-    createUserDto: CreateUserDto,
+    createUserDto: ValidationRequestCreateUserDto,
   ): Promise<AutomapperReadUserDto> {
     const checkUser: UserEntity =
       await this.userService.findUserByEmailOrUsername(
@@ -81,7 +81,7 @@ export class AdminPanelUserService {
 
   async updateUserMapped(
     id: string,
-    updateUserDto: UpdateUserDto,
+    updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.userService.updateUserMapped(id, updateUserDto);
   }
