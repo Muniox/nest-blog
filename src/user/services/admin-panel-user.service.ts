@@ -90,7 +90,6 @@ export class AdminPanelUserService {
     return await this.userService.removeUser(id);
   }
 
-  // @TODO: sprawdzić czy user istnije i zapisać zmiany, jeśli nie istnieje zwrócić błąd
   async logoutUser(id: string): Promise<void> {
     await this.userRepository.update(
       { id, hashedRT: Not(IsNull()) },
