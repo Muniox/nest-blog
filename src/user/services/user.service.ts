@@ -98,7 +98,7 @@ export class UserService {
     await this.userRepository.remove([user]);
   }
 
-  async updateUserHashRT(id: string, hashRT: string): Promise<void> {
+  async updateUserHashRefreshToken(id: string, hashRT: string): Promise<void> {
     await this.userRepository.update({ id }, { hashedRT: hashRT });
   }
 

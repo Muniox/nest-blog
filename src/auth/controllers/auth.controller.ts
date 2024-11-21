@@ -30,7 +30,11 @@ import {
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';
-import { LoginDto, ReadAuthUserDto, AuthDto } from '../dto';
+import {
+  ValidationRequestLoginDto,
+  AutomapperReadAuthUserDto,
+  ValidationRequestAuthDto,
+} from '../dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -53,7 +57,10 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('/register')
-  async register(@Body() dto: AuthDto, @Res() res: Response): Promise<Tokens> {
+  async register(
+    @Body() dto: ValidationRequestAuthDto,
+    @Res() res: Response,
+  ): Promise<Tokens> {
     return this.authService.register(dto, res);
   }
 
@@ -63,11 +70,11 @@ export class AuthController {
   })
   @ApiOkResponse({
     description: 'User successfully log in',
-    type: ReadAuthUserDto,
+    type: AutomapperReadAuthUserDto,
   })
   @ApiUnauthorizedResponse({ description: 'Wrong username or password' })
   @ApiBody({
-    type: LoginDto,
+    type: ValidationRequestLoginDto,
   })
   @UseGuards(LocalAuthGuard)
   @Public()
@@ -76,7 +83,7 @@ export class AuthController {
   async login(
     @User() user: UserEntity,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<ReadAuthUserDto> {
+  ): Promise<AutomapperReadAuthUserDto> {
     return this.authService.login(user, res);
   }
 

@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ReadAuthUserDto {
+export class AutomapperReadAuthUserDto {
   @ApiProperty({
     description: 'UUID',
     format: 'uuid',

@@ -2,7 +2,7 @@ import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { createMap, forMember, mapFrom, type Mapper } from '@automapper/core';
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../../user/entities';
-import { ReadAuthUserDto } from '../dto';
+import { AutomapperReadAuthUserDto } from '../dto';
 
 @Injectable()
 export class AuthMapper extends AutomapperProfile {
@@ -15,7 +15,7 @@ export class AuthMapper extends AutomapperProfile {
       createMap(
         mapper,
         UserEntity,
-        ReadAuthUserDto,
+        AutomapperReadAuthUserDto,
         forMember(
           (destination) => destination.role,
           mapFrom((source) => source.role.roleType),

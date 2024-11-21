@@ -14,10 +14,10 @@ import {
   RefreshTokenCookieConfig,
 } from '../../configs';
 import { UserService, AdminPanelUserService } from '../../user/services';
-import { AuthDto } from '../dto';
+import { ValidationRequestAuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
-import { ReadAuthUserDto } from '../dto/read-auth-user.dto';
+import { AutomapperReadAuthUserDto } from '../dto/automapper-read-auth-user.dto';
 import { AutomapperReadUserDto } from 'src/user/dto/automapper-read-user.dto';
 
 @Injectable()
@@ -34,7 +34,10 @@ export class AuthService {
     @InjectMapper() private readonly classMapper: Mapper,
   ) {}
 
-  async register(loginDto: AuthDto, res: Response): Promise<any> {
+  async register(
+    loginDto: ValidationRequestAuthDto,
+    res: Response,
+  ): Promise<any> {
     const user: AutomapperReadUserDto =
       await this.adminUserService.createUser(loginDto);
 
@@ -57,13 +60,16 @@ export class AuthService {
       });
   }
 
-  async login(user: UserEntity, res: Response): Promise<ReadAuthUserDto> {
+  async login(
+    user: UserEntity,
+    res: Response,
+  ): Promise<AutomapperReadAuthUserDto> {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     const mappToUserDTO = this.classMapper.map(
       user,
       UserEntity,
-      ReadAuthUserDto,
+      AutomapperReadAuthUserDto,
     );
 
     res
@@ -155,7 +161,7 @@ export class AuthService {
       email: user.email,
       username: user.username,
     });
-    await this.updateRtHash(user.id, tokens.refreshToken);
+    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -175,11 +181,14 @@ export class AuthService {
     };
   }
 
-  private async updateRtHash(
+  private async updateRefreshTokenHash(
     userId: string,
     refreshToken: string,
   ): Promise<void> {
     const hashedRefreshToken: string = await hashData(refreshToken);
-    await this.userService.updateUserHashRT(userId, hashedRefreshToken);
+    await this.userService.updateUserHashRefreshToken(
+      userId,
+      hashedRefreshToken,
+    );
   }
 }
