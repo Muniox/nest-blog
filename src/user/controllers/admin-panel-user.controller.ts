@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -22,7 +24,7 @@ import {
 } from '@nestjs/swagger';
 
 import { CreateUserDto, UpdateUserDto, AutomapperReadUserDto } from '../dto';
-import { Role, MessageResponse } from '../../types';
+import { Role } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
 
@@ -145,7 +147,7 @@ export class AdminPanelUserController {
     summary: 'delete selected user account',
     description: 'Admin can delete selected user account',
   })
-  @ApiOkResponse({ description: 'User was deleted' })
+  @ApiNoContentResponse({ description: 'User was deleted' })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -155,8 +157,9 @@ export class AdminPanelUserController {
     format: 'uuid',
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  async removeUser(@Param('id') id: string): Promise<MessageResponse> {
+  async removeUser(@Param('id') id: string): Promise<void> {
     return await this.adminPanelUserService.removeUser(id);
   }
 }

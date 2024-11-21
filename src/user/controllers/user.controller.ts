@@ -19,7 +19,7 @@ import {
 
 import { UserService } from '../services';
 import { UpdateUserDto } from '../dto';
-import { MessageResponse, UserAaccessTokenRequestData } from '../../types';
+import { UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
 import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
@@ -36,15 +36,13 @@ export class UserController {
   })
   @ApiNoContentResponse({
     description: 'User was deleted',
-    // @TODO: add class respsonse for MessageResponse
-    // type: MessageResponse,
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async removeUser(
     @User(UserAaccessTokenRequestData.userId) userId: string,
-  ): Promise<MessageResponse> {
+  ): Promise<void> {
     return await this.userService.removeUser(userId);
   }
 

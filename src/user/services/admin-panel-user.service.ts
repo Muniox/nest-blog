@@ -10,7 +10,6 @@ import {
 } from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
-import { MessageResponse } from '../../types';
 import { UserService } from './user.service';
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
@@ -87,7 +86,7 @@ export class AdminPanelUserService {
     return await this.userService.updateUserMapped(id, updateUserDto);
   }
 
-  async removeUser(id: string): Promise<MessageResponse> {
+  async removeUser(id: string): Promise<void> {
     return await this.userService.removeUser(id);
   }
 

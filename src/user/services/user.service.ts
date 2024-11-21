@@ -1,6 +1,12 @@
-import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 
 import {
   UpdateUserDto,
@@ -9,9 +15,6 @@ import {
 } from '../dto';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
-import { MessageResponse } from '../../types';
-import { InjectMapper } from '@automapper/nestjs';
-import { Mapper } from '@automapper/core';
 
 @Injectable()
 export class UserService {
@@ -81,18 +84,18 @@ export class UserService {
     );
   }
 
-  async removeUser(id: string): Promise<MessageResponse> {
+  async removeUser(id: string): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id },
       relations: { role: true },
     });
 
-    await this.userRepository.remove([user]);
+    if (!user)
+      throw new ForbiddenException(
+        "User have no access to this resource or resources don't exist",
+      );
 
-    return {
-      message: 'User was deleted',
-      statusCode: HttpStatus.OK,
-    };
+    await this.userRepository.remove([user]);
   }
 
   async updateUserHashRT(id: string, hashRT: string): Promise<void> {
