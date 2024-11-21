@@ -24,7 +24,6 @@ import { Response } from 'express';
 import { AuthService } from '../services';
 import {
   MessageResponse,
-  Tokens,
   UserAaccessTokenRequestData,
   UserRefreshTokenRequestData,
 } from '../../types';

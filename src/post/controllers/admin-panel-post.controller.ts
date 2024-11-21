@@ -26,7 +26,7 @@ import {
 import { UpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
-import { Role } from '../../types';
+import { MessageResponse, Role } from '../../types';
 import { AdminPanelPostService } from '../services';
 
 @ApiTags('admin-panel')
@@ -75,7 +75,7 @@ export class AdminPanelPostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<MessageResponse> {
     return await this.adminPanelPostService.updatePost(id, updatePostDto, file);
   }
 

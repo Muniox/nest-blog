@@ -13,19 +13,24 @@ import {
   ParseFilePipeBuilder,
   HttpStatus,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { PostService } from '../services';
 import { UpdatePostDto, CreatePostDto } from '../dto';
 import { Public, User } from '../../auth/decorators';
-import { DeleteResult } from 'typeorm';
-import { PostResponse, UserAaccessTokenRequestData } from '../../types';
+import {
+  MessageResponse,
+  PostResponse,
+  UserAaccessTokenRequestData,
+} from '../../types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
   ApiCookieAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -72,7 +77,7 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<MessageResponse> {
     return await this.postService.createPostFiltered(
       createPostDto,
       userId,
@@ -96,7 +101,7 @@ export class PostController {
     description: 'user display selected image',
   })
   @ApiOkResponse({ description: 'Return image' })
-  @ApiForbiddenResponse({ description: "File dosen't exist" })
+  @ApiForbiddenResponse({ description: "File doesn't exist" })
   @UseGuards(new FileExistGuard())
   @Public()
   @SkipThrottle()
@@ -167,7 +172,7 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<MessageResponse> {
     return await this.postService.updatePost(id, updatePostDto, userId, file);
   }
 
@@ -177,7 +182,7 @@ export class PostController {
     description:
       'The user can delete a selected post of which he/she is the author',
   })
-  @ApiOkResponse({ description: 'Post was deleted' })
+  @ApiNoContentResponse({ description: 'Post was deleted' })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -187,11 +192,12 @@ export class PostController {
     name: 'id',
     format: 'uuid',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async removePostByUser(
     @Param('id') id: string,
     @User(UserAaccessTokenRequestData.userId) userId: string,
-  ): Promise<DeleteResult> {
+  ): Promise<void> {
     return await this.postService.removePost(id, userId);
   }
 }

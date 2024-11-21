@@ -197,7 +197,7 @@ export class PostService {
       );
     }
 
-    return await this.postRepository.delete({ id });
+    await this.postRepository.delete({ id });
   }
 
   async getFile(filename: string): Promise<StreamableFile> {
