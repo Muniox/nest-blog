@@ -7,7 +7,6 @@ export type UserTokenRequest = {
   refreshToken?: string;
 };
 
-//TODO check if in access token data should be surname
 // Access Token data
 export enum UserAaccessTokenRequestData {
   userId = 'sub',
@@ -17,7 +16,6 @@ export enum UserAaccessTokenRequestData {
   expirationAt = 'exp',
 }
 
-//TODO check if in refresh token data should be surname
 // Refresh Token data
 export enum UserRefreshTokenRequestData {
   userId = 'sub',

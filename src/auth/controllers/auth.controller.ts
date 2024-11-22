@@ -23,7 +23,6 @@ import { Response } from 'express';
 
 import { AuthService } from '../services';
 import {
-  MessageResponse,
   UserAaccessTokenRequestData,
   UserRefreshTokenRequestData,
 } from '../../types';
@@ -35,6 +34,7 @@ import {
   AutomapperReadAuthUserDto,
   ValidationRequestAuthDto,
 } from '../dto';
+import { ValidationResponseAuthMessageDto } from '../dto/validation-response-auth-message.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -45,7 +45,10 @@ export class AuthController {
     summary: 'register user',
     description: 'Register new user',
   })
-  @ApiCreatedResponse({ description: 'User was registered successfully' })
+  @ApiCreatedResponse({
+    description: 'User was registered successfully',
+    type: ValidationResponseAuthMessageDto,
+  })
   @ApiConflictResponse({
     description:
       'Conflict error after try to register User that have email or username taken',
@@ -60,7 +63,7 @@ export class AuthController {
   async register(
     @Body() dto: ValidationRequestAuthDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<MessageResponse> {
+  ): Promise<ValidationResponseAuthMessageDto> {
     return await this.authService.register(dto, res);
   }
 
@@ -93,14 +96,17 @@ export class AuthController {
     summary: 'user log out',
     description: 'User can log out of the api',
   })
-  @ApiOkResponse({ description: 'User successfully log out' })
+  @ApiOkResponse({
+    description: 'User successfully log out',
+    type: ValidationResponseAuthMessageDto,
+  })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
     @User(UserAaccessTokenRequestData.userId) userId: string,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<MessageResponse> {
+  ): Promise<ValidationResponseAuthMessageDto> {
     return await this.authService.logout(userId, res);
   }
 
@@ -109,7 +115,10 @@ export class AuthController {
     summary: 'refresh tokens',
     description: 'User can refresh tokens after access token expired',
   })
-  @ApiOkResponse({ description: 'Tokens were refreshed' })
+  @ApiOkResponse({
+    description: 'Tokens were refreshed',
+    type: ValidationResponseAuthMessageDto,
+  })
   @ApiUnauthorizedResponse({
     description:
       'User must be logged in to refresh tokens or refresh token expired',
@@ -121,8 +130,8 @@ export class AuthController {
   async refreshTokens(
     @User(UserRefreshTokenRequestData.refreshToken) refreshToken: string,
     @User(UserRefreshTokenRequestData.userId) userId: string,
-    @Res() res: Response,
-  ): Promise<Response> {
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<ValidationResponseAuthMessageDto> {
     return await this.authService.refreshTokens(userId, refreshToken, res);
   }
 }

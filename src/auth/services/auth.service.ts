@@ -6,7 +6,7 @@ import { Response } from 'express';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
-import { CookieName, JwtPayload, MessageResponse, Tokens } from '../../types';
+import { CookieName, JwtPayload, Tokens } from '../../types';
 import {
   AccessTokenCookieConfig,
   JwtAccessTokenConfig,
@@ -14,11 +14,13 @@ import {
   RefreshTokenCookieConfig,
 } from '../../configs';
 import { UserService, AdminPanelUserService } from '../../user/services';
-import { ValidationRequestAuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
-import { AutomapperReadAuthUserDto } from '../dto/automapper-read-auth-user.dto';
-import { AutomapperReadUserDto } from 'src/user/dto/automapper-read-user.dto';
+import {
+  AutomapperReadAuthUserDto,
+  ValidationResponseAuthMessageDto,
+  ValidationRequestAuthDto,
+} from '../dto';
 
 @Injectable()
 export class AuthService {
@@ -37,8 +39,8 @@ export class AuthService {
   async register(
     loginDto: ValidationRequestAuthDto,
     res: Response,
-  ): Promise<MessageResponse> {
-    const user: AutomapperReadUserDto =
+  ): Promise<ValidationResponseAuthMessageDto> {
+    const user: AutomapperReadAuthUserDto =
       await this.adminUserService.createUser(loginDto);
 
     const tokens: Tokens = await this.getAndUpdateTokens(user);
@@ -55,23 +57,23 @@ export class AuthService {
         this.accessTokenCookieConfig,
       );
 
-    return {
+    return new ValidationResponseAuthMessageDto({
       message: 'User was registered',
       statusCode: HttpStatus.CREATED,
-    };
+    });
   }
 
   async login(
     user: UserEntity,
     res: Response,
   ): Promise<AutomapperReadAuthUserDto> {
-    const tokens: Tokens = await this.getAndUpdateTokens(user);
-
     const mappToUserDTO = this.classMapper.map(
-      user,
-      UserEntity,
-      AutomapperReadAuthUserDto,
+      user, // what data I get
+      UserEntity, // what type/blueprint data is right now
+      AutomapperReadAuthUserDto, // what blueprint i want to get (example. without password)
     );
+
+    const tokens: Tokens = await this.getAndUpdateTokens(mappToUserDTO);
 
     res
       .cookie(
@@ -88,7 +90,10 @@ export class AuthService {
     return mappToUserDTO;
   }
 
-  async logout(userId: string, res: Response): Promise<MessageResponse> {
+  async logout(
+    userId: string,
+    res: Response,
+  ): Promise<ValidationResponseAuthMessageDto> {
     await this.adminUserService.logoutUser(userId);
 
     res
@@ -101,17 +106,17 @@ export class AuthService {
         path: this.configService.get<string>('APP_REFRESH_PATH'),
       });
 
-    return {
+    return new ValidationResponseAuthMessageDto({
       message: 'User was logged out',
       statusCode: HttpStatus.OK,
-    };
+    });
   }
 
   async refreshTokens(
     userId: string,
     rt: string | null,
     res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  ): Promise<ValidationResponseAuthMessageDto> {
     const user: UserEntity = await this.userService.findOneUser(userId);
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
@@ -119,9 +124,15 @@ export class AuthService {
     const rtMatches: boolean = await argon2.verify(user.hashedRT, rt);
     if (!rtMatches) throw new UnauthorizedException();
 
-    const tokens: Tokens = await this.getAndUpdateTokens(user);
+    const mappToUserDTO = this.classMapper.map(
+      user,
+      UserEntity,
+      AutomapperReadAuthUserDto,
+    );
 
-    return res
+    const tokens: Tokens = await this.getAndUpdateTokens(mappToUserDTO);
+
+    res
       .cookie(
         CookieName.REFRESH,
         tokens.refreshToken,
@@ -131,11 +142,12 @@ export class AuthService {
         CookieName.ACCESS,
         tokens.accessToken,
         this.accessTokenCookieConfig,
-      )
-      .json({
-        message: `Tokens were refreshed`,
-        statusCode: HttpStatus.OK,
-      });
+      );
+
+    return new ValidationResponseAuthMessageDto({
+      message: `Tokens were refreshed`,
+      statusCode: HttpStatus.OK,
+    });
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -153,7 +165,7 @@ export class AuthService {
   }
 
   private async getAndUpdateTokens(
-    user: UserEntity | AutomapperReadUserDto,
+    user: AutomapperReadAuthUserDto,
   ): Promise<Tokens> {
     const tokens: Tokens = await this.getTokens({
       sub: user.id,
