@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 
-import { UpdatePostDto } from '../dto';
+import { ValidationUpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
 import { PostResponse } from '../../types';
 import { PostService } from './post.service';
@@ -21,7 +21,7 @@ export class AdminPanelPostService {
 
   async updatePostByUser(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
@@ -42,7 +42,7 @@ export class AdminPanelPostService {
 
   async updatePost(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     file: Express.Multer.File,
   ): Promise<{ message: string; statusCode: number }> {
     const post: PostResponse = await this.postService.findOnePostFiltered(id);

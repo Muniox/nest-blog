@@ -5,6 +5,8 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createReadStream, ReadStream } from 'fs';
@@ -14,11 +16,17 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as sanitizeHtml from 'sanitize-html';
 
-import { CreatePostDto, UpdatePostDto } from '../dto';
+import {
+  AutomapperReadPostDto,
+  ValidationCreatePostDto,
+  ValidationResponsePostMessageDto,
+  ValidationUpdatePostDto,
+} from '../dto';
 import { PostEntity } from '../entities';
 import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
 import { PostResponse } from '../../types';
+import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
 
 @Injectable()
 export class PostService {
@@ -26,6 +34,7 @@ export class PostService {
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
     private userService: UserService,
+    @InjectMapper() private readonly automapper: Mapper,
   ) {}
 
   // TODO: zmienić filter na interceptor
@@ -60,11 +69,11 @@ export class PostService {
     };
   }
 
-  async createPostFiltered(
-    createPostDto: CreatePostDto,
+  async createPostMapped(
+    createPostDto: ValidationCreatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<AutomapperReadPostDto> {
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
 
     try {
@@ -73,23 +82,28 @@ export class PostService {
         file.buffer,
       );
     } catch (error) {
-      Logger.log(error);
+      Logger.log(error.message);
     }
 
     const user: UserEntity = await this.userService.findOneUser(userId);
 
-    const post: PostEntity = new PostEntity();
-    post.user = user;
-    post.title = sanitizeHtml(createPostDto.title);
-    post.description = sanitizeHtml(createPostDto.description);
-    post.category = sanitizeHtml(createPostDto.category);
-    post.img = filename;
-    await this.postRepository.save(post);
+    const post = await this.automapper.mapAsync(
+      {
+        ...user,
+        title: sanitizeHtml(createPostDto.title),
+        description: sanitizeHtml(createPostDto.description),
+        category: sanitizeHtml(createPostDto.category),
+        img: filename,
+      },
+      AutomapperCreatePostDto,
+      PostEntity,
+    );
 
-    return {
-      message: `post created`,
-      statusCode: 201,
-    };
+    return await this.automapper.mapAsync(
+      await this.postRepository.save(post),
+      PostEntity,
+      AutomapperReadPostDto,
+    );
   }
 
   async findAllPostsFiltered(): Promise<PostResponse[]> {
@@ -100,7 +114,14 @@ export class PostService {
         },
       },
     });
-    return posts.map((post: PostEntity) => this.filter(post));
+
+    return await this.automapper.mapArrayAsync(
+      posts,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
+
+    // return posts.map((post: PostEntity) => this.filter(post));
   }
 
   async findOnePostFiltered(id: string): Promise<PostResponse> {
@@ -140,7 +161,7 @@ export class PostService {
   async update(
     post: PostResponse | PostEntity,
     file: Express.Multer.File,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
   ) {
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
 
@@ -173,10 +194,10 @@ export class PostService {
 
   async updatePost(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<ValidationResponsePostMessageDto> {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id !== userId) {

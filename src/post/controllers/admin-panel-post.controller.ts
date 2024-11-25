@@ -23,7 +23,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-import { UpdatePostDto } from '../dto';
+import { ValidationUpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
 import { MessageResponse, Role } from '../../types';
@@ -60,7 +60,7 @@ export class AdminPanelPostController {
   @Patch(':id')
   async updatePost(
     @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
+    @Body() updatePostDto: ValidationUpdatePostDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({

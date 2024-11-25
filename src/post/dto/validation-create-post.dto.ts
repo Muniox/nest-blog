@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreatePostDto {
+export class ValidationCreatePostDto {
   @ApiProperty({ type: 'string', format: 'binary', description: 'image' })
   file: any;
 

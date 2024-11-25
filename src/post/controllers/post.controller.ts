@@ -18,7 +18,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { PostService } from '../services';
-import { UpdatePostDto, CreatePostDto } from '../dto';
+import {
+  ValidationUpdatePostDto,
+  ValidationCreatePostDto,
+  AutomapperReadPostDto,
+} from '../dto';
 import { Public, User } from '../../auth/decorators';
 import {
   MessageResponse,
@@ -62,7 +66,7 @@ export class PostController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('/upload')
   async createPost(
-    @Body() createPostDto: CreatePostDto,
+    @Body() createPostDto: ValidationCreatePostDto,
     @User(UserAaccessTokenRequestData.userId) userId: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
@@ -77,12 +81,8 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<MessageResponse> {
-    return await this.postService.createPostFiltered(
-      createPostDto,
-      userId,
-      file,
-    );
+  ): Promise<AutomapperReadPostDto> {
+    return await this.postService.createPostMapped(createPostDto, userId, file);
   }
 
   @ApiOperation({
@@ -157,7 +157,7 @@ export class PostController {
   async updatePost(
     @User(UserAaccessTokenRequestData.userId) userId: string,
     @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
+    @Body() updatePostDto: ValidationUpdatePostDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
