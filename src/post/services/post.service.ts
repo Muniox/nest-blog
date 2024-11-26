@@ -19,7 +19,6 @@ import * as sanitizeHtml from 'sanitize-html';
 import {
   AutomapperReadPostDto,
   ValidationCreatePostDto,
-  ValidationResponsePostMessageDto,
   ValidationUpdatePostDto,
 } from '../dto';
 import { PostEntity } from '../entities';
@@ -27,6 +26,7 @@ import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
 import { PostResponse } from '../../types';
 import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
+import { AutomapperUpdatePostDto } from '../dto/automapper-update-post.dto';
 
 @Injectable()
 export class PostService {
@@ -36,38 +36,6 @@ export class PostService {
     private userService: UserService,
     @InjectMapper() private readonly automapper: Mapper,
   ) {}
-
-  // TODO: zmienić filter na interceptor
-  filter(post: PostEntity): PostResponse {
-    const {
-      id,
-      title,
-      description,
-      img,
-      createdAt,
-      updatedAt,
-      category,
-      user,
-    } = post;
-    const { role, username } = user;
-    const { roleType } = role;
-
-    return {
-      id,
-      title,
-      description,
-      img,
-      createdAt,
-      updatedAt,
-      category,
-      user: {
-        username,
-        role: {
-          roleType,
-        },
-      },
-    };
-  }
 
   async createPostMapped(
     createPostDto: ValidationCreatePostDto,
@@ -89,7 +57,7 @@ export class PostService {
 
     const post = await this.automapper.mapAsync(
       {
-        ...user,
+        user,
         title: sanitizeHtml(createPostDto.title),
         description: sanitizeHtml(createPostDto.description),
         category: sanitizeHtml(createPostDto.category),
@@ -106,7 +74,7 @@ export class PostService {
     );
   }
 
-  async findAllPostsFiltered(): Promise<PostResponse[]> {
+  async findAllPostsMapped(): Promise<AutomapperReadPostDto[]> {
     const posts: PostEntity[] = await this.postRepository.find({
       relations: {
         user: {
@@ -115,16 +83,16 @@ export class PostService {
       },
     });
 
+    // @TODO: jeśli user jest usunięty i post niema przypisanego usera to wyrzuca błąd 500
+
     return await this.automapper.mapArrayAsync(
       posts,
       PostEntity,
       AutomapperReadPostDto,
     );
-
-    // return posts.map((post: PostEntity) => this.filter(post));
   }
 
-  async findOnePostFiltered(id: string): Promise<PostResponse> {
+  async findOnePostMapped(id: string): Promise<AutomapperReadPostDto> {
     const post: PostEntity = await this.postRepository.findOne({
       where: { id },
       relations: {
@@ -134,11 +102,17 @@ export class PostService {
       },
     });
 
+    // @TODO: jeśli user jest usunięty i post niema przypisanego usera to wyrzuca błąd 500
+
     if (!post) {
       throw new ForbiddenException(`Post with this id don't exist`);
     }
 
-    return this.filter(post);
+    return await this.automapper.mapAsync(
+      post,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
   }
 
   async findOnePost(id: string): Promise<PostEntity> {
@@ -159,7 +133,7 @@ export class PostService {
   }
 
   async update(
-    post: PostResponse | PostEntity,
+    post: PostEntity,
     file: Express.Multer.File,
     updatePostDto: ValidationUpdatePostDto,
   ) {
@@ -173,23 +147,47 @@ export class PostService {
 
       await fs.unlink(path.join(process.cwd(), 'storage', post.img));
     } catch (error) {
-      Logger.log(error);
+      Logger.log(error.message);
     }
 
-    await this.postRepository.update(
-      { id: post.id },
+    const updatedPost = await this.automapper.mapAsync(
       {
-        title: sanitizeHtml(updatePostDto.title),
-        description: sanitizeHtml(updatePostDto.description),
+        ...post,
+        title: updatePostDto.title
+          ? sanitizeHtml(updatePostDto.title)
+          : post.title,
+        description: updatePostDto.description
+          ? sanitizeHtml(updatePostDto.description)
+          : post.description,
         img: file ? filename : post.img,
-        category: sanitizeHtml(updatePostDto.category),
+        category: updatePostDto.category
+          ? sanitizeHtml(updatePostDto.category)
+          : post.category,
       },
+      AutomapperUpdatePostDto,
+      PostEntity,
     );
 
-    return {
-      message: `post ${post.title} updated`,
-      statusCode: 201,
-    };
+    return await this.automapper.mapAsync(
+      updatedPost,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
+
+    // await this.postRepository.update(
+    //   { id: post.id },
+    //   {
+    //     title: sanitizeHtml(updatePostDto.title),
+    //     description: sanitizeHtml(updatePostDto.description),
+    //     img: file ? filename : post.img,
+    //     category: sanitizeHtml(updatePostDto.category),
+    //   },
+    // );
+
+    // return {
+    //   message: `post ${post.title} updated`,
+    //   statusCode: 201,
+    // };
   }
 
   async updatePost(
@@ -197,7 +195,7 @@ export class PostService {
     updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<ValidationResponsePostMessageDto> {
+  ): Promise<AutomapperReadPostDto> {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id !== userId) {

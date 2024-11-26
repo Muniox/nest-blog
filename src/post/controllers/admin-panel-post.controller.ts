@@ -26,7 +26,7 @@ import {
 import { ValidationUpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
 import { DeleteResult } from 'typeorm';
-import { MessageResponse, Role } from '../../types';
+import { Role } from '../../types';
 import { AdminPanelPostService } from '../services';
 
 @ApiTags('admin-panel')
@@ -40,7 +40,10 @@ export class AdminPanelPostController {
     summary: 'update selected post',
     description: 'Admin can update selected post',
   })
-  @ApiOkResponse({ description: 'Post was updated' })
+  @ApiOkResponse({
+    description: 'Post was updated',
+    type: ValidationUpdatePostDto,
+  })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -75,7 +78,7 @@ export class AdminPanelPostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<MessageResponse> {
+  ): Promise<ValidationUpdatePostDto> {
     return await this.adminPanelPostService.updatePost(id, updatePostDto, file);
   }
 
@@ -95,6 +98,7 @@ export class AdminPanelPostController {
     format: 'uuid',
   })
   @Delete(':id')
+  // @TODO: powinien zwrócić no content
   async removePost(@Param('id') id: string): Promise<DeleteResult> {
     return await this.adminPanelPostService.removePost(id);
   }

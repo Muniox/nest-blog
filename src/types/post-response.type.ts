@@ -1,5 +1,3 @@
-import { Role } from './user-roles';
-
 export type PostResponse = {
   id: string;
   title: string;
@@ -8,6 +6,8 @@ export type PostResponse = {
   createdAt: Date;
   updatedAt: Date;
   category: string;
-  username: string;
-  role: Role;
+  user: {
+    username: string;
+    role: string;
+  };
 };

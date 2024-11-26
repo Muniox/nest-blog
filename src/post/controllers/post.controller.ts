@@ -24,11 +24,7 @@ import {
   AutomapperReadPostDto,
 } from '../dto';
 import { Public, User } from '../../auth/decorators';
-import {
-  MessageResponse,
-  PostResponse,
-  UserAaccessTokenRequestData,
-} from '../../types';
+import { PostResponse, UserAaccessTokenRequestData } from '../../types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -55,7 +51,7 @@ export class PostController {
     summary: 'create post',
     description: 'user can create post',
   })
-  @ApiOkResponse({ description: 'Post created' })
+  @ApiOkResponse({ description: 'Post created', type: AutomapperReadPostDto })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiUnprocessableEntityResponse({
     description:
@@ -89,18 +85,21 @@ export class PostController {
     summary: 'return all posts',
     description: 'user can get all posts',
   })
-  @ApiOkResponse({ description: 'return all posts' })
+  @ApiOkResponse({
+    description: 'return all posts',
+    type: [AutomapperReadPostDto],
+  })
   @Public()
   @Get()
-  async findAllPosts(): Promise<PostResponse[]> {
-    return await this.postService.findAllPostsFiltered();
+  async findAllPosts(): Promise<AutomapperReadPostDto[]> {
+    return await this.postService.findAllPostsMapped();
   }
 
   @ApiOperation({
     summary: 'return selected image',
     description: 'user display selected image',
   })
-  @ApiOkResponse({ description: 'Return image' })
+  @ApiOkResponse({ description: 'Return image', type: StreamableFile })
   @ApiForbiddenResponse({ description: "File doesn't exist" })
   @UseGuards(new FileExistGuard())
   @Public()
@@ -115,7 +114,7 @@ export class PostController {
     summary: 'return selected post',
     description: 'User can get selected post',
   })
-  @ApiOkResponse({ description: 'Return post' })
+  @ApiOkResponse({ description: 'Return post', type: AutomapperReadPostDto })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -126,8 +125,8 @@ export class PostController {
   })
   @Public()
   @Get(':id')
-  async findOnePost(@Param('id') id: string): Promise<PostResponse> {
-    return await this.postService.findOnePostFiltered(id);
+  async findOnePost(@Param('id') id: string): Promise<AutomapperReadPostDto> {
+    return await this.postService.findOnePostMapped(id);
   }
 
   @ApiCookieAuth()
@@ -172,7 +171,7 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<MessageResponse> {
+  ): Promise<AutomapperReadPostDto> {
     return await this.postService.updatePost(id, updatePostDto, userId, file);
   }
 

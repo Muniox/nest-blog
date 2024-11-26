@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role, UserResponse } from '../../types';
+import { UserResponse } from '../../types';
 
 export class AutomapperReadAuthUserDto implements UserResponse {
   @ApiProperty({
@@ -30,5 +30,5 @@ export class AutomapperReadAuthUserDto implements UserResponse {
     example: 'user',
   })
   @AutoMap()
-  role: Role;
+  role: string;
 }

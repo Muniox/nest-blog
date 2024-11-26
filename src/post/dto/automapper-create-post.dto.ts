@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { AutoMap } from '@automapper/classes';
+import { UserEntity } from '../../user/entities';
 
 export class AutomapperCreatePostDto {
   @AutoMap()
@@ -24,6 +25,9 @@ export class AutomapperCreatePostDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @AutoMap(() => UserEntity)
+  user: UserEntity;
 
   @AutoMap()
   @ApiProperty({

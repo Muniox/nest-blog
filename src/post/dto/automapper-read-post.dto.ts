@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { PostResponse, Role } from 'src/types';
+import { PostResponse } from '../../types';
 
 export class AutomapperReadPostDto implements PostResponse {
   @AutoMap()
@@ -22,8 +22,8 @@ export class AutomapperReadPostDto implements PostResponse {
   category: string;
 
   @AutoMap()
-  username: string;
-
-  @AutoMap()
-  role: Role;
+  user: {
+    username: string;
+    role: string;
+  };
 }

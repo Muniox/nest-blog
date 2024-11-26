@@ -8,7 +8,6 @@ import { DeleteResult, Repository } from 'typeorm';
 
 import { ValidationUpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
-import { PostResponse } from '../../types';
 import { PostService } from './post.service';
 
 @Injectable()
@@ -24,7 +23,7 @@ export class AdminPanelPostService {
     updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<ValidationUpdatePostDto> {
     const post: PostEntity = await this.postService.findOnePost(id);
 
     if (!post) {
@@ -44,8 +43,8 @@ export class AdminPanelPostService {
     id: string,
     updatePostDto: ValidationUpdatePostDto,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.postService.findOnePostFiltered(id);
+  ): Promise<ValidationUpdatePostDto> {
+    const post: PostEntity = await this.postService.findOnePost(id);
 
     if (!post) {
       throw new ForbiddenException('There is no post with that id');
