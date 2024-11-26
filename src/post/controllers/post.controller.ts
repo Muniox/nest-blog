@@ -135,7 +135,10 @@ export class PostController {
     description:
       'The user can update a selected post of which he/she is the author',
   })
-  @ApiOkResponse({ description: 'Post was updated' })
+  @ApiOkResponse({
+    description: 'Post was updated',
+    type: AutomapperReadPostDto,
+  })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
