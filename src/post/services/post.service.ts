@@ -24,7 +24,6 @@ import {
 import { PostEntity } from '../entities';
 import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
-import { PostResponse } from '../../types';
 import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
 import { AutomapperUpdatePostDto } from '../dto/automapper-update-post.dto';
 

@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { ValidationUpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
@@ -53,7 +53,7 @@ export class AdminPanelPostService {
     return await this.postService.update(post, file, updatePostDto);
   }
 
-  async removePost(id: string): Promise<DeleteResult> {
-    return await this.postRepository.delete({ id });
+  async removePost(id: string): Promise<void> {
+    await this.postRepository.delete({ id });
   }
 }

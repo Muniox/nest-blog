@@ -7,6 +7,7 @@ import {
   ValidationRequestUpdateUserDto,
   AutomapperCreateUserDto,
   AutomapperReadUserDto,
+  AutomapperUpdateUserDto,
 } from '../dto';
 import { UserEntity, UserRoleEntity } from '../entities';
 import { hashData } from '../../utils';
@@ -28,11 +29,13 @@ export class AdminPanelUserService {
   async createUser(
     createUserDto: ValidationRequestCreateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    const checkUser: UserEntity =
-      await this.userService.findUserByEmailOrUsername(
-        createUserDto.email,
-        createUserDto.username,
-      );
+    const checkUser: UserEntity = await this.userRepository.findOne({
+      where: [
+        { email: createUserDto.email },
+        { username: createUserDto.username },
+      ],
+      relations: { role: true },
+    });
 
     if (checkUser?.email === createUserDto.email) {
       throw new ConflictException('User with that email already exists');
@@ -83,7 +86,45 @@ export class AdminPanelUserService {
     id: string,
     updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    return await this.userService.updateUserMapped(id, updateUserDto);
+    const checkUser: UserEntity = await this.userRepository.findOne({
+      where: [
+        { email: updateUserDto.email },
+        { username: updateUserDto.username },
+      ],
+      relations: { role: true },
+    });
+
+    if (checkUser?.email === updateUserDto.email) {
+      throw new ConflictException(`User with this email already exist`);
+    }
+
+    if (checkUser?.username === updateUserDto.username) {
+      throw new ConflictException(`User with this username already exist`);
+    }
+
+    const user: UserEntity = await this.userRepository.findOne({
+      where: { id },
+      relations: { role: true },
+    });
+
+    const newUser = await this.automapper.mapAsync(
+      {
+        ...user,
+        email: updateUserDto.email,
+        username: updateUserDto.username,
+        hash: updateUserDto.password
+          ? await hashData(updateUserDto.password)
+          : user.hash,
+      },
+      AutomapperUpdateUserDto,
+      UserEntity,
+    );
+
+    return this.automapper.mapAsync(
+      await this.userRepository.save(newUser),
+      UserEntity,
+      AutomapperReadUserDto,
+    );
   }
 
   async removeUser(id: string): Promise<void> {

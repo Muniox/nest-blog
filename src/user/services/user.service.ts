@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
@@ -46,10 +46,13 @@ export class UserService {
     id: string,
     updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    const checkUser: UserEntity = await this.findUserByEmailOrUsername(
-      updateUserDto.email,
-      updateUserDto.username,
-    );
+    const checkUser: UserEntity = await this.userRepository.findOne({
+      where: [
+        { email: updateUserDto.email, id: Not(id) },
+        { username: updateUserDto.username, id: Not(id) },
+      ],
+      relations: { role: true },
+    });
 
     if (checkUser?.email === updateUserDto.email) {
       throw new ConflictException(`User with this email already exist`);
@@ -106,16 +109,6 @@ export class UserService {
   async findUserByEmail(email: string): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: { email },
-      relations: { role: true },
-    });
-  }
-
-  async findUserByEmailOrUsername(
-    email: string,
-    username: string,
-  ): Promise<UserEntity> {
-    return await this.userRepository.findOne({
-      where: [{ email }, { username }],
       relations: { role: true },
     });
   }

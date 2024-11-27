@@ -8,6 +8,7 @@ import {
   UploadedFile,
   ParseFilePipeBuilder,
   HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -15,6 +16,7 @@ import {
   ApiConsumes,
   ApiCookieAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -25,7 +27,6 @@ import {
 
 import { ValidationUpdatePostDto } from '../dto';
 import { UseRole } from '../../auth/decorators';
-import { DeleteResult } from 'typeorm';
 import { Role } from '../../types';
 import { AdminPanelPostService } from '../services';
 
@@ -87,7 +88,7 @@ export class AdminPanelPostController {
     summary: 'delete selected post',
     description: 'Admin can delete selected post',
   })
-  @ApiOkResponse({ description: 'Selected Post was deleted' })
+  @ApiNoContentResponse({ description: 'Selected Post was deleted' })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -97,9 +98,9 @@ export class AdminPanelPostController {
     name: 'id',
     format: 'uuid',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  // @TODO: powinien zwrócić no content
-  async removePost(@Param('id') id: string): Promise<DeleteResult> {
+  async removePost(@Param('id') id: string): Promise<void> {
     return await this.adminPanelPostService.removePost(id);
   }
 }

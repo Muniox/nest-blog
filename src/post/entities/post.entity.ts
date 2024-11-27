@@ -33,9 +33,11 @@ export class PostEntity {
   @Column()
   img: string;
 
+  @AutoMap()
   @CreateDateColumn()
   createdAt: Date;
 
+  @AutoMap()
   @UpdateDateColumn()
   updatedAt: Date;
 

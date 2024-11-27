@@ -24,7 +24,7 @@ import {
   AutomapperReadPostDto,
 } from '../dto';
 import { Public, User } from '../../auth/decorators';
-import { PostResponse, UserAaccessTokenRequestData } from '../../types';
+import { UserAaccessTokenRequestData } from '../../types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
