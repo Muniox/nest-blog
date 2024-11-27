@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -21,8 +23,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { CreateUserDto, UpdateUserDto } from '../dto';
-import { UserResponse, Role, MessageResponse } from '../../types';
+import {
+  ValidationRequestCreateUserDto,
+  ValidationRequestUpdateUserDto,
+  AutomapperReadUserDto,
+} from '../dto';
+import { Role } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';
 
@@ -39,6 +45,7 @@ export class AdminPanelUserController {
   })
   @ApiCreatedResponse({
     description: 'Return User Entity',
+    type: AutomapperReadUserDto,
   })
   @ApiConflictResponse({
     description:
@@ -48,9 +55,9 @@ export class AdminPanelUserController {
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Post()
   async createUser(
-    @Body() createUserDto: CreateUserDto,
-  ): Promise<UserResponse> {
-    return await this.adminPanelUserService.createUserFiltered(createUserDto);
+    @Body() createUserDto: ValidationRequestCreateUserDto,
+  ): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.createUser(createUserDto);
   }
 
   @ApiCookieAuth()
@@ -60,11 +67,12 @@ export class AdminPanelUserController {
   })
   @ApiOkResponse({
     description: 'Return all users data',
+    type: [AutomapperReadUserDto],
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @Get()
-  async findAllUsers(): Promise<UserResponse[]> {
-    return await this.adminPanelUserService.findAllUsersFiltered();
+  async findAllUsers(): Promise<AutomapperReadUserDto[]> {
+    return await this.adminPanelUserService.findAllUsersMapped();
   }
 
   @ApiCookieAuth()
@@ -84,7 +92,7 @@ export class AdminPanelUserController {
   })
   @Get('logout/:id')
   async logoutUser(@Param('id') id: string): Promise<void> {
-    await this.adminPanelUserService.logoutUser(id);
+    return await this.adminPanelUserService.logoutUser(id);
   }
 
   @ApiCookieAuth()
@@ -92,7 +100,10 @@ export class AdminPanelUserController {
     summary: 'get selected user data',
     description: 'Admin can get selected user data',
   })
-  @ApiOkResponse({ description: 'Return User Entity (user object)' })
+  @ApiOkResponse({
+    description: 'Return User Entity (user object)',
+    type: AutomapperReadUserDto,
+  })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -103,8 +114,8 @@ export class AdminPanelUserController {
     format: 'uuid',
   })
   @Get(':id')
-  async findOneUser(@Param('id') id: string): Promise<UserResponse> {
-    return await this.adminPanelUserService.findOneUserFiltered(id);
+  async findOneUser(@Param('id') id: string): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.findOneUserMapped(id);
   }
 
   @ApiCookieAuth()
@@ -130,12 +141,9 @@ export class AdminPanelUserController {
   @Patch(':id')
   async updateUser(
     @Param('id') id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
-    return await this.adminPanelUserService.updateUserFiltered(
-      id,
-      updateUserDto,
-    );
+    @Body() updateUserDto: ValidationRequestUpdateUserDto,
+  ): Promise<AutomapperReadUserDto> {
+    return await this.adminPanelUserService.updateUserMapped(id, updateUserDto);
   }
 
   @ApiCookieAuth()
@@ -143,7 +151,7 @@ export class AdminPanelUserController {
     summary: 'delete selected user account',
     description: 'Admin can delete selected user account',
   })
-  @ApiOkResponse({ description: 'User was deleted' })
+  @ApiNoContentResponse({ description: 'User was deleted' })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -153,8 +161,9 @@ export class AdminPanelUserController {
     format: 'uuid',
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  async removeUser(@Param('id') id: string): Promise<MessageResponse> {
+  async removeUser(@Param('id') id: string): Promise<void> {
     return await this.adminPanelUserService.removeUser(id);
   }
 }

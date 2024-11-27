@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateUserDto {
+export class ValidationRequestAuthDto {
   @ApiProperty({
     description: 'User email',
     example: 'test@email.com',

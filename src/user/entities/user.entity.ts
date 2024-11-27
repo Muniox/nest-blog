@@ -8,15 +8,16 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AutoMap } from '@automapper/classes';
 
 import { UserRoleEntity } from './user-role.entity';
 import { PostEntity } from '../../post/entities';
 
-// TODO: add username to user (needed for displaying who published post!)
 @Entity({
   name: 'users',
 })
 export class UserEntity {
+  @AutoMap()
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -26,16 +27,19 @@ export class UserEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @AutoMap()
   @Column({
     unique: true,
   })
   username: string;
 
+  @AutoMap()
   @Column({
     unique: true,
   })
   email: string;
 
+  @AutoMap()
   @Column()
   hash: string;
 
@@ -44,12 +48,14 @@ export class UserEntity {
   })
   hashedRT: string;
 
+  @AutoMap(() => UserRoleEntity)
   @ManyToOne(() => UserRoleEntity, (userRole) => userRole.users, {
     onDelete: 'SET NULL',
   })
   @JoinColumn({ name: 'roleId' })
   role: UserRoleEntity;
 
+  @AutoMap(() => [PostEntity])
   @OneToMany(() => PostEntity, (post) => post.user)
   posts: PostEntity[];
 }

@@ -1,23 +1,27 @@
 export type UserTokenRequest = {
   sub: string; //userId
   email: string; //userEmail
-  surname: string;
+  username: string;
   iat: number;
   exp: number;
   refreshToken?: string;
 };
 
-export enum UserATRequestData {
-  sub = 'sub',
+// Access Token data
+export enum UserAaccessTokenRequestData {
+  userId = 'sub',
   email = 'email',
-  iat = 'iat',
-  exp = 'exp',
+  username = 'username',
+  issuedAt = 'iat',
+  expirationAt = 'exp',
 }
 
-export enum UserRTRequestData {
-  sub = 'sub',
+// Refresh Token data
+export enum UserRefreshTokenRequestData {
+  userId = 'sub',
   email = 'email',
-  iat = 'iat',
-  exp = 'exp',
+  username = 'username',
+  issuedAt = 'iat',
+  expirationAt = 'exp',
   refreshToken = 'refreshToken',
 }

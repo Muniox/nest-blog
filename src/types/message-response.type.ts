@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
+
 export type MessageResponse = {
   message: string;
-  statusCode: number;
+  statusCode: HttpStatus;
 };

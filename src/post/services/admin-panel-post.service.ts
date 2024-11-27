@@ -4,11 +4,10 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
-import { UpdatePostDto } from '../dto';
+import { ValidationUpdatePostDto } from '../dto';
 import { PostEntity } from '../entities';
-import { PostResponse } from '../../types';
 import { PostService } from './post.service';
 
 @Injectable()
@@ -21,10 +20,10 @@ export class AdminPanelPostService {
 
   async updatePostByUser(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<ValidationUpdatePostDto> {
     const post: PostEntity = await this.postService.findOnePost(id);
 
     if (!post) {
@@ -42,10 +41,10 @@ export class AdminPanelPostService {
 
   async updatePost(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    const post: PostResponse = await this.postService.findOnePostFiltered(id);
+  ): Promise<ValidationUpdatePostDto> {
+    const post: PostEntity = await this.postService.findOnePost(id);
 
     if (!post) {
       throw new ForbiddenException('There is no post with that id');
@@ -54,7 +53,7 @@ export class AdminPanelPostService {
     return await this.postService.update(post, file, updatePostDto);
   }
 
-  async removePost(id: string): Promise<DeleteResult> {
-    return await this.postRepository.delete({ id });
+  async removePost(id: string): Promise<void> {
+    await this.postRepository.delete({ id });
   }
 }

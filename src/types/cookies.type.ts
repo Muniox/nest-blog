@@ -1,4 +1,4 @@
-export enum CookieNames {
+export enum CookieName {
   ACCESS = 'Access',
   REFRESH = 'Refresh',
 }

@@ -1,7 +1,15 @@
-import { Body, Controller, Delete, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiCookieAuth,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiResponseProperty,
@@ -10,28 +18,31 @@ import {
 } from '@nestjs/swagger';
 
 import { UserService } from '../services';
-import { UpdateUserDto } from '../dto';
-import { UserResponse, MessageResponse, UserATRequestData } from '../../types';
+import { ValidationRequestUpdateUserDto } from '../dto';
+import { UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
+import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // TODO: czy nie powinien zwracać no content zamiast ok 200?
   @ApiCookieAuth()
   @ApiOperation({
     summary: 'delete account',
     description: 'User can delete his account',
   })
-  @ApiOkResponse({ description: 'User was deleted' })
+  @ApiNoContentResponse({
+    description: 'User was deleted',
+  })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async removeUser(
-    @User(UserATRequestData.sub) userId: string,
-  ): Promise<MessageResponse> {
+    @User(UserAaccessTokenRequestData.userId) userId: string,
+  ): Promise<void> {
     return await this.userService.removeUser(userId);
   }
 
@@ -42,6 +53,7 @@ export class UserController {
   })
   @ApiOkResponse({
     description: 'Return updated user entity',
+    type: AutomapperReadUserDto,
   })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiBadRequestResponse({ description: 'Provided wrong data' })
@@ -50,9 +62,9 @@ export class UserController {
   })
   @Patch()
   async updateUser(
-    @User(UserATRequestData.sub) userId: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<UserResponse> {
-    return await this.userService.updateUserFiltered(userId, updateUserDto);
+    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @Body() updateUserDto: ValidationRequestUpdateUserDto,
+  ): Promise<AutomapperReadUserDto> {
+    return await this.userService.updateUserMapped(userId, updateUserDto);
   }
 }

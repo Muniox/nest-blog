@@ -12,19 +12,25 @@ import {
   Header,
   ParseFilePipeBuilder,
   HttpStatus,
+  UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { PostService } from '../services';
-import { UpdatePostDto, CreatePostDto } from '../dto';
+import {
+  ValidationUpdatePostDto,
+  ValidationCreatePostDto,
+  AutomapperReadPostDto,
+} from '../dto';
 import { Public, User } from '../../auth/decorators';
-import { DeleteResult } from 'typeorm';
-import { PostResponse, UserATRequestData } from '../../types';
+import { UserAaccessTokenRequestData } from '../../types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
   ApiCookieAuth,
   ApiForbiddenResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -33,6 +39,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
+import { FileExistGuard } from '../guards/file-exist.guard';
 
 @ApiTags('post')
 @Controller('post')
@@ -44,7 +51,7 @@ export class PostController {
     summary: 'create post',
     description: 'user can create post',
   })
-  @ApiOkResponse({ description: 'Post created' })
+  @ApiOkResponse({ description: 'Post created', type: AutomapperReadPostDto })
   @ApiUnauthorizedResponse({ description: 'User must be logged in' })
   @ApiUnprocessableEntityResponse({
     description:
@@ -55,8 +62,8 @@ export class PostController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('/upload')
   async createPost(
-    @Body() createPostDto: CreatePostDto,
-    @User(UserATRequestData.sub) userId: string,
+    @Body() createPostDto: ValidationCreatePostDto,
+    @User(UserAaccessTokenRequestData.userId) userId: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -70,31 +77,31 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
-    return await this.postService.createPostFiltered(
-      createPostDto,
-      userId,
-      file,
-    );
+  ): Promise<AutomapperReadPostDto> {
+    return await this.postService.createPostMapped(createPostDto, userId, file);
   }
 
   @ApiOperation({
     summary: 'return all posts',
     description: 'user can get all posts',
   })
-  @ApiOkResponse({ description: 'return all posts' })
+  @ApiOkResponse({
+    description: 'return all posts',
+    type: [AutomapperReadPostDto],
+  })
   @Public()
   @Get()
-  async findAllPosts(): Promise<PostResponse[]> {
-    return await this.postService.findAllPostsFiltered();
+  async findAllPosts(): Promise<AutomapperReadPostDto[]> {
+    return await this.postService.findAllPostsMapped();
   }
 
   @ApiOperation({
     summary: 'return selected image',
     description: 'user display selected image',
   })
-  @ApiOkResponse({ description: 'Return image' })
-  @ApiForbiddenResponse({ description: 'not implemented yet' })
+  @ApiOkResponse({ description: 'Return image', type: StreamableFile })
+  @ApiForbiddenResponse({ description: "File doesn't exist" })
+  @UseGuards(new FileExistGuard())
   @Public()
   @SkipThrottle()
   @Header('Content-Type', 'image/jpeg')
@@ -107,7 +114,7 @@ export class PostController {
     summary: 'return selected post',
     description: 'User can get selected post',
   })
-  @ApiOkResponse({ description: 'Return post' })
+  @ApiOkResponse({ description: 'Return post', type: AutomapperReadPostDto })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -118,8 +125,8 @@ export class PostController {
   })
   @Public()
   @Get(':id')
-  async findOnePost(@Param('id') id: string): Promise<PostResponse> {
-    return await this.postService.findOnePostFiltered(id);
+  async findOnePost(@Param('id') id: string): Promise<AutomapperReadPostDto> {
+    return await this.postService.findOnePostMapped(id);
   }
 
   @ApiCookieAuth()
@@ -128,7 +135,10 @@ export class PostController {
     description:
       'The user can update a selected post of which he/she is the author',
   })
-  @ApiOkResponse({ description: 'Post was updated' })
+  @ApiOkResponse({
+    description: 'Post was updated',
+    type: AutomapperReadPostDto,
+  })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -147,9 +157,9 @@ export class PostController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async updatePost(
-    @User(UserATRequestData.sub) userId: string,
+    @User(UserAaccessTokenRequestData.userId) userId: string,
     @Param('id') id: string,
-    @Body() updatePostDto: UpdatePostDto,
+    @Body() updatePostDto: ValidationUpdatePostDto,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -164,7 +174,7 @@ export class PostController {
         }),
     )
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<AutomapperReadPostDto> {
     return await this.postService.updatePost(id, updatePostDto, userId, file);
   }
 
@@ -174,7 +184,7 @@ export class PostController {
     description:
       'The user can delete a selected post of which he/she is the author',
   })
-  @ApiOkResponse({ description: 'Post was deleted' })
+  @ApiNoContentResponse({ description: 'Post was deleted' })
   @ApiForbiddenResponse({
     description:
       "User have no access to this resource or resources don't exist",
@@ -184,11 +194,12 @@ export class PostController {
     name: 'id',
     format: 'uuid',
   })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async removePostByUser(
     @Param('id') id: string,
-    @User(UserATRequestData.sub) userId: string,
-  ): Promise<DeleteResult> {
+    @User(UserAaccessTokenRequestData.userId) userId: string,
+  ): Promise<void> {
     return await this.postService.removePost(id, userId);
   }
 }

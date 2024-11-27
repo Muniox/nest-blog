@@ -5,6 +5,8 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { createReadStream, ReadStream } from 'fs';
@@ -14,11 +16,16 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as sanitizeHtml from 'sanitize-html';
 
-import { CreatePostDto, UpdatePostDto } from '../dto';
+import {
+  AutomapperReadPostDto,
+  ValidationCreatePostDto,
+  ValidationUpdatePostDto,
+} from '../dto';
 import { PostEntity } from '../entities';
 import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
-import { PostResponse } from '../../types';
+import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
+import { AutomapperUpdatePostDto } from '../dto/automapper-update-post.dto';
 
 @Injectable()
 export class PostService {
@@ -26,45 +33,14 @@ export class PostService {
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
     private userService: UserService,
+    @InjectMapper() private readonly automapper: Mapper,
   ) {}
 
-  // TODO: zmienić filter na interceptor
-  filter(post: PostEntity): PostResponse {
-    const {
-      id,
-      title,
-      description,
-      img,
-      createdAt,
-      updatedAt,
-      category,
-      user,
-    } = post;
-    const { role, username } = user;
-    const { roleType } = role;
-
-    return {
-      id,
-      title,
-      description,
-      img,
-      createdAt,
-      updatedAt,
-      category,
-      user: {
-        username,
-        role: {
-          roleType,
-        },
-      },
-    };
-  }
-
-  async createPostFiltered(
-    createPostDto: CreatePostDto,
+  async createPostMapped(
+    createPostDto: ValidationCreatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<AutomapperReadPostDto> {
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
 
     try {
@@ -73,26 +49,31 @@ export class PostService {
         file.buffer,
       );
     } catch (error) {
-      Logger.log(error);
+      Logger.log(error.message);
     }
 
     const user: UserEntity = await this.userService.findOneUser(userId);
 
-    const post: PostEntity = new PostEntity();
-    post.user = user;
-    post.title = sanitizeHtml(createPostDto.title);
-    post.description = sanitizeHtml(createPostDto.description);
-    post.category = sanitizeHtml(createPostDto.category);
-    post.img = filename;
-    await this.postRepository.save(post);
+    const post = await this.automapper.mapAsync(
+      {
+        user,
+        title: sanitizeHtml(createPostDto.title),
+        description: sanitizeHtml(createPostDto.description),
+        category: sanitizeHtml(createPostDto.category),
+        img: filename,
+      },
+      AutomapperCreatePostDto,
+      PostEntity,
+    );
 
-    return {
-      message: `post created`,
-      statusCode: 201,
-    };
+    return await this.automapper.mapAsync(
+      await this.postRepository.save(post),
+      PostEntity,
+      AutomapperReadPostDto,
+    );
   }
 
-  async findAllPostsFiltered(): Promise<PostResponse[]> {
+  async findAllPostsMapped(): Promise<AutomapperReadPostDto[]> {
     const posts: PostEntity[] = await this.postRepository.find({
       relations: {
         user: {
@@ -100,10 +81,17 @@ export class PostService {
         },
       },
     });
-    return posts.map((post: PostEntity) => this.filter(post));
+
+    // @TODO: jeśli user jest usunięty i post niema przypisanego usera to wyrzuca błąd 500
+
+    return await this.automapper.mapArrayAsync(
+      posts,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
   }
 
-  async findOnePostFiltered(id: string): Promise<PostResponse> {
+  async findOnePostMapped(id: string): Promise<AutomapperReadPostDto> {
     const post: PostEntity = await this.postRepository.findOne({
       where: { id },
       relations: {
@@ -113,11 +101,17 @@ export class PostService {
       },
     });
 
+    // @TODO: jeśli user jest usunięty i post niema przypisanego usera to wyrzuca błąd 500
+
     if (!post) {
       throw new ForbiddenException(`Post with this id don't exist`);
     }
 
-    return this.filter(post);
+    return await this.automapper.mapAsync(
+      post,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
   }
 
   async findOnePost(id: string): Promise<PostEntity> {
@@ -138,9 +132,9 @@ export class PostService {
   }
 
   async update(
-    post: PostResponse | PostEntity,
+    post: PostEntity,
     file: Express.Multer.File,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
   ) {
     const filename: string = `${uuid()}.${mime.getExtension(file?.mimetype)}`;
 
@@ -152,31 +146,55 @@ export class PostService {
 
       await fs.unlink(path.join(process.cwd(), 'storage', post.img));
     } catch (error) {
-      Logger.log(error);
+      Logger.log(error.message);
     }
 
-    await this.postRepository.update(
-      { id: post.id },
+    const updatedPost = await this.automapper.mapAsync(
       {
-        title: sanitizeHtml(updatePostDto.title),
-        description: sanitizeHtml(updatePostDto.description),
+        ...post,
+        title: updatePostDto.title
+          ? sanitizeHtml(updatePostDto.title)
+          : post.title,
+        description: updatePostDto.description
+          ? sanitizeHtml(updatePostDto.description)
+          : post.description,
         img: file ? filename : post.img,
-        category: sanitizeHtml(updatePostDto.category),
+        category: updatePostDto.category
+          ? sanitizeHtml(updatePostDto.category)
+          : post.category,
       },
+      AutomapperUpdatePostDto,
+      PostEntity,
     );
 
-    return {
-      message: `post ${post.title} updated`,
-      statusCode: 201,
-    };
+    return await this.automapper.mapAsync(
+      updatedPost,
+      PostEntity,
+      AutomapperReadPostDto,
+    );
+
+    // await this.postRepository.update(
+    //   { id: post.id },
+    //   {
+    //     title: sanitizeHtml(updatePostDto.title),
+    //     description: sanitizeHtml(updatePostDto.description),
+    //     img: file ? filename : post.img,
+    //     category: sanitizeHtml(updatePostDto.category),
+    //   },
+    // );
+
+    // return {
+    //   message: `post ${post.title} updated`,
+    //   statusCode: 201,
+    // };
   }
 
   async updatePost(
     id: string,
-    updatePostDto: UpdatePostDto,
+    updatePostDto: ValidationUpdatePostDto,
     userId: string,
     file: Express.Multer.File,
-  ): Promise<{ message: string; statusCode: number }> {
+  ): Promise<AutomapperReadPostDto> {
     const post: PostEntity = await this.findOnePost(id);
 
     if (post.user.id !== userId) {
@@ -197,10 +215,9 @@ export class PostService {
       );
     }
 
-    return await this.postRepository.delete({ id });
+    await this.postRepository.delete({ id });
   }
 
-  // TODO: Stwórz guarda który zwraca false jeśli plik w storage nie istnieje?
   async getFile(filename: string): Promise<StreamableFile> {
     const pathFile = path.join(process.cwd(), 'storage', `${filename}`);
     const file: ReadStream = createReadStream(pathFile);

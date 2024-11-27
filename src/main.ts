@@ -6,8 +6,9 @@ import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
-import { Cors } from './configs';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Cors, swaggerConfig } from './configs';
+import { SwaggerModule } from '@nestjs/swagger';
+import { isProduction } from './utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +16,7 @@ async function bootstrap() {
     new ValidationPipe({
       // validateCustomDecorators: true, //make error for globally only dunno why??
       transform: true,
-      disableErrorMessages: false,
+      disableErrorMessages: isProduction(),
       whitelist: true,
       forbidNonWhitelisted: true,
       transformOptions: {
@@ -24,17 +25,6 @@ async function bootstrap() {
     }),
   );
 
-  const swaggerConfig = new DocumentBuilder()
-    .addCookieAuth('Access', {
-      type: 'apiKey',
-      in: 'cookie',
-    })
-    .setTitle('nest-blog')
-    .setDescription(
-      'The blog API description.\n\n After creating an account and logging in, it is not necessary to add a cookie value to the swagger authorize input.',
-    )
-    .setVersion('0.0.1')
-    .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 

@@ -3,88 +3,120 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
 import { Response } from 'express';
+import { InjectMapper } from '@automapper/nestjs';
+import { Mapper } from '@automapper/core';
 
-import { CookieNames, JwtPayload, Tokens, UserResponse } from '../../types';
-import { AtCookieConfig, RtCookieConfig } from '../../configs';
+import { CookieName, JwtPayload, Tokens } from '../../types';
+import {
+  AccessTokenCookieConfig,
+  JwtAccessTokenConfig,
+  JwtRefreshTokenConfig,
+  RefreshTokenCookieConfig,
+} from '../../configs';
 import { UserService, AdminPanelUserService } from '../../user/services';
-import { AuthDto } from '../dto';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
+import {
+  AutomapperReadAuthUserDto,
+  ValidationResponseAuthMessageDto,
+  ValidationRequestAuthDto,
+} from '../dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     private configService: ConfigService,
-    private rtCookieConfig: RtCookieConfig,
-    private atCookieConfig: AtCookieConfig,
+    private refreshTokenCookieConfig: RefreshTokenCookieConfig,
+    private accessTokenCookieConfig: AccessTokenCookieConfig,
     private userService: UserService,
     private adminUserService: AdminPanelUserService,
+    private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
+    private jwtAccesTokenConfig: JwtAccessTokenConfig,
+    @InjectMapper() private readonly classMapper: Mapper,
   ) {}
 
-  private readonly jwtSecretActivationToken: string =
-    this.configService.get<string>('JWT_SECRET_ACCESS_TOKEN');
+  async register(
+    loginDto: ValidationRequestAuthDto,
+    res: Response,
+  ): Promise<ValidationResponseAuthMessageDto> {
+    const user: AutomapperReadAuthUserDto =
+      await this.adminUserService.createUser(loginDto);
 
-  private readonly jwtExpirationTimeActivationToken: string =
-    this.configService.get<string>('JWT_EXPIRATION_TIME_ACCESS_TOKEN');
-
-  private readonly jwtSecretRefreshToken: string =
-    this.configService.get<string>('JWT_SECRET_REFRESH_TOKEN');
-
-  private readonly jwtExpirationTimeRefreshToken: string =
-    this.configService.get<string>('JWT_EXPIRATION_TIME_REFRESH_TOKEN');
-
-  async register(loginDto: AuthDto, res: Response): Promise<any> {
-    const user: UserResponse =
-      await this.adminUserService.createUserFiltered(loginDto);
-
-    const tokens: Tokens = await this.getAndUpdateTokens(user);
-
-    return res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig)
-      .json({
-        message: 'User was registered',
-        statusCode: HttpStatus.CREATED,
-      });
-  }
-
-  async login(user: UserEntity, res: Response): Promise<UserResponse> {
     const tokens: Tokens = await this.getAndUpdateTokens(user);
 
     res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig);
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      );
 
-    return this.userService.filter(user);
+    return new ValidationResponseAuthMessageDto({
+      message: 'User was registered',
+      statusCode: HttpStatus.CREATED,
+    });
+  }
+
+  async login(
+    user: UserEntity,
+    res: Response,
+  ): Promise<AutomapperReadAuthUserDto> {
+    const mappToUserDTO = this.classMapper.map(
+      user, // what data I get
+      UserEntity, // what type/blueprint data is right now
+      AutomapperReadAuthUserDto, // what blueprint i want to get (example. without password)
+    );
+
+    const tokens: Tokens = await this.getAndUpdateTokens(mappToUserDTO);
+
+    res
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      );
+
+    return mappToUserDTO;
   }
 
   async logout(
     userId: string,
     res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  ): Promise<ValidationResponseAuthMessageDto> {
     await this.adminUserService.logoutUser(userId);
 
-    return res
-      .clearCookie(CookieNames.ACCESS, {
+    res
+      .clearCookie(CookieName.ACCESS, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: '/',
       })
-      .clearCookie(CookieNames.REFRESH, {
+      .clearCookie(CookieName.REFRESH, {
         domain: this.configService.get<string>('APP_DOMAIN'),
         path: this.configService.get<string>('APP_REFRESH_PATH'),
-      })
-      .json({
-        message: 'User was logged out',
-        statusCode: HttpStatus.OK,
       });
+
+    return new ValidationResponseAuthMessageDto({
+      message: 'User was logged out',
+      statusCode: HttpStatus.OK,
+    });
   }
 
   async refreshTokens(
     userId: string,
     rt: string | null,
     res: Response,
-  ): Promise<Response<any, Record<string, any>>> {
+  ): Promise<ValidationResponseAuthMessageDto> {
     const user: UserEntity = await this.userService.findOneUser(userId);
 
     if (!user || !user.hashedRT) throw new UnauthorizedException();
@@ -92,15 +124,30 @@ export class AuthService {
     const rtMatches: boolean = await argon2.verify(user.hashedRT, rt);
     if (!rtMatches) throw new UnauthorizedException();
 
-    const tokens: Tokens = await this.getAndUpdateTokens(user);
+    const mappToUserDTO = this.classMapper.map(
+      user,
+      UserEntity,
+      AutomapperReadAuthUserDto,
+    );
 
-    return res
-      .cookie(CookieNames.REFRESH, tokens.refreshToken, this.rtCookieConfig)
-      .cookie(CookieNames.ACCESS, tokens.accessToken, this.atCookieConfig)
-      .json({
-        message: `Tokens were refreshed`,
-        statusCode: HttpStatus.OK,
-      });
+    const tokens: Tokens = await this.getAndUpdateTokens(mappToUserDTO);
+
+    res
+      .cookie(
+        CookieName.REFRESH,
+        tokens.refreshToken,
+        this.refreshTokenCookieConfig,
+      )
+      .cookie(
+        CookieName.ACCESS,
+        tokens.accessToken,
+        this.accessTokenCookieConfig,
+      );
+
+    return new ValidationResponseAuthMessageDto({
+      message: `Tokens were refreshed`,
+      statusCode: HttpStatus.OK,
+    });
   }
 
   async validateUser(email: string, password: string): Promise<UserEntity> {
@@ -117,40 +164,42 @@ export class AuthService {
     return user;
   }
 
-  private async getAndUpdateTokens(user: UserResponse): Promise<Tokens> {
+  private async getAndUpdateTokens(
+    user: AutomapperReadAuthUserDto,
+  ): Promise<Tokens> {
     const tokens: Tokens = await this.getTokens({
       sub: user.id,
       email: user.email,
       username: user.username,
     });
-    await this.updateRtHash(user.id, tokens.refreshToken);
+    await this.updateRefreshTokenHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
   // Rfresh Token and Access Token payload
   async getTokens(payload: JwtPayload): Promise<Tokens> {
-    const [at, rt]: [at: string, rt: string] = await Promise.all([
-      this.jwtService.signAsync(payload, {
-        secret: this.jwtSecretActivationToken,
-        expiresIn: this.jwtExpirationTimeActivationToken,
-      }),
-      this.jwtService.signAsync(payload, {
-        secret: this.jwtSecretRefreshToken,
-        expiresIn: this.jwtExpirationTimeRefreshToken,
-      }),
+    const [accessToken, refreshToken]: [
+      accessToken: string,
+      refreshToken: string,
+    ] = await Promise.all([
+      this.jwtService.signAsync(payload, this.jwtAccesTokenConfig.config),
+      this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig.config),
     ]);
 
     return {
-      accessToken: at,
-      refreshToken: rt,
+      accessToken,
+      refreshToken,
     };
   }
 
-  private async updateRtHash(
+  private async updateRefreshTokenHash(
     userId: string,
     refreshToken: string,
   ): Promise<void> {
-    const hashRT: string = await hashData(refreshToken);
-    await this.userService.updateUserHashRT(userId, hashRT);
+    const hashedRefreshToken: string = await hashData(refreshToken);
+    await this.userService.updateUserHashRefreshToken(
+      userId,
+      hashedRefreshToken,
+    );
   }
 }

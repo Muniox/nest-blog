@@ -8,8 +8,6 @@ export type PostResponse = {
   category: string;
   user: {
     username: string;
-    role: {
-      roleType: string;
-    };
+    role: string;
   };
 };
