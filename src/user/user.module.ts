@@ -5,8 +5,7 @@ import { UserService, AdminPanelUserService, AddRoleService } from './services';
 import { UserController, AdminPanelUserController } from './controllers';
 import { UserEntity, UserRoleEntity } from './entities';
 import { UserMapper } from './mappers';
-import { UserRepository } from './repositories/user.repository';
-import { UserRoleRepository } from './repositories/role.repository';
+import { UserRepository, UserRoleRepository } from './repositories';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, UserRoleEntity])],

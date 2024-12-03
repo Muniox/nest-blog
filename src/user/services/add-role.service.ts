@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { UserRoleEntity } from '../entities';
 import { Role } from '../../types';
+import { UserRoleRepository } from '../repositories';
 
 @Injectable()
 export class AddRoleService {
-  constructor(
-    @InjectRepository(UserRoleEntity)
-    private userRoleRepository: Repository<UserRoleEntity>,
-  ) {}
+  constructor(private userRoleRepository: UserRoleRepository) {}
 
   async onApplicationBootstrap(): Promise<void> {
     await this.createUserRoles(Object.values(Role));
@@ -22,9 +18,7 @@ export class AddRoleService {
 
     uniqueRoleArray.map(async (item: string): Promise<void> => {
       const searchRoleType: UserRoleEntity[] =
-        await this.userRoleRepository.findBy({
-          roleType: item,
-        });
+        await this.userRoleRepository.findByRoleType(item);
       if (searchRoleType.length === 0) {
         const role: UserRoleEntity = new UserRoleEntity();
         role.roleType = item;
