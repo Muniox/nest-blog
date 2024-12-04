@@ -46,7 +46,7 @@ export class UserEntity {
   @Column({
     nullable: true,
   })
-  hashedRT: string;
+  hashedRefreshToken: string;
 
   @AutoMap(() => UserRoleEntity)
   @ManyToOne(() => UserRoleEntity, (userRole) => userRole.users, {
