@@ -1,10 +1,9 @@
 import {
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
@@ -15,44 +14,37 @@ import {
 } from '../dto';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
+import { IUserRepository, USER_REPOSITORY_TOKEN } from '../interfaces';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
+    @Inject(USER_REPOSITORY_TOKEN)
+    private userRepository: IUserRepository,
     @InjectMapper() private readonly automapper: Mapper,
   ) {}
 
   async findOneUserMapped(id: string): Promise<AutomapperReadUserDto> {
     return this.automapper.mapAsync(
-      await this.userRepository.findOne({
-        where: { id },
-        relations: { role: true },
-      }),
+      await this.userRepository.findOneUserWithRole(id),
       UserEntity,
       AutomapperReadUserDto,
     );
   }
 
   async findOneUser(id: string): Promise<UserEntity> {
-    return this.userRepository.findOne({
-      where: { id },
-      relations: { role: true },
-    });
+    return this.userRepository.findOneUserWithRole(id);
   }
 
   async updateUserMapped(
     id: string,
     updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    const checkUser: UserEntity = await this.userRepository.findOne({
-      where: [
-        { email: updateUserDto.email, id: Not(id) },
-        { username: updateUserDto.username, id: Not(id) },
-      ],
-      relations: { role: true },
-    });
+    const checkUser: UserEntity =
+      await this.userRepository.findOneUserByEmailOrUsernameWhereNotIdWithRole(
+        updateUserDto,
+        id,
+      );
 
     if (checkUser?.email === updateUserDto.email) {
       throw new ConflictException(`User with this email already exist`);
@@ -62,10 +54,7 @@ export class UserService {
       throw new ConflictException(`User with this username already exist`);
     }
 
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { id },
-      relations: { role: true },
-    });
+    const user: UserEntity = await this.userRepository.findOneUserWithRole(id);
 
     const newUser = await this.automapper.mapAsync(
       {
@@ -81,35 +70,35 @@ export class UserService {
     );
 
     return this.automapper.mapAsync(
-      await this.userRepository.save(newUser),
+      await this.userRepository.createOrUpdateUser(newUser),
       UserEntity,
       AutomapperReadUserDto,
     );
   }
 
   async removeUser(id: string): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: { role: true },
-    });
+    const user = await this.userRepository.findOneUserWithRole(id);
 
     if (!user)
       throw new ForbiddenException(
         "User have no access to this resource or resources don't exist",
       );
 
-    await this.userRepository.remove([user]);
+    await this.userRepository.deleteUser(user);
   }
 
-  async updateUserHashRefreshToken(id: string, hashRT: string): Promise<void> {
-    await this.userRepository.update({ id }, { hashedRT: hashRT });
+  async updateUserHashRefreshToken(
+    id: string,
+    hashedRefreshToken: string,
+  ): Promise<void> {
+    await this.userRepository.updateUserHashRefreshToken(
+      id,
+      hashedRefreshToken,
+    );
   }
 
   // jeśli to zmienisz zmienisz również walidaję! w local stretegy
   async findUserByEmail(email: string): Promise<UserEntity> {
-    return await this.userRepository.findOne({
-      where: { email },
-      relations: { role: true },
-    });
+    return await this.userRepository.findOneUserByEmailWithRole(email);
   }
 }

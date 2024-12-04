@@ -1,6 +1,6 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
 
 import {
   ValidationRequestCreateUserDto,
@@ -9,19 +9,23 @@ import {
   AutomapperReadUserDto,
   AutomapperUpdateUserDto,
 } from '../dto';
-import { UserEntity, UserRoleEntity } from '../entities';
+import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
 import { UserService } from './user.service';
-import { Mapper } from '@automapper/core';
-import { InjectMapper } from '@automapper/nestjs';
+import {
+  IUserRepository,
+  IUserRoleRepository,
+  USER_REPOSITORY_TOKEN,
+  USER_ROLE_REPOSITORY_TOKEN,
+} from '../interfaces';
 
 @Injectable()
 export class AdminPanelUserService {
   constructor(
-    @InjectRepository(UserEntity)
-    private userRepository: Repository<UserEntity>,
-    @InjectRepository(UserRoleEntity)
-    private userRoleRepository: Repository<UserRoleEntity>,
+    @Inject(USER_REPOSITORY_TOKEN)
+    private userRepository: IUserRepository,
+    @Inject(USER_ROLE_REPOSITORY_TOKEN)
+    private userRoleRepository: IUserRoleRepository,
     @InjectMapper() private readonly automapper: Mapper,
     private userService: UserService,
   ) {}
@@ -29,13 +33,8 @@ export class AdminPanelUserService {
   async createUser(
     createUserDto: ValidationRequestCreateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    const checkUser: UserEntity = await this.userRepository.findOne({
-      where: [
-        { email: createUserDto.email },
-        { username: createUserDto.username },
-      ],
-      relations: { role: true },
-    });
+    const checkUser: UserEntity =
+      await this.userRepository.findOneUserByEmailOrUsername(createUserDto);
 
     if (checkUser?.email === createUserDto.email) {
       throw new ConflictException('User with that email already exists');
@@ -45,16 +44,10 @@ export class AdminPanelUserService {
       throw new ConflictException('User with that username already exists');
     }
 
-    if (checkUser) {
-      throw new ConflictException('User already exists');
-    }
-
     const user = await this.automapper.mapAsync(
       {
         ...createUserDto,
-        role: await this.userRoleRepository.findOne({
-          where: { roleType: 'user' },
-        }),
+        role: await this.userRoleRepository.findUserRoleWithRoleTypeUser(),
         hash: await hashData(createUserDto.password),
       },
       AutomapperCreateUserDto,
@@ -62,7 +55,7 @@ export class AdminPanelUserService {
     );
 
     return await this.automapper.mapAsync(
-      await this.userRepository.save(user),
+      await this.userRepository.createOrUpdateUser(user),
       UserEntity,
       AutomapperReadUserDto,
     );
@@ -74,9 +67,7 @@ export class AdminPanelUserService {
 
   async findAllUsersMapped(): Promise<AutomapperReadUserDto[]> {
     return this.automapper.mapArrayAsync(
-      await this.userRepository.find({
-        relations: { role: true },
-      }),
+      await this.userRepository.findAllUsersWithRole(),
       UserEntity,
       AutomapperReadUserDto,
     );
@@ -86,14 +77,10 @@ export class AdminPanelUserService {
     id: string,
     updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
-    const checkUser: UserEntity = await this.userRepository.findOne({
-      where: [
-        { email: updateUserDto.email },
-        { username: updateUserDto.username },
-      ],
-      relations: { role: true },
-    });
+    const checkUser: UserEntity =
+      await this.userRepository.findOneUserByEmailOrUsername(updateUserDto);
 
+    // @TODO: Validacje można przenieść do entity jako funkcje
     if (checkUser?.email === updateUserDto.email) {
       throw new ConflictException(`User with this email already exist`);
     }
@@ -102,10 +89,7 @@ export class AdminPanelUserService {
       throw new ConflictException(`User with this username already exist`);
     }
 
-    const user: UserEntity = await this.userRepository.findOne({
-      where: { id },
-      relations: { role: true },
-    });
+    const user: UserEntity = await this.userRepository.findOneUserWithRole(id);
 
     const newUser = await this.automapper.mapAsync(
       {
@@ -121,7 +105,7 @@ export class AdminPanelUserService {
     );
 
     return this.automapper.mapAsync(
-      await this.userRepository.save(newUser),
+      await this.userRepository.createOrUpdateUser(newUser),
       UserEntity,
       AutomapperReadUserDto,
     );
@@ -132,9 +116,6 @@ export class AdminPanelUserService {
   }
 
   async logoutUser(id: string): Promise<void> {
-    await this.userRepository.update(
-      { id, hashedRT: Not(IsNull()) },
-      { hashedRT: null },
-    );
+    await this.userRepository.deleteHashedRefreshToken(id);
   }
 }

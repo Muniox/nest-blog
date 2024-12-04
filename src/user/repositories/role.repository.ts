@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-
-import { Repository } from 'typeorm';
-import { UserRoleEntity } from '../entities';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IUserRoleRepository } from '../irepository/iuser-role.repository';
+import { Repository } from 'typeorm';
+
+import { UserRoleEntity } from '../entities';
+import { IUserRoleRepository } from '../interfaces';
 
 @Injectable()
 export class UserRoleRepository
@@ -24,6 +24,12 @@ export class UserRoleRepository
   async findByRoleType(item: string) {
     return await this.findBy({
       roleType: item,
+    });
+  }
+
+  async findUserRoleWithRoleTypeUser() {
+    return await this.userRoleRepository.findOne({
+      where: { roleType: 'user' },
     });
   }
 }

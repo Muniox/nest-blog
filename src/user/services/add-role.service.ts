@@ -2,10 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import { UserRoleEntity } from '../entities';
 import { Role } from '../../types';
-import {
-  IUserRoleRepository,
-  USER_ROLE_REPOSITORY_TOKEN,
-} from '../irepository';
+import { IUserRoleRepository, USER_ROLE_REPOSITORY_TOKEN } from '../interfaces';
 
 @Injectable()
 export class AddRoleService {
