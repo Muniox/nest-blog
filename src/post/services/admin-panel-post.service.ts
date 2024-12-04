@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { ValidationUpdatePostDto } from '../dto';
+import { ValidationUpdatePostDto } from '../dtos';
 import { PostEntity } from '../entities';
 import { PostService } from './post.service';
 

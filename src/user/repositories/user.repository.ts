@@ -7,7 +7,7 @@ import { IUserRepository } from '../interfaces';
 import {
   ValidationRequestCreateUserDto,
   ValidationRequestUpdateUserDto,
-} from '../dto';
+} from '../dtos';
 
 @Injectable()
 export class UserRepository

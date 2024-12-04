@@ -27,7 +27,7 @@ import {
   ValidationRequestCreateUserDto,
   ValidationRequestUpdateUserDto,
   AutomapperReadUserDto,
-} from '../dto';
+} from '../dtos';
 import { Role } from '../../types';
 import { UseRole } from '../../auth/decorators';
 import { AdminPanelUserService } from '../services';

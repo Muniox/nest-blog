@@ -7,10 +7,10 @@ import {
 } from '@automapper/core';
 import { AutomapperProfile, InjectMapper } from '@automapper/nestjs';
 import { Injectable } from '@nestjs/common';
-import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
+import { AutomapperCreatePostDto } from '../dtos/automapper-create-post.dto';
 import { PostEntity } from '../entities';
-import { AutomapperReadPostDto } from '../dto';
-import { AutomapperUpdatePostDto } from '../dto/automapper-update-post.dto';
+import { AutomapperReadPostDto } from '../dtos';
+import { AutomapperUpdatePostDto } from '../dtos/automapper-update-post.dto';
 
 @Injectable()
 export class PostMapper extends AutomapperProfile {

@@ -20,12 +20,12 @@ import {
   AutomapperReadPostDto,
   ValidationCreatePostDto,
   ValidationUpdatePostDto,
-} from '../dto';
+} from '../dtos';
 import { PostEntity } from '../entities';
 import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
-import { AutomapperCreatePostDto } from '../dto/automapper-create-post.dto';
-import { AutomapperUpdatePostDto } from '../dto/automapper-update-post.dto';
+import { AutomapperCreatePostDto } from '../dtos/automapper-create-post.dto';
+import { AutomapperUpdatePostDto } from '../dtos/automapper-update-post.dto';
 
 @Injectable()
 export class PostService {

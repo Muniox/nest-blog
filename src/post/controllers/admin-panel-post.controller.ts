@@ -25,7 +25,7 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-import { ValidationUpdatePostDto } from '../dto';
+import { ValidationUpdatePostDto } from '../dtos';
 import { UseRole } from '../../auth/decorators';
 import { Role } from '../../types';
 import { AdminPanelPostService } from '../services';

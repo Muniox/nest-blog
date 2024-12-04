@@ -18,11 +18,11 @@ import {
 } from '@nestjs/swagger';
 
 import { UserService } from '../services';
-import { ValidationRequestUpdateUserDto } from '../dto';
+import { ValidationRequestUpdateUserDto } from '../dtos';
 import { UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
-import { AutomapperReadUserDto } from '../dto/automapper-read-user.dto';
+import { AutomapperReadUserDto } from '../dtos/automapper-read-user.dto';
 
 @ApiTags('user')
 @Controller('user')

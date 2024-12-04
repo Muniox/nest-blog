@@ -22,7 +22,7 @@ import {
   ValidationUpdatePostDto,
   ValidationCreatePostDto,
   AutomapperReadPostDto,
-} from '../dto';
+} from '../dtos';
 import { Public, User } from '../../auth/decorators';
 import { UserAaccessTokenRequestData } from '../../types';
 import {

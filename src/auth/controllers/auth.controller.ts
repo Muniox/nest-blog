@@ -33,8 +33,8 @@ import {
   ValidationRequestLoginDto,
   AutomapperReadAuthUserDto,
   ValidationRequestAuthDto,
-} from '../dto';
-import { ValidationResponseAuthMessageDto } from '../dto/validation-response-auth-message.dto';
+} from '../dtos';
+import { ValidationResponseAuthMessageDto } from '../dtos/validation-response-auth-message.dto';
 
 @ApiTags('auth')
 @Controller('auth')

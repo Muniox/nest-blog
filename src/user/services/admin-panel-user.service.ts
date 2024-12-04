@@ -8,7 +8,7 @@ import {
   AutomapperCreateUserDto,
   AutomapperReadUserDto,
   AutomapperUpdateUserDto,
-} from '../dto';
+} from '../dtos';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
 import { UserService } from './user.service';

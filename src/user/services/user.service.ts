@@ -11,7 +11,7 @@ import {
   ValidationRequestUpdateUserDto,
   AutomapperReadUserDto,
   AutomapperUpdateUserDto,
-} from '../dto';
+} from '../dtos';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
 import { IUserRepository, USER_REPOSITORY_TOKEN } from '../interfaces';

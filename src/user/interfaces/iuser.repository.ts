@@ -2,7 +2,7 @@ import { UserEntity } from '../entities';
 import {
   ValidationRequestCreateUserDto,
   ValidationRequestUpdateUserDto,
-} from '../dto';
+} from '../dtos';
 
 export const USER_REPOSITORY_TOKEN = 'USER_REPOSITORY_TOKEN';
 

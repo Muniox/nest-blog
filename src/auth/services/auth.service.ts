@@ -20,7 +20,7 @@ import {
   AutomapperReadAuthUserDto,
   ValidationResponseAuthMessageDto,
   ValidationRequestAuthDto,
-} from '../dto';
+} from '../dtos';
 
 @Injectable()
 export class AuthService {

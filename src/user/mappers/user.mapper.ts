@@ -7,7 +7,7 @@ import {
   AutomapperCreateUserDto,
   AutomapperReadUserDto,
   AutomapperUpdateUserDto,
-} from '../dto';
+} from '../dtos';
 
 @Injectable()
 export class UserMapper extends AutomapperProfile {
