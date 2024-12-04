@@ -25,7 +25,7 @@ export class PostEntity {
 
   @AutoMap()
   @Column({
-    type: 'longtext',
+    type: 'text',
   })
   description: string;
 
