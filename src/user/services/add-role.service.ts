@@ -1,18 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { UserRoleEntity } from '../entities';
 import { Role } from '../../types';
-import { IUserRoleRepository } from '../irepository';
+import {
+  IUserRoleRepository,
+  USER_ROLE_REPOSITORY_TOKEN,
+} from '../irepository';
 
 @Injectable()
 export class AddRoleService {
-  constructor(private userRoleRepository: IUserRoleRepository) {}
+  constructor(
+    @Inject(USER_ROLE_REPOSITORY_TOKEN)
+    private userRoleRepository: IUserRoleRepository,
+  ) {}
 
   async onApplicationBootstrap(): Promise<void> {
     await this.createUserRoles(Object.values(Role));
   }
 
-  async createUserRoles(roles: string[]): Promise<void> {
+  private async createUserRoles(roles: string[]): Promise<void> {
     // pozbywam się z tablicy wszystkich duplikatów
     const uniqueRoleArray: string[] = [...new Set(roles)];
 

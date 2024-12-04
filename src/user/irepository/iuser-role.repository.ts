@@ -1,9 +1,8 @@
-import { Injectable } from '@nestjs/common';
-
 import { UserRoleEntity } from '../entities';
 import { Repository } from 'typeorm';
 
-@Injectable()
-export abstract class IUserRoleRepository extends Repository<UserRoleEntity> {
-  abstract findByRoleType(item: string): Promise<UserRoleEntity[]>;
+export const USER_ROLE_REPOSITORY_TOKEN = 'USER_ROLE_REPOSITORY_TOKEN';
+
+export interface IUserRoleRepository extends Repository<UserRoleEntity> {
+  findByRoleType(item: string): Promise<UserRoleEntity[]>;
 }

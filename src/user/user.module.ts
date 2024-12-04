@@ -6,7 +6,7 @@ import { UserController, AdminPanelUserController } from './controllers';
 import { UserEntity, UserRoleEntity } from './entities';
 import { UserMapper } from './mappers';
 import { UserRepository, UserRoleRepository } from './repositories';
-import { IUserRoleRepository } from './irepository';
+import { USER_ROLE_REPOSITORY_TOKEN } from './irepository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, UserRoleEntity])],
@@ -18,7 +18,7 @@ import { IUserRoleRepository } from './irepository';
     UserMapper,
     UserRepository,
     {
-      provide: IUserRoleRepository,
+      provide: USER_ROLE_REPOSITORY_TOKEN,
       useClass: UserRoleRepository,
     },
   ],
