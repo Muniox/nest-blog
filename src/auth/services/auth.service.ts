@@ -119,9 +119,9 @@ export class AuthService {
   ): Promise<ValidationResponseAuthMessageDto> {
     const user: UserEntity = await this.userService.findOneUser(userId);
 
-    if (!user || !user.hashedRT) throw new UnauthorizedException();
+    if (!user || !user.hashedRefreshToken) throw new UnauthorizedException();
 
-    const rtMatches: boolean = await argon2.verify(user.hashedRT, rt);
+    const rtMatches: boolean = await argon2.verify(user.hashedRefreshToken, rt);
     if (!rtMatches) throw new UnauthorizedException();
 
     const mappToUserDTO = this.classMapper.map(
