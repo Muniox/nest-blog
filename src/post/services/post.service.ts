@@ -1,6 +1,7 @@
 import {
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   Logger,
   StreamableFile,
@@ -22,17 +23,17 @@ import {
   ValidationUpdatePostDto,
 } from '../dtos';
 import { PostEntity } from '../entities';
-import { UserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
-import { AutomapperCreatePostDto } from '../dtos/automapper-create-post.dto';
-import { AutomapperUpdatePostDto } from '../dtos/automapper-update-post.dto';
+import { AutomapperCreatePostDto, AutomapperUpdatePostDto } from '../dtos';
+
+import { IUserService, USER_SERVICE_TOKEN } from '../../user/interfaces';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
-    private userService: UserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
     @InjectMapper() private readonly automapper: Mapper,
   ) {}
 

@@ -4,6 +4,7 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Inject,
   Patch,
 } from '@nestjs/common';
 import {
@@ -17,17 +18,18 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { UserService } from '../services';
-import { ValidationRequestUpdateUserDto } from '../dtos';
+import { ValidationRequestUpdateUserDto, AutomapperReadUserDto } from '../dtos';
 import { UserAaccessTokenRequestData } from '../../types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
-import { AutomapperReadUserDto } from '../dtos/automapper-read-user.dto';
+import { IUserService, USER_SERVICE_TOKEN } from '../interfaces';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    @Inject(USER_SERVICE_TOKEN) private readonly userService: IUserService,
+  ) {}
 
   @ApiCookieAuth()
   @ApiOperation({

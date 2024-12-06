@@ -9,13 +9,17 @@ import { UserRepository, UserRoleRepository } from './repositories';
 import {
   USER_REPOSITORY_TOKEN,
   USER_ROLE_REPOSITORY_TOKEN,
+  USER_SERVICE_TOKEN,
 } from './interfaces';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, UserRoleEntity])],
   controllers: [UserController, AdminPanelUserController],
   providers: [
-    UserService,
+    {
+      provide: USER_SERVICE_TOKEN,
+      useClass: UserService,
+    },
     AdminPanelUserService,
     AddRoleService,
     UserMapper,
@@ -28,6 +32,12 @@ import {
       useClass: UserRoleRepository,
     },
   ],
-  exports: [UserService, AdminPanelUserService],
+  exports: [
+    {
+      provide: USER_SERVICE_TOKEN,
+      useClass: UserService,
+    },
+    AdminPanelUserService,
+  ],
 })
 export class UserModule {}

@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as argon2 from 'argon2';
@@ -13,7 +18,7 @@ import {
   JwtRefreshTokenConfig,
   RefreshTokenCookieConfig,
 } from '../../configs';
-import { UserService, AdminPanelUserService } from '../../user/services';
+import { AdminPanelUserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
 import {
@@ -21,6 +26,7 @@ import {
   ValidationResponseAuthMessageDto,
   ValidationRequestAuthDto,
 } from '../dtos';
+import { IUserService, USER_SERVICE_TOKEN } from '../../user/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +35,7 @@ export class AuthService {
     private configService: ConfigService,
     private refreshTokenCookieConfig: RefreshTokenCookieConfig,
     private accessTokenCookieConfig: AccessTokenCookieConfig,
-    private userService: UserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
     private adminUserService: AdminPanelUserService,
     private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
     private jwtAccesTokenConfig: JwtAccessTokenConfig,

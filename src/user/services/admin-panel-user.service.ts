@@ -11,12 +11,13 @@ import {
 } from '../dtos';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
-import { UserService } from './user.service';
 import {
   IUserRepository,
   IUserRoleRepository,
+  IUserService,
   USER_REPOSITORY_TOKEN,
   USER_ROLE_REPOSITORY_TOKEN,
+  USER_SERVICE_TOKEN,
 } from '../interfaces';
 
 @Injectable()
@@ -27,7 +28,7 @@ export class AdminPanelUserService {
     @Inject(USER_ROLE_REPOSITORY_TOKEN)
     private userRoleRepository: IUserRoleRepository,
     @InjectMapper() private readonly automapper: Mapper,
-    private userService: UserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
   ) {}
 
   async createUser(
