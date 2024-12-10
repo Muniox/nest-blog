@@ -31,13 +31,14 @@ export interface IUserService {
   /**
    * Function return all User data (critical data included) where userID is equal to provided uuid
    * @param id user ID (uuid)
-   * @return user data
+   * @return user entity
    */
   findOneUser(id: string): Promise<UserEntity>;
 
   /**
    * Function return all User data (critical data included) where userEmail is equal to provided email
    * @param email user email
+   * @return user entity
    */
   findUserByEmail(email: string): Promise<UserEntity>;
 
