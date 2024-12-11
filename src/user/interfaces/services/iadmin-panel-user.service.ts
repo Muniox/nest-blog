@@ -2,7 +2,7 @@ import {
   AutomapperReadUserDto,
   ValidationRequestCreateUserDto,
   ValidationRequestUpdateUserDto,
-} from '../dtos';
+} from '../../dtos';
 
 export const ADMIN_PANEL_SERVICE_TOKEN = 'ADMIN_PANEL_SERVICE_TOKEN';
 

@@ -1,5 +1,8 @@
-import { AutomapperReadUserDto, ValidationRequestUpdateUserDto } from '../dtos';
-import { UserEntity } from '../entities';
+import {
+  AutomapperReadUserDto,
+  ValidationRequestUpdateUserDto,
+} from '../../dtos';
+import { UserEntity } from '../../entities';
 
 export const USER_SERVICE_TOKEN = 'USER_SERVICE_TOKEN';
 

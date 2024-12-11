@@ -1,4 +1,4 @@
-import { UserRoleEntity } from '../entities';
+import { UserRoleEntity } from '../../entities';
 import { Repository } from 'typeorm';
 
 export const USER_ROLE_REPOSITORY_TOKEN = 'USER_ROLE_REPOSITORY_TOKEN';
