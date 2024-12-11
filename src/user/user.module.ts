@@ -7,6 +7,7 @@ import { UserEntity, UserRoleEntity } from './entities';
 import { UserMapper } from './mappers';
 import { UserRepository, UserRoleRepository } from './repositories';
 import {
+  ADMIN_PANEL_SERVICE_TOKEN,
   USER_REPOSITORY_TOKEN,
   USER_ROLE_REPOSITORY_TOKEN,
   USER_SERVICE_TOKEN,
@@ -20,7 +21,10 @@ import {
       provide: USER_SERVICE_TOKEN,
       useClass: UserService,
     },
-    AdminPanelUserService,
+    {
+      provide: ADMIN_PANEL_SERVICE_TOKEN,
+      useClass: AdminPanelUserService,
+    },
     AddRoleService,
     UserMapper,
     {
@@ -37,7 +41,10 @@ import {
       provide: USER_SERVICE_TOKEN,
       useClass: UserService,
     },
-    AdminPanelUserService,
+    {
+      provide: ADMIN_PANEL_SERVICE_TOKEN,
+      useClass: AdminPanelUserService,
+    },
   ],
 })
 export class UserModule {}

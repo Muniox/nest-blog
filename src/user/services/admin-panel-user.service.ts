@@ -12,6 +12,7 @@ import {
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
 import {
+  IAdminPanelUserService,
   IUserRepository,
   IUserRoleRepository,
   IUserService,
@@ -21,7 +22,7 @@ import {
 } from '../interfaces';
 
 @Injectable()
-export class AdminPanelUserService {
+export class AdminPanelUserService implements IAdminPanelUserService {
   constructor(
     @Inject(USER_REPOSITORY_TOKEN)
     private userRepository: IUserRepository,

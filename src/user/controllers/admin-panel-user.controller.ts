@@ -5,6 +5,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
@@ -30,13 +31,19 @@ import {
 } from '../dtos';
 import { Role } from '../../types';
 import { UseRole } from '../../auth/decorators';
-import { AdminPanelUserService } from '../services';
+import {
+  ADMIN_PANEL_SERVICE_TOKEN,
+  IAdminPanelUserService,
+} from '../interfaces';
 
 @ApiTags('admin-panel')
 @UseRole(Role.admin)
 @Controller('admin-panel/user')
 export class AdminPanelUserController {
-  constructor(private adminPanelUserService: AdminPanelUserService) {}
+  constructor(
+    @Inject(ADMIN_PANEL_SERVICE_TOKEN)
+    private adminPanelUserService: IAdminPanelUserService,
+  ) {}
 
   @ApiCookieAuth()
   @ApiOperation({

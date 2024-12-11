@@ -18,7 +18,6 @@ import {
   JwtRefreshTokenConfig,
   RefreshTokenCookieConfig,
 } from '../../configs';
-import { AdminPanelUserService } from '../../user/services';
 import { UserEntity } from '../../user/entities';
 import { hashData } from '../../utils';
 import {
@@ -26,7 +25,12 @@ import {
   ValidationResponseAuthMessageDto,
   ValidationRequestAuthDto,
 } from '../dtos';
-import { IUserService, USER_SERVICE_TOKEN } from '../../user/interfaces';
+import {
+  ADMIN_PANEL_SERVICE_TOKEN,
+  IAdminPanelUserService,
+  IUserService,
+  USER_SERVICE_TOKEN,
+} from '../../user/interfaces';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +40,8 @@ export class AuthService {
     private refreshTokenCookieConfig: RefreshTokenCookieConfig,
     private accessTokenCookieConfig: AccessTokenCookieConfig,
     @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
-    private adminUserService: AdminPanelUserService,
+    @Inject(ADMIN_PANEL_SERVICE_TOKEN)
+    private adminUserService: IAdminPanelUserService,
     private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
     private jwtAccesTokenConfig: JwtAccessTokenConfig,
     @InjectMapper() private readonly classMapper: Mapper,

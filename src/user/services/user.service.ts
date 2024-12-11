@@ -14,10 +14,14 @@ import {
 } from '../dtos';
 import { UserEntity } from '../entities';
 import { hashData } from '../../utils';
-import { IUserRepository, USER_REPOSITORY_TOKEN } from '../interfaces';
+import {
+  IUserRepository,
+  IUserService,
+  USER_REPOSITORY_TOKEN,
+} from '../interfaces';
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
   constructor(
     @Inject(USER_REPOSITORY_TOKEN)
     private userRepository: IUserRepository,
