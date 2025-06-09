@@ -24,7 +24,7 @@ import {
   AutomapperReadPostDto,
 } from '../dtos';
 import { Public, User } from '../../auth/decorators';
-import { UserAaccessTokenRequestData } from '../../types';
+import { UserAccessTokenRequestData } from '../../shared/types';
 import {
   ApiBadRequestResponse,
   ApiConsumes,
@@ -63,7 +63,7 @@ export class PostController {
   @Post('/upload')
   async createPost(
     @Body() createPostDto: ValidationCreatePostDto,
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addFileTypeValidator({
@@ -157,7 +157,7 @@ export class PostController {
   @Patch(':id')
   @UseInterceptors(FileInterceptor('file'))
   async updatePost(
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
     @Param('id') id: string,
     @Body() updatePostDto: ValidationUpdatePostDto,
     @UploadedFile(
@@ -198,7 +198,7 @@ export class PostController {
   @Delete(':id')
   async removePostByUser(
     @Param('id') id: string,
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
   ): Promise<void> {
     return await this.postService.removePost(id, userId);
   }

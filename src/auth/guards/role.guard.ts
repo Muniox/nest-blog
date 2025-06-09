@@ -6,17 +6,20 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 
-import { Role, UserTokenRequest } from '../../types';
+import { Role, UserTokenRequest } from '../../shared/types';
 import { ROLES_KEY } from '../decorators';
 import { UserEntity } from '../../user/entities';
 import { from, map, Observable } from 'rxjs';
-import { IUserService, USER_SERVICE_TOKEN } from '../../user/interfaces';
+import {
+  UserServiceInterface,
+  USER_SERVICE_TOKEN,
+} from '../../user/interfaces';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: UserServiceInterface,
   ) {}
 
   canActivate(

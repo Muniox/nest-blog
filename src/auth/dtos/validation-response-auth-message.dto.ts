@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { MessageResponse } from '../../types';
+import { MessageResponse } from '../../shared/types';
 
 export class ValidationResponseAuthMessageDto implements MessageResponse {
   @ApiProperty({

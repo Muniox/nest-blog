@@ -6,7 +6,7 @@ import {
 
 export const USER_REPOSITORY_TOKEN = 'USER_REPOSITORY_TOKEN';
 
-export interface IUserRepository {
+export interface UserRepositoryInterface {
   findOneUserByEmailOrUsername(
     item: ValidationRequestCreateUserDto | ValidationRequestUpdateUserDto,
   ): Promise<UserEntity | null>;

@@ -13,19 +13,20 @@ import {
   AutomapperUpdateUserDto,
 } from '../dtos';
 import { UserEntity } from '../entities';
-import { hashData } from '../../utils';
 import {
-  IUserRepository,
-  IUserService,
+  UserRepositoryInterface,
+  UserServiceInterface,
   USER_REPOSITORY_TOKEN,
 } from '../interfaces';
+import { HashService } from '../../shared/utils';
 
 @Injectable()
-export class UserService implements IUserService {
+export class UserService implements UserServiceInterface {
   constructor(
     @Inject(USER_REPOSITORY_TOKEN)
-    private userRepository: IUserRepository,
+    private userRepository: UserRepositoryInterface,
     @InjectMapper() private readonly automapper: Mapper,
+    private hashService: HashService,
   ) {}
 
   async findOneUserMapped(id: string): Promise<AutomapperReadUserDto> {
@@ -66,7 +67,7 @@ export class UserService implements IUserService {
         email: updateUserDto.email,
         username: updateUserDto.username,
         hash: updateUserDto.password
-          ? await hashData(updateUserDto.password)
+          ? await this.hashService.hashData(updateUserDto.password)
           : user.hash,
       },
       AutomapperUpdateUserDto,
@@ -101,7 +102,7 @@ export class UserService implements IUserService {
     );
   }
 
-  // jeśli to zmienisz zmienisz również walidaję! w local stretegy
+  // jeśli to zmienisz, zmienisz również walidację! w local strategy
   async findUserByEmail(email: string): Promise<UserEntity> {
     return await this.userRepository.findOneUserByEmailWithRole(email);
   }

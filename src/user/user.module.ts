@@ -12,6 +12,7 @@ import {
   USER_ROLE_REPOSITORY_TOKEN,
   USER_SERVICE_TOKEN,
 } from './interfaces';
+import { HashService } from '../shared/utils';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, UserRoleEntity])],
@@ -35,6 +36,7 @@ import {
       provide: USER_ROLE_REPOSITORY_TOKEN,
       useClass: UserRoleRepository,
     },
+    HashService,
   ],
   exports: [
     {

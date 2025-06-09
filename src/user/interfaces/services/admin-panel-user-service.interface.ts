@@ -6,7 +6,7 @@ import {
 
 export const ADMIN_PANEL_SERVICE_TOKEN = 'ADMIN_PANEL_SERVICE_TOKEN';
 
-export interface IAdminPanelUserService {
+export interface AdminPanelUserServiceInterface {
   createUser(
     item: ValidationRequestCreateUserDto,
   ): Promise<AutomapperReadUserDto>;

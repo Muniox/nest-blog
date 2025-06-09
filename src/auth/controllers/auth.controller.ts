@@ -23,9 +23,9 @@ import { Response } from 'express';
 
 import { AuthService } from '../services';
 import {
-  UserAaccessTokenRequestData,
+  UserAccessTokenRequestData,
   UserRefreshTokenRequestData,
-} from '../../types';
+} from '../../shared/types';
 import { RtGuard, LocalAuthGuard } from '../guards';
 import { User, Public } from '../decorators';
 import { UserEntity } from '../../user/entities';
@@ -34,7 +34,7 @@ import {
   AutomapperReadAuthUserDto,
   ValidationRequestAuthDto,
 } from '../dtos';
-import { ValidationResponseAuthMessageDto } from '../dtos/validation-response-auth-message.dto';
+import { ValidationResponseAuthMessageDto } from '../dtos';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -104,7 +104,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('/logout')
   async logout(
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
     @Res({ passthrough: true }) res: Response,
   ): Promise<ValidationResponseAuthMessageDto> {
     return await this.authService.logout(userId, res);

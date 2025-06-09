@@ -7,11 +7,13 @@ import {
   JwtAccessTokenConfig,
   JwtRefreshTokenConfig,
   RefreshTokenCookieConfig,
-} from '../configs';
+} from '../shared/infrastructure/configs';
 import { AuthService } from './services';
 import { AuthController } from './controllers';
 import { UserModule } from '../user/user.module';
 import { AuthMapper } from './mappers';
+import { ApiConfigHelperService } from '../shared/utils';
+import { HashService } from '../shared/utils';
 
 @Module({
   imports: [JwtModule.register({}), UserModule],
@@ -26,6 +28,8 @@ import { AuthMapper } from './mappers';
     AuthMapper,
     JwtAccessTokenConfig,
     JwtRefreshTokenConfig,
+    ApiConfigHelperService,
+    HashService,
   ],
 })
 export class AuthModule {}

@@ -1,2 +1,2 @@
-export * from './iuser-role.repository';
-export * from './iuser.repository';
+export * from './user-role-repository.interface';
+export * from './user-repository.interface';

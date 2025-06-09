@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 
 import { UserEntity } from '../entities';
-import { IUserRepository } from '../interfaces';
+import { UserRepositoryInterface } from '../interfaces';
 import {
   ValidationRequestCreateUserDto,
   ValidationRequestUpdateUserDto,
@@ -12,7 +12,7 @@ import {
 @Injectable()
 export class UserRepository
   extends Repository<UserEntity>
-  implements IUserRepository
+  implements UserRepositoryInterface
 {
   constructor(
     @InjectRepository(UserEntity)

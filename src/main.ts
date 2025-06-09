@@ -6,17 +6,19 @@ import helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
-import { Cors, swaggerConfig } from './configs';
+import { Cors, swaggerConfig } from './shared/infrastructure/configs';
 import { SwaggerModule } from '@nestjs/swagger';
-import { isProduction } from './utils';
+import { ApiConfigHelperService } from './shared/utils';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const apiConfigHelperService = app.get(ApiConfigHelperService);
+
   app.useGlobalPipes(
     new ValidationPipe({
       // validateCustomDecorators: true, //make error for globally only dunno why??
       transform: true,
-      disableErrorMessages: isProduction(),
+      disableErrorMessages: apiConfigHelperService.isProduction,
       whitelist: true,
       forbidNonWhitelisted: true,
       transformOptions: {

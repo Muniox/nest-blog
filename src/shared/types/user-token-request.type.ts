@@ -8,7 +8,7 @@ export type UserTokenRequest = {
 };
 
 // Access Token data
-export enum UserAaccessTokenRequestData {
+export enum UserAccessTokenRequestData {
   userId = 'sub',
   email = 'email',
   username = 'username',

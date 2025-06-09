@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { PostResponse, Role } from '../../types';
+import { PostResponse, Role } from '../../shared/types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class AutomapperReadPostDto implements PostResponse {

@@ -6,7 +6,7 @@ import { UserEntity } from '../../entities';
 
 export const USER_SERVICE_TOKEN = 'USER_SERVICE_TOKEN';
 
-export interface IUserService {
+export interface UserServiceInterface {
   /**
    * Function remove user with provided ID
    * @param id user ID (uuid)

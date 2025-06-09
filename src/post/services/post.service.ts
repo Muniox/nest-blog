@@ -26,14 +26,17 @@ import { PostEntity } from '../entities';
 import { UserEntity } from '../../user/entities';
 import { AutomapperCreatePostDto, AutomapperUpdatePostDto } from '../dtos';
 
-import { IUserService, USER_SERVICE_TOKEN } from '../../user/interfaces';
+import {
+  UserServiceInterface,
+  USER_SERVICE_TOKEN,
+} from '../../user/interfaces';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private postRepository: Repository<PostEntity>,
-    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: UserServiceInterface,
     @InjectMapper() private readonly automapper: Mapper,
   ) {}
 

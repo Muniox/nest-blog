@@ -29,11 +29,11 @@ import {
   ValidationRequestUpdateUserDto,
   AutomapperReadUserDto,
 } from '../dtos';
-import { Role } from '../../types';
+import { Role } from '../../shared/types';
 import { UseRole } from '../../auth/decorators';
 import {
   ADMIN_PANEL_SERVICE_TOKEN,
-  IAdminPanelUserService,
+  AdminPanelUserServiceInterface,
 } from '../interfaces';
 
 @ApiTags('admin-panel')
@@ -42,7 +42,7 @@ import {
 export class AdminPanelUserController {
   constructor(
     @Inject(ADMIN_PANEL_SERVICE_TOKEN)
-    private adminPanelUserService: IAdminPanelUserService,
+    private adminPanelUserService: AdminPanelUserServiceInterface,
   ) {}
 
   @ApiCookieAuth()

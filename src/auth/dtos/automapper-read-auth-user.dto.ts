@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserResponse } from '../../types';
+import { UserResponse } from '../../shared/types';
 
 export class AutomapperReadAuthUserDto implements UserResponse {
   @ApiProperty({

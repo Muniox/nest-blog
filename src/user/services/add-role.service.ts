@@ -1,14 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 
 import { UserRoleEntity } from '../entities';
-import { Role } from '../../types';
-import { IUserRoleRepository, USER_ROLE_REPOSITORY_TOKEN } from '../interfaces';
+import { Role } from '../../shared/types';
+import {
+  UserRoleRepositoryInterface,
+  USER_ROLE_REPOSITORY_TOKEN,
+} from '../interfaces';
 
 @Injectable()
 export class AddRoleService {
   constructor(
     @Inject(USER_ROLE_REPOSITORY_TOKEN)
-    private userRoleRepository: IUserRoleRepository,
+    private userRoleRepository: UserRoleRepositoryInterface,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {

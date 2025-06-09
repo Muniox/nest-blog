@@ -27,7 +27,7 @@ import {
 
 import { ValidationUpdatePostDto } from '../dtos';
 import { UseRole } from '../../auth/decorators';
-import { Role } from '../../types';
+import { Role } from '../../shared/types';
 import { AdminPanelPostService } from '../services';
 
 @ApiTags('admin-panel')

@@ -1,6 +1,10 @@
 import { DataSource } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'dotenv';
 
-import { configService } from '../utils';
+config();
+
+export const configService: ConfigService = new ConfigService();
 
 export default new DataSource({
   type: 'mysql',

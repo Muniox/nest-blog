@@ -6,12 +6,17 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { classes } from '@automapper/classes';
 import { AutomapperModule } from '@automapper/nestjs';
 
-import { DatabaseModule } from './database/database.module';
-import { Cors, envValidationObjectSchema, getThrottlerConfig } from './configs';
+import { DatabaseModule } from './shared/infrastructure/database/database.module';
+import {
+  Cors,
+  envValidationObjectSchema,
+  getThrottlerConfig,
+} from './shared/infrastructure/configs';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AtGuard, RolesGuard } from './auth/guards';
 import { PostModule } from './post/post.module';
+import { ApiConfigHelperService } from './shared/utils';
 
 @Module({
   imports: [
@@ -46,6 +51,7 @@ import { PostModule } from './post/post.module';
       useClass: RolesGuard,
     },
     Cors,
+    ApiConfigHelperService,
   ],
 })
 export class AppModule {}

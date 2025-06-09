@@ -4,7 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 
-import { CookieName, JwtRefreshToken, JwtReturnPayload } from '../../types';
+import {
+  CookieName,
+  JwtRefreshToken,
+  JwtReturnPayload,
+} from '../../shared/types';
 
 @Injectable()
 export class RtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {

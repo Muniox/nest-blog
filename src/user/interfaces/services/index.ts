@@ -1,2 +1,2 @@
-export * from './iadmin-panel-user.service';
-export * from './iuser.service';
+export * from './admin-panel-user-service.interface';
+export * from './user-service.interface';

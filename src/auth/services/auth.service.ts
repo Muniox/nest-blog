@@ -6,20 +6,18 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as argon2 from 'argon2';
 import { Response } from 'express';
 import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
 
-import { CookieName, JwtPayload, Tokens } from '../../types';
+import { CookieName, JwtPayload, Tokens } from '../../shared/types';
 import {
   AccessTokenCookieConfig,
   JwtAccessTokenConfig,
   JwtRefreshTokenConfig,
   RefreshTokenCookieConfig,
-} from '../../configs';
+} from '../../shared/infrastructure/configs';
 import { UserEntity } from '../../user/entities';
-import { hashData } from '../../utils';
 import {
   AutomapperReadAuthUserDto,
   ValidationResponseAuthMessageDto,
@@ -27,10 +25,11 @@ import {
 } from '../dtos';
 import {
   ADMIN_PANEL_SERVICE_TOKEN,
-  IAdminPanelUserService,
-  IUserService,
+  AdminPanelUserServiceInterface,
+  UserServiceInterface,
   USER_SERVICE_TOKEN,
 } from '../../user/interfaces';
+import { HashService } from '../../shared/utils';
 
 @Injectable()
 export class AuthService {
@@ -39,12 +38,13 @@ export class AuthService {
     private configService: ConfigService,
     private refreshTokenCookieConfig: RefreshTokenCookieConfig,
     private accessTokenCookieConfig: AccessTokenCookieConfig,
-    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: UserServiceInterface,
     @Inject(ADMIN_PANEL_SERVICE_TOKEN)
-    private adminUserService: IAdminPanelUserService,
+    private adminUserService: AdminPanelUserServiceInterface,
     private jwtRefreshTokenConfig: JwtRefreshTokenConfig,
-    private jwtAccesTokenConfig: JwtAccessTokenConfig,
+    private jwtAccessTokenConfig: JwtAccessTokenConfig,
     @InjectMapper() private readonly classMapper: Mapper,
+    private hashService: HashService,
   ) {}
 
   async register(
@@ -78,13 +78,13 @@ export class AuthService {
     user: UserEntity,
     res: Response,
   ): Promise<AutomapperReadAuthUserDto> {
-    const mappToUserDTO = this.classMapper.map(
+    const mapToUserDTO = this.classMapper.map(
       user, // what data I get
       UserEntity, // what type/blueprint data is right now
       AutomapperReadAuthUserDto, // what blueprint i want to get (example. without password)
     );
 
-    const tokens: Tokens = await this.getAndUpdateTokens(mappToUserDTO);
+    const tokens: Tokens = await this.getAndUpdateTokens(mapToUserDTO);
 
     res
       .cookie(
@@ -98,7 +98,7 @@ export class AuthService {
         this.accessTokenCookieConfig,
       );
 
-    return mappToUserDTO;
+    return mapToUserDTO;
   }
 
   async logout(
@@ -132,7 +132,10 @@ export class AuthService {
 
     if (!user || !user.hashedRefreshToken) throw new UnauthorizedException();
 
-    const rtMatches: boolean = await argon2.verify(user.hashedRefreshToken, rt);
+    const rtMatches: boolean = await this.hashService.compareData(
+      user.hashedRefreshToken,
+      rt,
+    );
     if (!rtMatches) throw new UnauthorizedException();
 
     const mappToUserDTO = this.classMapper.map(
@@ -168,7 +171,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    if (!(await argon2.verify(user.hash, password))) {
+    if (!(await this.hashService.compareData(user.hash, password))) {
       throw new UnauthorizedException();
     }
 
@@ -187,13 +190,13 @@ export class AuthService {
     return tokens;
   }
 
-  // Rfresh Token and Access Token payload
+  // Refresh Token and Access Token payload
   async getTokens(payload: JwtPayload): Promise<Tokens> {
     const [accessToken, refreshToken]: [
       accessToken: string,
       refreshToken: string,
     ] = await Promise.all([
-      this.jwtService.signAsync(payload, this.jwtAccesTokenConfig.config),
+      this.jwtService.signAsync(payload, this.jwtAccessTokenConfig.config),
       this.jwtService.signAsync(payload, this.jwtRefreshTokenConfig.config),
     ]);
 
@@ -207,7 +210,8 @@ export class AuthService {
     userId: string,
     refreshToken: string,
   ): Promise<void> {
-    const hashedRefreshToken: string = await hashData(refreshToken);
+    const hashedRefreshToken: string =
+      await this.hashService.hashData(refreshToken);
     await this.userService.updateUserHashRefreshToken(
       userId,
       hashedRefreshToken,

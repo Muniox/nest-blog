@@ -19,16 +19,17 @@ import {
 } from '@nestjs/swagger';
 
 import { ValidationRequestUpdateUserDto, AutomapperReadUserDto } from '../dtos';
-import { UserAaccessTokenRequestData } from '../../types';
+import { UserAccessTokenRequestData } from '../../shared/types';
 import { User } from '../../auth/decorators';
 import { UserEntity } from '../entities';
-import { IUserService, USER_SERVICE_TOKEN } from '../interfaces';
+import { UserServiceInterface, USER_SERVICE_TOKEN } from '../interfaces';
 
 @ApiTags('user')
 @Controller('user')
 export class UserController {
   constructor(
-    @Inject(USER_SERVICE_TOKEN) private readonly userService: IUserService,
+    @Inject(USER_SERVICE_TOKEN)
+    private readonly userService: UserServiceInterface,
   ) {}
 
   @ApiCookieAuth()
@@ -43,7 +44,7 @@ export class UserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async removeUser(
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
   ): Promise<void> {
     return await this.userService.removeUser(userId);
   }
@@ -64,7 +65,7 @@ export class UserController {
   })
   @Patch()
   async updateUser(
-    @User(UserAaccessTokenRequestData.userId) userId: string,
+    @User(UserAccessTokenRequestData.userId) userId: string,
     @Body() updateUserDto: ValidationRequestUpdateUserDto,
   ): Promise<AutomapperReadUserDto> {
     return await this.userService.updateUserMapped(userId, updateUserDto);

@@ -10,26 +10,27 @@ import {
   AutomapperUpdateUserDto,
 } from '../dtos';
 import { UserEntity } from '../entities';
-import { hashData } from '../../utils';
 import {
-  IAdminPanelUserService,
-  IUserRepository,
-  IUserRoleRepository,
-  IUserService,
+  AdminPanelUserServiceInterface,
+  UserRepositoryInterface,
+  UserRoleRepositoryInterface,
+  UserServiceInterface,
   USER_REPOSITORY_TOKEN,
   USER_ROLE_REPOSITORY_TOKEN,
   USER_SERVICE_TOKEN,
 } from '../interfaces';
+import { HashService } from '../../shared/utils';
 
 @Injectable()
-export class AdminPanelUserService implements IAdminPanelUserService {
+export class AdminPanelUserService implements AdminPanelUserServiceInterface {
   constructor(
     @Inject(USER_REPOSITORY_TOKEN)
-    private userRepository: IUserRepository,
+    private userRepository: UserRepositoryInterface,
     @Inject(USER_ROLE_REPOSITORY_TOKEN)
-    private userRoleRepository: IUserRoleRepository,
+    private userRoleRepository: UserRoleRepositoryInterface,
     @InjectMapper() private readonly automapper: Mapper,
-    @Inject(USER_SERVICE_TOKEN) private userService: IUserService,
+    @Inject(USER_SERVICE_TOKEN) private userService: UserServiceInterface,
+    private hashService: HashService,
   ) {}
 
   async createUser(
@@ -50,7 +51,7 @@ export class AdminPanelUserService implements IAdminPanelUserService {
       {
         ...createUserDto,
         role: await this.userRoleRepository.findUserRoleWithRoleTypeUser(),
-        hash: await hashData(createUserDto.password),
+        hash: await this.hashService.hashData(createUserDto.password),
       },
       AutomapperCreateUserDto,
       UserEntity,
@@ -99,7 +100,7 @@ export class AdminPanelUserService implements IAdminPanelUserService {
         email: updateUserDto.email,
         username: updateUserDto.username,
         hash: updateUserDto.password
-          ? await hashData(updateUserDto.password)
+          ? await this.hashService.hashData(updateUserDto.password)
           : user.hash,
       },
       AutomapperUpdateUserDto,
